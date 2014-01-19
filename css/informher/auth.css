@@ -1,0 +1,66 @@
+html {
+    overflow: hidden;
+}
+
+.spacer {
+    height: 200px;
+    display: none;
+}
+
+.columns {
+    padding: 0 4px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"],
+input[type="url"],
+.button {
+    margin-bottom: 4px;
+}
+
+.button.tiny {
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+hr {
+    margin: 8px 0;
+}
+
+@media only screen and (orientation: landscape) {
+    .informher-logo {
+        width: 50%;
+        max-width: 300px;
+    }
+}
+
+@media only screen and (orientation: portrait) {
+    .informher-logo {
+        width: 50%;
+        max-width: 150px;
+    }
+}
+
+.informher-btn-auth-social {
+    padding: 0;
+}
+
+.informher-form-auth {
+    display: table-row;
+}
+
+.informher-form-auth > div {
+    display: table-cell;
+}
+
+.informher-auth-regular {
+    border-right: 1px solid #DDD;
+}
+
+.informher-auth-social,
+.informher-auth-regular {
+    height:200px;
+    max-height: 200px;
+    min-height: 200px;
+}

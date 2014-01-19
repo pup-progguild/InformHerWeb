@@ -1,0 +1,11 @@
+# Laravel stuff
+/bootstrap/compiled.php
+# /vendor
+composer.phar
+composer.lock
+.DS_Store
+Thumbs.db
+
+# IDE
+/.idea
+
