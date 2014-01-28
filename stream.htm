@@ -6,7 +6,6 @@
 	<link rel="stylesheet" type="text/css" href="css/foundation.css">
 	<link rel="stylesheet" type="text/css" href="css/informher/stream.css">
 	<title>InformHer</title>
-	<script type="text/javascript" src="js/modernizr.js"></script>
 </head>
 <body>
 	<header class="spacer">&nbsp;</header>
@@ -32,7 +31,7 @@
 		<div class="row">
 			<div class="small-12 columns">
 				<div class="row">
-					<dl class="accordion" data-accordion>
+					<dl class="accordion" data-accordion id="posts-stream">
 						<dd>
 							<a href="#ask-1"><div class="row">
 								<div class="small-8 columns">Post 1</div>
@@ -97,7 +96,11 @@
 	</section>
 	<footer class="spacer">&nbsp;</footer>
 
+    <script type="text/javascript" src="js/modernizr.js"></script>
 	<script type="text/javascript" src="js/jquery.js"></script>
+    <script type="text/javascript" src="js/vendor/underscore.js"></script>
+    <script type="text/javascript" src="js/vendor/backbone.js"></script>
+    <script type="text/javascript" src="js/informher/models/posts.js"></script>
 	<script type="text/javascript" src="js/foundation.min.js"></script>
 	<script type="text/javascript" src="js/informher/pages.js"></script>
 	<script type="text/javascript" src="js/informher/pages/stream.js"></script>
