@@ -1,162 +1,503 @@
-<!DOCTYPE html>
-<html class="informher-screen-auth">
+<!DOCTYPE HTML>
+<html>
 <head>
-	<meta charset="utf-8">
-	<link rel="stylesheet" type="text/css" href="css/normalize.css">
-	<link rel="stylesheet" type="text/css" href="css/foundation.css">
-	<link rel="stylesheet" type="text/css" href="css/informher/auth.css">
-	<title>InformHer</title>
-	<script type="text/javascript" src="js/modernizr.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InformHer</title>
+    <link rel="stylesheet" type="text/css" href="css/vendor/foundation.css">
+    <link rel="stylesheet" type="text/css" href="css/app/margin-fix.css">
+    <script type="text/javascript">
+        var currPage = "home";
+    </script>
 </head>
 <body>
-	<header class="spacer">&nbsp;</header>
-	<section id="main">
-		<!-- Auth -->
-		<div class="row" id="panel-auth">
-			<div class="small-12 columns">
-				<h1 class="text-center">
-					<a href="index.htm">
-						<img class="informher-logo" data-interchange="[./img/InformHer%20landscape.png, (landscape)], [./img/InformHer%20portrait.png, (portrait)]">
-					</a>
-				</h1>
-			</div>
-			<div class="small-6 columns"><button class="column button" id="btn-login" type="button">Login</button></div>
-			<div class="small-6 columns"><button class="column secondary button" id="btn-register" type="button">Register</button></div>
-		</div>
-		
-		<!-- Login -->
-		<div class="row hide" id="panel-login">
-			<div class="small-12 column">
-				<div class="row show-for-small-only">
-					<div class="small-2 medium-12 columns show-for-landscape">
-						<h1 class="text-center">
-							<a href="index.htm">
-								<img src="./img/InformHer%20icon.png">
-							</a>
-						</h1>
-					</div>
-					<div class="small-10 medium-12 columns show-for-landscape"><h2>Login.</h2></div>
+<div id="wrapper">
+    <div id="header"></div>
+    <div id="body">
+        <section id="page-home" class="hide">
+            <div class="row">
+                <div class="small-12 columns">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img class="informher-logo"
+                                 data-interchange="[./img/applogo-landscape.png, (default)],
+                                    [./img/applogo-landscape.png, (landscape)],
+                                    [./img/applogo-portrait.png, (portrait)]"
+                                 title="InformHer">
+                            InformHer
+                        </a>
+                    </h1>
+                </div>
+                <div class="small-12 medium-6 columns"><button class="column button" id="btn-login" type="button">Login</button></div>
+                <div class="small-12 medium-6 columns"><button class="column secondary button" id="btn-register" type="button">Register</button></div>
+            </div>
+        </section>
+        <section id="page-login" class="hide">
+            <div class="row show-for-small-only">
+                <div class="small-2 medium-12 columns show-for-landscape">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img src="./img/applogo-icon.png">
+                        </a>
+                    </h1>
+                </div>
+                <div class="small-10 medium-12 columns show-for-landscape"><h2>Login.</h2></div>
 
-					<div class="small-12 columns show-for-portrait">
-						<h1 class="text-center">
-							<a href="index.htm">
-								<img class="informher-logo" src="./img/InformHer%20portrait.png">
-							</a>
-						</h1>
-					</div>
-					<div class="small-12 columns show-for-portrait"><h2>Login.</h2></div>
-				</div>
+                <div class="small-12 columns show-for-portrait">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img class="informher-logo" src="img/applogo-portrait.png">
+                        </a>
+                    </h1>
+                </div>
+                <div class="small-12 columns show-for-portrait"><h2>Login.</h2></div>
+            </div>
 
-				<div class="row show-for-medium-up">
-					<div class="medium-12 columns">
-						<h1 class="text-center">
-							<a href="index.htm">
-								<img class="informher-logo" data-interchange="[./img/InformHer%20landscape.png, (landscape)], [./img/InformHer%20portrait.png, (portrait)]">
-							</a>
-						</h1>
-					</div>
-					<div class="medium-12 columns"><h2>Login.</h2></div>
-				</div>
+            <div class="row show-for-medium-up">
+                <div class="medium-12 columns">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img class="informher-logo"
+                                 data-interchange="[./img/applogo-landscape.png, (default)],
+                                    [./img/applogo-landscape.png, (landscape)],
+                                    [./img/applogo-portrait.png, (portrait)]"
+                                 title="InformHer">
+                        </a>
+                    </h1>
+                </div>
+                <div class="medium-12 columns"><h2>Login.</h2></div>
+            </div>
 
-				<div class="row show-for-portrait">
-					<div class="small-12 columns"><input type="text" class="column" placeholder="Username"></div>
-					<div class="small-12 columns"><input type="password" class="column" placeholder="Password"></div>
-				</div>
-				<div class="row show-for-portrait">
-					<div class="small-4 columns"><button class="tiny column button" type="submit">Login</button></div>
-					<div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">f</button></div>
-					<div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">t</button></div>
-					<div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">g</button></div>
-					<div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">in</button></div>
-					<div class="small-12 columns text-right"><a href="#!">Forgot password?</a></div>
-				</div>
+            <div class="row show-for-portrait">
+                <div class="small-12 columns"><input type="text" class="column" placeholder="Username"></div>
+                <div class="small-12 columns"><input type="password" class="column" placeholder="Password"></div>
+            </div>
+            <div class="row show-for-portrait">
+                <div class="small-4 columns"><button class="tiny column button" type="submit">Login</button></div>
+                <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">f</button></div>
+                <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">t</button></div>
+                <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">g</button></div>
+                <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">in</button></div>
+                <div class="small-12 columns text-right"><a href="#!">Forgot password?</a></div>
+            </div>
 
-				<div class="row show-for-landscape">
-					<div class="small-5 medium-5 columns"><input type="text" class="column" placeholder="Username"></div>
-					<div class="small-5 medium-5 columns"><input type="password" class="column" placeholder="Password"></div>
-					<div class="small-2 medium-2 columns"><button class="tiny column button" type="submit">Login</button></div>
-				</div>
+            <div class="row show-for-landscape">
+                <div class="small-5 medium-5 columns"><input type="text" class="column" placeholder="Username"></div>
+                <div class="small-5 medium-5 columns"><input type="password" class="column" placeholder="Password"></div>
+                <div class="small-2 medium-2 columns"><button class="tiny column button" type="submit">Login</button></div>
+            </div>
 
-				<div class="row show-for-landscape">
-					<div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">f</button></div>
-					<div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">t</button></div>
-					<div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">g</button></div>
-					<div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">in</button></div>
-					<div class="small-4 columns text-right"><a href="#!">Forgot password?</a></div>
-				</div>
+            <div class="row show-for-landscape">
+                <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">f</button></div>
+                <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">t</button></div>
+                <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">g</button></div>
+                <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">in</button></div>
+                <div class="small-4 columns text-right"><a href="#!">Forgot password?</a></div>
+            </div>
 
-				<div class="row">
-					<div class="small-12 columns"><hr></div>
-					<div class="small-12 columns"><a href="#!" class="informher-lnk-back-to-auth">Back</a></div>
-				</div>
-			</div>
-		</div>
+            <div class="row">
+                <div class="small-12 columns"><hr></div>
+                <div class="small-12 columns"><a href="#!" class="informher-to-home">Back</a></div>
+            </div>
+        </section>
+        <section id="page-register" class="hide">
+            <div class="row show-for-small-only">
+                <div class="small-2 medium-12 columns show-for-landscape">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img src="./img/applogo-icon.png">
+                        </a>
+                    </h1>
+                </div>
+                <div class="small-10 medium-12 columns show-for-landscape"><h2>Register.</h2></div>
 
-		<div class="row hide" id="panel-register">
-			<div class="small-12 column">
-				<div class="row show-for-small-only">
-					<div class="small-2 medium-12 columns show-for-landscape">
-						<h1 class="text-center">
-							<a href="index.htm">
-								<img src="./img/InformHer%20icon.png">
-							</a>
-						</h1>
-					</div>
-					<div class="small-10 medium-12 columns show-for-landscape"><h2>Register.</h2></div>
+                <div class="small-12 columns show-for-portrait">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img class="informher-logo" src="img/applogo-portrait.png">
+                        </a>
+                    </h1>
+                </div>
+                <div class="small-12 columns show-for-portrait"><h2>Register.</h2></div>
+            </div>
 
-					<div class="small-12 columns show-for-portrait">
-						<h1 class="text-center">
-							<a href="index.htm">
-								<img class="informher-logo" src="./img/InformHer%20portrait.png">
-							</a>
-						</h1>
-					</div>
-					<div class="small-12 columns show-for-portrait"><h2>Register.</h2></div>
-				</div>
+            <div class="row show-for-medium-up">
+                <div class="medium-12 columns">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img class="informher-logo"
+                                 data-interchange="[./img/applogo-landscape.png, (default)],
+                                    [./img/applogo-landscape.png, (landscape)],
+                                    [./img/applogo-portrait.png, (portrait)]"
+                                 title="InformHer">
+                        </a>
+                    </h1>
+                </div>
+                <div class="medium-12 columns"><h2>Register.</h2></div>
+            </div>
 
-				<div class="row show-for-medium-up">
-					<div class="medium-12 columns">
-						<h1 class="text-center">
-							<a href="index.htm">
-								<img class="informher-logo" data-interchange="[./img/InformHer%20landscape.png, (landscape)], [./img/InformHer%20portrait.png, (portrait)]">
-							</a>
-						</h1>
-					</div>
-					<div class="medium-12 columns"><h2>Register.</h2></div>
-				</div>
+            <div class="row show-for-portrait">
+                <div class="small-12 columns"><input type="text" class="column" placeholder="Username"></div>
+                <div class="small-12 columns"><input type="text" class="column" placeholder="Email address"></div>
+                <div class="small-12 columns"><input type="password" class="column" placeholder="Password"></div>
+                <div class="small-12 columns"><input type="password" class="column" placeholder="Confirm password"></div>
+                <div class="small-4 columns"><button class="tiny column button" type="submit">Register</button></div>
+                <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">f</button></div>
+                <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">t</button></div>
+                <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">g</button></div>
+                <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">in</button></div>
+            </div>
 
-				<div class="row show-for-portrait">
-					<div class="small-12 medium-6 columns"><input type="text" class="column" placeholder="Username"></div>
-					<div class="small-12 medium-6 columns"><input type="email" class="column" placeholder="Email address"></div>
-					<div class="small-12 medium-6 columns"><input type="password" class="column" placeholder="Password"></div>
-					<div class="small-12 medium-6 columns"><input type="password" class="column" placeholder="Confirm password"></div>
-				</div>
-				<div class="row show-for-landscape">
-					<div class="small-6 columns"><input type="text" class="column" placeholder="Username"></div>
-					<div class="small-6 columns"><input type="email" class="column" placeholder="Email address"></div>
-					<div class="small-6 columns"><input type="password" class="column" placeholder="Password"></div>
-					<div class="small-6 columns"><input type="password" class="column" placeholder="Confirm password"></div>
-				</div>
-				<div class="row">
-					<div class="small-4 columns"><button class="tiny column button" type="submit">Register</button></div>
-					<div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">f</button></div>
-					<div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">t</button></div>
-					<div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">g</button></div>
-					<div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">in</button></div>
-				</div>
-				<div class="row">
-					<div class="small-12 columns"><hr></div>
+            <div class="row show-for-landscape">
+                <div class="small-6 medium-6 columns"><input type="text" class="column" placeholder="Username"></div>
+                <div class="small-6 medium-6 columns"><input type="email" class="column" placeholder="Email address"></div>
+                <div class="small-6 medium-6 columns"><input type="password" class="column" placeholder="Password"></div>
+                <div class="small-6 medium-6 columns"><input type="password" class="column" placeholder="Confirm password"></div>
+                <div class="small-4 medium-8 columns"><button class="tiny column button" type="submit">Login</button></div>
+                <div class="small-2 medium-1 columns"><button class="tiny column button informher-btn-auth-social" type="submit">f</button></div>
+                <div class="small-2 medium-1 columns"><button class="tiny column button informher-btn-auth-social" type="submit">t</button></div>
+                <div class="small-2 medium-1 columns"><button class="tiny column button informher-btn-auth-social" type="submit">g</button></div>
+                <div class="small-2 medium-1 columns"><button class="tiny column button informher-btn-auth-social" type="submit">in</button></div>
+            </div>
 
-					<div class="small-12 columns"><a href="#!" class="informher-lnk-back-to-auth">Back</a></div>
-				</div>
-			</div>
-		</div>
-	</section>
-	<footer class="spacer">&nbsp;</footer>
+            <div class="row">
+                <div class="small-12 columns"><hr></div>
+                <div class="small-12 columns"><a href="#!" class="informher-to-home">Back</a></div>
+            </div>
+        </section>
+        <section id="page-stream">
+            <div class="row show-for-small-only">
+                <div class="small-2 medium-12 columns show-for-landscape">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img src="./img/applogo-icon.png">
+                        </a>
+                    </h1>
+                </div>
+                <div class="small-10 medium-12 columns show-for-landscape"><h2>Streeeeeeam.</h2></div>
 
-	<script type="text/javascript" src="js/jquery.js"></script>
-	<script type="text/javascript" src="js/foundation.min.js"></script>
-	<script type="text/javascript" src="js/informher/pages.js"></script>
-	<script type="text/javascript" src="js/informher/pages/auth.js"></script>
+                <div class="small-12 columns show-for-portrait">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img class="informher-logo" src="img/applogo-portrait.png">
+                        </a>
+                    </h1>
+                </div>
+                <div class="small-12 columns show-for-portrait"><h2>Streeeeeeam.</h2></div>
+            </div>
+
+            <div class="row show-for-medium-up">
+                <div class="medium-12 columns">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img class="informher-logo"
+                                 data-interchange="[./img/applogo-landscape.png, (default)],
+                                    [./img/applogo-landscape.png, (landscape)],
+                                    [./img/applogo-portrait.png, (portrait)]"
+                                 title="InformHer">
+                        </a>
+                    </h1>
+                </div>
+                <div class="medium-12 columns"><h2>Streeeeeeam.</h2></div>
+            </div>
+
+            <div class="row">
+                <div class="small-12 columns">
+                    <a href="#!" class="button" class="informher-to-post">New Post</a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-12 columns">
+                    <div class="row">
+                        <dl class="accordion informher-stream" data-accordion id="stream"></dl>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section id="page-ask" class="hide">
+            <div class="row show-for-small-only">
+                <div class="small-2 medium-12 columns show-for-landscape">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img src="./img/applogo-icon.png">
+                        </a>
+                    </h1>
+                </div>
+                <div class="small-10 medium-12 columns show-for-landscape"><h2>Ask her.</h2></div>
+
+                <div class="small-12 columns show-for-portrait">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img class="informher-logo" src="img/applogo-portrait.png">
+                        </a>
+                    </h1>
+                </div>
+                <div class="small-12 columns show-for-portrait"><h2>Ask her.</h2></div>
+            </div>
+            <div class="row show-for-medium-up">
+                <div class="medium-12 columns">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img class="informher-logo"
+                                 data-interchange="[./img/applogo-landscape.png, (default)],
+                                        [./img/applogo-landscape.png, (landscape)],
+                                        [./img/applogo-portrait.png, (portrait)]"
+                                 title="InformHer">
+                        </a>
+                    </h1>
+                </div>
+                <div class="medium-12 columns"><h2>Ask her.</h2></div>
+            </div>
+            <form action="http://informherapi.azurewebsites.net/post/ask" method="post">
+                <div class="row">
+                    <div class="small-12 columns"><input type="text" placeholder="Title" name="title"></div>
+                    <div class="small-12 columns"><textarea rows="5" placeholder="Type your question here." name="content"></textarea></div>
+                    <div class="show-for-portrait">
+                        <div class="small-12 columns"><input type="text" placeholder="Tags"></div>
+                        <div class="small-12 columns"><button type="submit" class="tiny column button">Post</button></div>
+                    </div>
+                    <div class="show-for-landscape">
+                        <div class="small-8 medium-10 columns"><input type="text" placeholder="Tags"></div>
+                        <div class="small-4 medium-2 columns"><button type="submit" class="tiny column button">Post</button></div>
+                    </div>
+                </div>
+            </form>
+            <div class="row show-for-medium-up">
+                <div class="medium-12 columns"><hr></div>
+                <div class="medium-12 columns"><a href="#!" class="informher-lnk-back-to-option">Back</a></div>
+            </div>
+            <div class="row show-for-small-only">
+                <div class="small-12 columns show-for-portrait"><hr></div>
+                <div class="small-12 columns show-for-portrait"><a href="#!" class="informher-lnk-back-to-option">Back</a></div>
+            </div>
+        </section>
+        <section id="page-relate" class="hide">
+            <div class="row show-for-small-only">
+                <div class="small-2 medium-12 columns show-for-landscape">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img src="./img/applogo-icon.png">
+                        </a>
+                    </h1>
+                </div>
+                <div class="small-10 medium-12 columns show-for-landscape"><h2>Relate to her.</h2></div>
+
+                <div class="small-12 columns show-for-portrait">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img class="informher-logo" src="img/applogo-portrait.png">
+                        </a>
+                    </h1>
+                </div>
+                <div class="small-12 columns show-for-portrait"><h2>Relate to her.</h2></div>
+            </div>
+            <div class="row show-for-medium-up">
+                <div class="medium-12 columns">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img class="informher-logo"
+                                 data-interchange="[./img/applogo-landscape.png, (default)],
+                                        [./img/applogo-landscape.png, (landscape)],
+                                        [./img/applogo-portrait.png, (portrait)]"
+                                 title="InformHer">
+                        </a>
+                    </h1>
+                </div>
+                <div class="medium-12 columns"><h2>Relate to her.</h2></div>
+            </div>
+            <form action="http://informherapi.azurewebsites.net/post/relate" method="post">
+                <div class="row">
+                    <div class="small-12 columns"><input type="text" placeholder="Title" name="title"></div>
+                    <div class="small-12 columns"><textarea rows="5" placeholder="Type anything here." name="content"></textarea></div>
+                    <div class="show-for-portrait">
+                        <div class="small-12 columns"><input type="text" placeholder="Tags"></div>
+                        <div class="small-12 columns"><button type="submit" class="tiny column button">Post</button></div>
+                    </div>
+                    <div class="show-for-landscape">
+                        <div class="small-8 medium-10 columns"><input type="text" placeholder="Tags"></div>
+                        <div class="small-4 medium-2 columns"><button type="submit" class="tiny column button">Post</button></div>
+                    </div>
+                </div>
+            </form>
+            <div class="row show-for-medium-up">
+                <div class="medium-12 columns"><hr></div>
+                <div class="medium-12 columns"><a href="#!" class="informher-lnk-back-to-option">Back</a></div>
+            </div>
+            <div class="row show-for-small-only">
+                <div class="small-12 columns show-for-portrait"><hr></div>
+                <div class="small-12 columns show-for-portrait"><a href="#!" class="informher-lnk-back-to-option">Back</a></div>
+            </div>
+        </section>
+        <section id="page-shoutout" class="hide">
+            <div class="row show-for-small-only">
+                <div class="small-2 medium-12 columns show-for-landscape">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img src="./img/applogo-icon.png">
+                        </a>
+                    </h1>
+                </div>
+                <div class="small-10 medium-12 columns show-for-landscape"><h2>Be strong. Shout out.</h2></div>
+
+                <div class="small-12 columns show-for-portrait">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img class="informher-logo" src="img/applogo-portrait.png">
+                        </a>
+                    </h1>
+                </div>
+                <div class="small-12 columns show-for-portrait"><h2>Be strong. Shout out.</h2></div>
+            </div>
+            <div class="row show-for-medium-up">
+                <div class="medium-12 columns">
+                    <h1 class="text-center">
+                        <a href="index.htm">
+                            <img class="informher-logo"
+                                 data-interchange="[./img/applogo-landscape.png, (default)],
+                                        [./img/applogo-landscape.png, (landscape)],
+                                        [./img/applogo-portrait.png, (portrait)]"
+                                 title="InformHer">
+                        </a>
+                    </h1>
+                </div>
+                <div class="medium-12 columns"><h2>Be strong. Shout out.</h2></div>
+            </div>
+            <form action="http://informherapi.azurewebsites.net/post/shoutout" method="post">
+                <div class="row">
+                    <div class="small-12 columns"><input type="text" placeholder="Appropriate description(s) of your report"></div>
+                    <!-- TODO when selecting tags:
+                    <input type="hidden" name="tags[]" value="tag1">
+                    <input type="hidden" name="tags[]" value="tag2">
+                    <input type="hidden" name="tags[]" value="tag3">
+                    <input type="hidden" name="tags[]" value="tag4">
+                    <input type="hidden" name="tags[]" value="tag5">
+                    <input type="hidden" name="tags[]" value="tag6">
+                    for tags: [tag1], [tag2], [tag3], [tag4], [tag5], [tag6]
+                    -->
+                </div>
+                <div class="row">
+                    <div class="small-12 medium-6 columns">
+                        <div class="small-8 columns"><label class="column" for="btngrp-shoutout-track">Do you want to send your current location to InformHer?</label></div>
+                        <div class="small-4 columns">
+                            <input type="hidden" value="" name="track">
+                            <ul class="button-group column" id="btngrp-shoutout-track">
+                                <li><a href="#" class="tiny button">Yes</a></li>
+                                <li><a href="#" class="tiny button">No</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="small-12 medium-6 columns">
+                        <div class="small-8 columns"><label class="column" for="btngrp-shoutout-contact">Do you want InformHer to get in contact with you?</label></div>
+                        <div class="small-4 columns">
+                            <input type="hidden" value="" name="contact">
+                            <ul class="button-group column" id="btngrp-shoutout-contact">
+                                <li><a href="#" class="tiny button">Yes</a></li>
+                                <li><a href="#" class="tiny button">No</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="small-12 medium-6 columns">
+                        <div class="small-8 columns"><label class="column" for="btngrp-shoutout-urgent">Do you want InformHer to contact you immediately?</label></div>
+                        <div class="small-4 columns">
+                            <input type="hidden" value="" name="urgent">
+                            <ul class="button-group column" id="btngrp-shoutout-urgent">
+                                <li><a href="#" class="tiny button">Yes</a></li>
+                                <li><a href="#" class="tiny button">No</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="small-12 medium-6 columns"><button type="submit" class="tiny column button">Submit</button></div>
+                </div>
+                <div class="row show-for-medium-up">
+                    <div class="medium-12 columns"><hr></div>
+                    <div class="medium-12 columns"><a href="#!" class="informher-lnk-back-to-option">Back</a></div>
+                </div>
+                <div class="row show-for-small-only">
+                    <div class="small-12 columns show-for-portrait"><hr></div>
+                    <div class="small-12 columns show-for-portrait"><a href="#!" class="informher-lnk-back-to-option">Back</a></div>
+                </div>
+            </form>
+        </section>
+    </div>
+    <div id="footer"></div>
+</div>
+
+<script type="text/javascript" src="js/vendor/jquery.js"></script>
+<script type="text/javascript" src="js/vendor/underscore.js"></script>
+<script type="text/javascript" src="js/vendor/backbone.js"></script>
+<script type="text/javascript" src="js/vendor/backbone.marionette.js"></script>
+
+<script type="text/javascript" src="js/vendor/foundation/foundation.js"></script>
+
+<script type="text/javascript" src="js/app/models/tag.js"></script>
+<script type="text/javascript" src="js/app/collections/tags.js"></script>
+
+<script type="text/javascript" src="js/app/models/post.js"></script>
+<script type="text/javascript" src="js/app/collections/posts.js"></script>
+
+<script type="text/javascript" src="js/app/views/stream.js"></script>
+
+<script type="text/javascript">
+    $(document).foundation();
+</script>
+
+<!-- TODO fix the incorrect parsing of template (by Underscore) -->
+<script id="template-post" type="text/html">
+    <a href="#<%= type %>-<%= id %>">
+        <div class="row">
+            <div class="small-8 columns"><%= title %></div>
+            <div class="small-4 columns"><ul class="inline-list">
+                <% _.each(tags, function(tag){ %>
+                <li><a href="#!<%= tag.id %>"><span class="label"><%= tag.name %></span></a></li>
+                <% }); %>
+            </ul></div>
+        </div>
+    </a>
+    <div id="<%= type %>-<%= id %>" class="content">
+        <%= content %>
+    </div>
+</script>
+
+<script type="text/javascript">
+    function parseData(data) {
+        var posts = new PostCollection();
+        var type;
+
+        for(var i = 0; i < data.length; i++) {
+            var post = data[i];
+
+            var newPost = new Post({
+                id: post.id,
+                type: "type",
+                tags: [{ id: 0, name: "tag-1" }, { id: 1, name: "tag-2" }, { id: 2, name: "tag-3" }],
+                title: post.title,
+                content: post.content,
+                author: post.user_id,
+                created: post.created_at,
+                updated: post.updated_at,
+                deleted: post.deleted_at
+            });
+
+            posts.add(newPost);
+        }
+        return posts;
+    }
+
+    $.getJSON("http://informherapi.azurewebsites.net/post", function(response) {
+        if(response.status != "POSTS_ALL_RETRIEVE_SUCCESSFUL") {
+            alert("Can't fetch data!");
+            return;
+        }
+        var posts = parseData(response.posts);
+
+        var streamView = new StreamPostsView({
+            collection: posts,
+            el: "#stream"
+        });
+
+        streamView.render();
+    });
+</script>
+
 </body>
 </html>
