@@ -4,8 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>InformHer</title>
-    <link rel="stylesheet" type="text/css" href="css/vendor/foundation.css">
+    <link rel="stylesheet" type="text/css" href="css/vendor/foundation/foundation.css">
     <link rel="stylesheet" type="text/css" href="css/app/margin-fix.css">
+    <link rel="stylesheet" type="text/css" href="css/app/stream.css">
     <script type="text/javascript">
         var currPage = "home";
     </script>
@@ -208,9 +209,78 @@
             </div>
             <div class="row">
                 <div class="small-12 columns">
-                    <div class="row">
-                        <dl class="accordion informher-stream" data-accordion id="stream"></dl>
-                    </div>
+                    <ul class="informher-stream stream column" id="stream" data-stream>
+                        <li class="stream-post">
+                            <div class="post-meta">
+                                <ul class="post-tags">
+                                    <li class="tag-a"><a href="#!tag=a">a</a></li><li class="tag-b"><a href="#!tag=b">b</a></li><li class="tag-c"><a href="#!tag=c">c</a></li><li class="tag-d"><a href="#!tag=d">d</a></li>
+                                </ul>
+                                <ul class="post-categories">
+                                    <li class="category-ask"><a href="#!category=ask">ask</a></li>
+                                </ul>
+                                <strong class="post-title"><a href="#ask-1">title</a></strong>
+                            </div>
+                            <div id="ask-1" class="post-content">
+                                content
+                            </div>
+                        </li>
+                        <li class="stream-post">
+                            <div class="post-meta">
+                                <ul class="post-tags">
+                                    <li class="tag-a"><a href="#!tag=a">a</a></li><li class="tag-b"><a href="#!tag=b">b</a></li><li class="tag-c"><a href="#!tag=c">c</a></li><li class="tag-d"><a href="#!tag=d">d</a></li>
+                                </ul>
+                                <ul class="post-categories">
+                                    <li class="category-ask"><a href="#!category=ask">ask</a></li>
+                                </ul>
+                                <strong class="post-title"><a href="#ask-2">title</a></strong>
+                            </div>
+                            <div id="ask-2" class="post-content">
+                                content
+                            </div>
+                        </li>
+                        <li class="stream-post">
+                            <div class="post-meta">
+                                <ul class="post-tags">
+                                    <li class="tag-a"><a href="#!tag=a">a</a></li><li class="tag-b"><a href="#!tag=b">b</a></li><li class="tag-c"><a href="#!tag=c">c</a></li><li class="tag-d"><a href="#!tag=d">d</a></li>
+                                </ul>
+                                <ul class="post-categories">
+                                    <li class="category-ask"><a href="#!category=ask">ask</a></li>
+                                </ul>
+                                <strong class="post-title"><a href="#ask-3">title</a></strong>
+                            </div>
+                            <div id="ask-3" class="post-content">
+                                content
+                            </div>
+                        </li>
+                        <li class="stream-post">
+                            <div class="post-meta">
+                                <ul class="post-tags">
+                                    <li class="tag-a"><a href="#!tag=a">a</a></li><li class="tag-b"><a href="#!tag=b">b</a></li><li class="tag-c"><a href="#!tag=c">c</a></li><li class="tag-d"><a href="#!tag=d">d</a></li>
+                                </ul>
+                                <ul class="post-categories">
+                                    <li class="category-ask"><a href="#!category=ask">ask</a></li>
+                                </ul>
+                                <strong class="post-title"><a href="#ask-4">title</a></strong>
+                            </div>
+                            <div id="ask-4" class="post-content">
+                                content
+                            </div>
+                        </li>
+                        <li class="stream-post">
+                            <div class="post-meta">
+                                <ul class="post-tags">
+                                    <li class="tag-a"><a href="#!tag=a">a</a></li><li class="tag-b"><a href="#!tag=b">b</a></li><li class="tag-c"><a href="#!tag=c">c</a></li><li class="tag-d"><a href="#!tag=d">d</a></li>
+                                </ul>
+                                <ul class="post-categories">
+                                    <li class="category-ask"><a href="#!category=ask">ask</a></li>
+                                </ul>
+                                <strong class="post-title"><a href="#ask-5">title</a></strong>
+                            </div>
+                            <div id="ask-5" class="post-content">
+                                content
+                            </div>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -428,12 +498,16 @@
 <script type="text/javascript" src="js/vendor/backbone.marionette.js"></script>
 
 <script type="text/javascript" src="js/vendor/foundation/foundation.js"></script>
+<script type="text/javascript" src="js/app/views/controls/foundation.stream.js"></script>
 
 <script type="text/javascript" src="js/app/models/tag.js"></script>
 <script type="text/javascript" src="js/app/collections/tags.js"></script>
 
 <script type="text/javascript" src="js/app/models/post.js"></script>
 <script type="text/javascript" src="js/app/collections/posts.js"></script>
+
+<script type="text/javascript" src="js/app/models/category.js"></script>
+<script type="text/javascript" src="js/app/collections/categories.js"></script>
 
 <script type="text/javascript" src="js/app/views/stream.js"></script>
 
@@ -443,28 +517,45 @@
 
 <!-- TODO fix the incorrect parsing of template (by Underscore) -->
 <script id="template-post" type="text/html">
-    <a href="#<%= type %>-<%= id %>">
-        <div class="row">
-            <div class="small-8 columns"><%= title %></div>
-            <div class="small-4 columns"><ul class="inline-list">
-                <% _.each(tags, function(tag){ %>
-                <li><a href="#!<%= tag.id %>"><span class="label"><%= tag.name %></span></a></li>
-                <% }); %>
-            </ul></div>
-        </div>
-    </a>
-    <div id="<%= type %>-<%= id %>" class="content">
+    <div class="post-meta">
+        <ul class="post-tags">
+            <% _.each(tags, function(tag){ %>
+            <li><a href="#!<%= tag.id %>"><span class="label"><%= tag.name %></span></a></li>
+            <% }); %>
+        </ul>
+        <ul class="post-categories">
+            <li class="category-ask"><a href="#!category=ask">ask</a></li>
+        </ul>
+        <strong class="post-title"><a href="#<%= type %>-<%= id %>"><%= title %></a></strong>
+    </div>
+    <div id="<%= type %>-<%= id %>" class="post-content">
         <%= content %>
     </div>
 </script>
-
 <script type="text/javascript">
     function parseData(data) {
+        if(!(data instanceof Array))
+            data = [data];
+
         var posts = new PostCollection();
-        var type;
 
         for(var i = 0; i < data.length; i++) {
             var post = data[i];
+
+            var postCategories = post.category;
+            var categories = new CategoryCollection();
+
+            for(var j = 0; j < postCategories.length; j++) {
+                var postCategory = postCategories[j];
+                var newCategory = new Category({
+                    id: postCategory.id,
+                    name: postCategory.name,
+                    description: postCategory.description,
+                    created: postCategory.created_at,
+                    updated: postCategory.updated_at
+                });
+                categories.add(newCategory);
+            }
 
             var newPost = new Post({
                 id: post.id,
@@ -475,10 +566,13 @@
                 author: post.user_id,
                 created: post.created_at,
                 updated: post.updated_at,
-                deleted: post.deleted_at
+                deleted: post.deleted_at,
+                categories: categories
             });
 
             posts.add(newPost);
+
+            window.test = newPost;
         }
         return posts;
     }
@@ -489,7 +583,6 @@
             return;
         }
         var posts = parseData(response.posts);
-
         var streamView = new StreamPostsView({
             collection: posts,
             el: "#stream"

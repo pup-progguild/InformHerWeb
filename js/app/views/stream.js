@@ -7,12 +7,13 @@
  */
 
 var StreamPostView = Backbone.Marionette.ItemView.extend({
-    tagName: 'dd',
+    tagName: 'li',
+    className: 'stream-post',
     template: '#template-post',
     model: Post
 });
 
 var StreamPostsView = Backbone.Marionette.CollectionView.extend({
-    tagName: 'dl',
+    tagName: 'ul',
     itemView: StreamPostView
 });

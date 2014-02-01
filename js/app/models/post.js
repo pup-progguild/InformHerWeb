@@ -7,9 +7,6 @@
  */
 
 var Post = Backbone.Model.extend({
-    id: function() {
-        return this.get("id");
-    },
     title: function(title) {
         if(title !== undefined)
             this.set("title", title);
@@ -19,7 +16,7 @@ var Post = Backbone.Model.extend({
     author: function(author) {
         if(author !== undefined)
             this.set("author", author);
-        return this.set("author");
+        return this.get("author");
     },
     // TODO get tags
     content: function(content) {
@@ -41,6 +38,15 @@ var Post = Backbone.Model.extend({
         if(deleted !== undefined)
             this.set("deleted", deleted);
         return this.get("deleted");
+    },
+    categories: function() {
+        return this.get("categories");
+    },
+    type: function() {
+        return "post";
+    },
+    uid: function() {
+        return this.type() + "-" + this.id;
     }
 });
 

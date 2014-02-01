@@ -7,12 +7,12 @@
  */
 
 var Tag = Backbone.Model.extend({
-    id: function() {
-        return this.get("id");
-    },
     name: function(name) {
         if(name !== undefined)
             this.set("name", name);
         return this.get("name");
+    },
+    uid: function() {
+        return this.name() + "-" + this.id;
     }
 });
