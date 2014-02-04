@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>InformHer</title>
     <link rel="stylesheet" type="text/css" href="css/vendor/foundation/foundation.css">
+	<link rel="stylesheet" type="text/css" href="css/app/global.css">
     <link rel="stylesheet" type="text/css" href="css/app/margin-fix.css">
     <link rel="stylesheet" type="text/css" href="css/app/stream.css">
     <script type="text/javascript">
@@ -15,7 +16,7 @@
 <div id="wrapper">
     <div id="header"></div>
     <div id="body">
-        <section id="page-home" class="hide">
+        <section id="page-home">
             <div class="row">
                 <div class="small-12 columns">
                     <h1 class="text-center">
@@ -25,15 +26,14 @@
                                     [./img/applogo-landscape.png, (landscape)],
                                     [./img/applogo-portrait.png, (portrait)]"
                                  title="InformHer">
-                            InformHer
                         </a>
                     </h1>
                 </div>
-                <div class="small-12 medium-6 columns"><button class="column button" id="btn-login" type="button">Login</button></div>
-                <div class="small-12 medium-6 columns"><button class="column secondary button" id="btn-register" type="button">Register</button></div>
+                <div class="small-12 medium-6 columns"><button class="column button informher-to-login" id="btn-login" type="button">Login</button></div>
+                <div class="small-12 medium-6 columns"><button class="column secondary button informher-to-register" id="btn-register" type="button">Register</button></div>
             </div>
         </section>
-        <section id="page-login" class="hide">
+        <section id="page-login" class="inactive">
             <div class="row show-for-small-only">
                 <div class="small-2 medium-12 columns show-for-landscape">
                     <h1 class="text-center">
@@ -74,7 +74,7 @@
                 <div class="small-12 columns"><input type="password" class="column" placeholder="Password"></div>
             </div>
             <div class="row show-for-portrait">
-                <div class="small-4 columns"><button class="tiny column button" type="submit">Login</button></div>
+                <div class="small-4 columns"><button class="tiny column button informher-to-stream" type="submit">Login</button></div>
                 <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">f</button></div>
                 <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">t</button></div>
                 <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">g</button></div>
@@ -85,7 +85,7 @@
             <div class="row show-for-landscape">
                 <div class="small-5 medium-5 columns"><input type="text" class="column" placeholder="Username"></div>
                 <div class="small-5 medium-5 columns"><input type="password" class="column" placeholder="Password"></div>
-                <div class="small-2 medium-2 columns"><button class="tiny column button" type="submit">Login</button></div>
+                <div class="small-2 medium-2 columns"><button class="tiny column button informher-to-stream" type="submit">Login</button></div>
             </div>
 
             <div class="row show-for-landscape">
@@ -101,7 +101,7 @@
                 <div class="small-12 columns"><a href="#!" class="informher-to-home">Back</a></div>
             </div>
         </section>
-        <section id="page-register" class="hide">
+        <section id="page-register" class="inactive">
             <div class="row show-for-small-only">
                 <div class="small-2 medium-12 columns show-for-landscape">
                     <h1 class="text-center">
@@ -142,7 +142,7 @@
                 <div class="small-12 columns"><input type="text" class="column" placeholder="Email address"></div>
                 <div class="small-12 columns"><input type="password" class="column" placeholder="Password"></div>
                 <div class="small-12 columns"><input type="password" class="column" placeholder="Confirm password"></div>
-                <div class="small-4 columns"><button class="tiny column button" type="submit">Register</button></div>
+                <div class="small-4 columns"><button class="tiny column button informher-to-stream" type="submit">Register</button></div>
                 <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">f</button></div>
                 <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">t</button></div>
                 <div class="small-2 columns"><button class="tiny column button informher-btn-auth-social" type="submit">g</button></div>
@@ -154,7 +154,7 @@
                 <div class="small-6 medium-6 columns"><input type="email" class="column" placeholder="Email address"></div>
                 <div class="small-6 medium-6 columns"><input type="password" class="column" placeholder="Password"></div>
                 <div class="small-6 medium-6 columns"><input type="password" class="column" placeholder="Confirm password"></div>
-                <div class="small-4 medium-8 columns"><button class="tiny column button" type="submit">Login</button></div>
+                <div class="small-4 medium-8 columns"><button class="tiny column button informher-to-stream" type="submit">Register</button></div>
                 <div class="small-2 medium-1 columns"><button class="tiny column button informher-btn-auth-social" type="submit">f</button></div>
                 <div class="small-2 medium-1 columns"><button class="tiny column button informher-btn-auth-social" type="submit">t</button></div>
                 <div class="small-2 medium-1 columns"><button class="tiny column button informher-btn-auth-social" type="submit">g</button></div>
@@ -166,7 +166,7 @@
                 <div class="small-12 columns"><a href="#!" class="informher-to-home">Back</a></div>
             </div>
         </section>
-        <section id="page-stream">
+        <section id="page-stream" class="inactive">
             <div class="row show-for-small-only">
                 <div class="small-2 medium-12 columns show-for-landscape">
                     <h1 class="text-center">
@@ -175,7 +175,7 @@
                         </a>
                     </h1>
                 </div>
-                <div class="small-10 medium-12 columns show-for-landscape"><h2>Streeeeeeam.</h2></div>
+                <div class="small-10 medium-12 columns show-for-landscape"><h2>All posts in category ask tagged tag-1, relate tagged tag-1</h2></div>
 
                 <div class="small-12 columns show-for-portrait">
                     <h1 class="text-center">
@@ -184,7 +184,6 @@
                         </a>
                     </h1>
                 </div>
-                <div class="small-12 columns show-for-portrait"><h2>Streeeeeeam.</h2></div>
             </div>
 
             <div class="row show-for-medium-up">
@@ -199,12 +198,49 @@
                         </a>
                     </h1>
                 </div>
-                <div class="medium-12 columns"><h2>Streeeeeeam.</h2></div>
+                <div class="medium-12 columns"><h2>All posts in category ask tagged tag-1, relate tagged tag-1</h2></div>
             </div>
 
             <div class="row">
-                <div class="small-12 columns">
-                    <a href="#!" class="button" class="informher-to-post">New Post</a>
+	            <div class="small-8 columns">
+		            <!-- TODO get Bootstrap and make dropdown buttons:
+		            (toggle) ask:
+		            = new post
+		            = sort by
+		                = newest
+		                = title
+		                = author
+
+		            (toggle) relate:
+		            = new post
+		            = sort by
+		                = newest
+		                = title
+		                = author
+		            -->
+		            <ul class="inline-list">
+			            <li>
+				            <a href="#" class="tiny split button">Ask <span data-dropdown="drop-ask"></span></a><br>
+				            <ul id="drop-ask" class="f-dropdown" data-dropdown-content>
+					            <li><a class="informher-to-ask" href="#!">New Post</a></li>
+					            <li><a href="#!">Sort by Newest</a></li>
+					            <li><a href="#!">Sort by Title</a></li>
+					            <li><a href="#!">Sort by Author</a></li>
+				            </ul>
+			            </li>
+			            <li>
+				            <a href="#" class="tiny split button">Relate <span data-dropdown="drop-relate"></span></a><br>
+				            <ul id="drop-relate" class="f-dropdown" data-dropdown-content>
+					            <li><a class="informher-to-relate" href="#!">New Post</a></li>
+					            <li><a href="#">Sort by Newest</a></li>
+					            <li><a href="#">Sort by Title</a></li>
+					            <li><a href="#">Sort by Author</a></li>
+				            </ul>
+			            </li>
+		            </ul>
+	            </div>
+                <div class="small-4 columns">
+                    <a href="#!" class="tiny right button informher-to-shoutout">Shoutout</a>
                 </div>
             </div>
             <div class="row">
@@ -284,7 +320,7 @@
                 </div>
             </div>
         </section>
-        <section id="page-ask" class="hide">
+        <section id="page-ask" class="inactive">
             <div class="row show-for-small-only">
                 <div class="small-2 medium-12 columns show-for-landscape">
                     <h1 class="text-center">
@@ -334,14 +370,14 @@
             </form>
             <div class="row show-for-medium-up">
                 <div class="medium-12 columns"><hr></div>
-                <div class="medium-12 columns"><a href="#!" class="informher-lnk-back-to-option">Back</a></div>
+                <div class="medium-12 columns"><a href="#!" class="informher-to-stream">Back</a></div>
             </div>
             <div class="row show-for-small-only">
                 <div class="small-12 columns show-for-portrait"><hr></div>
-                <div class="small-12 columns show-for-portrait"><a href="#!" class="informher-lnk-back-to-option">Back</a></div>
+                <div class="small-12 columns show-for-portrait"><a href="#!" class="informher-to-stream">Back</a></div>
             </div>
         </section>
-        <section id="page-relate" class="hide">
+        <section id="page-relate" class="inactive">
             <div class="row show-for-small-only">
                 <div class="small-2 medium-12 columns show-for-landscape">
                     <h1 class="text-center">
@@ -391,14 +427,14 @@
             </form>
             <div class="row show-for-medium-up">
                 <div class="medium-12 columns"><hr></div>
-                <div class="medium-12 columns"><a href="#!" class="informher-lnk-back-to-option">Back</a></div>
+                <div class="medium-12 columns"><a href="#!" class="informher-to-stream">Back</a></div>
             </div>
             <div class="row show-for-small-only">
                 <div class="small-12 columns show-for-portrait"><hr></div>
-                <div class="small-12 columns show-for-portrait"><a href="#!" class="informher-lnk-back-to-option">Back</a></div>
+                <div class="small-12 columns show-for-portrait"><a href="#!" class="informher-to-stream">Back</a></div>
             </div>
         </section>
-        <section id="page-shoutout" class="hide">
+        <section id="page-shoutout" class="inactive">
             <div class="row show-for-small-only">
                 <div class="small-2 medium-12 columns show-for-landscape">
                     <h1 class="text-center">
@@ -480,11 +516,11 @@
                 </div>
                 <div class="row show-for-medium-up">
                     <div class="medium-12 columns"><hr></div>
-                    <div class="medium-12 columns"><a href="#!" class="informher-lnk-back-to-option">Back</a></div>
+                    <div class="medium-12 columns"><a href="#!" class="informher-to-stream">Back</a></div>
                 </div>
                 <div class="row show-for-small-only">
                     <div class="small-12 columns show-for-portrait"><hr></div>
-                    <div class="small-12 columns show-for-portrait"><a href="#!" class="informher-lnk-back-to-option">Back</a></div>
+                    <div class="small-12 columns show-for-portrait"><a href="#!" class="informher-to-stream">Back</a></div>
                 </div>
             </form>
         </section>
@@ -498,6 +534,8 @@
 <script type="text/javascript" src="js/vendor/backbone.marionette.js"></script>
 
 <script type="text/javascript" src="js/vendor/foundation/foundation.js"></script>
+<script type="text/javascript" src="js/vendor/foundation/foundation.interchange.js"></script>
+<script type="text/javascript" src="js/vendor/foundation/foundation.dropdown.js"></script>
 <script type="text/javascript" src="js/app/views/controls/foundation.stream.js"></script>
 
 <script type="text/javascript" src="js/app/models/tag.js"></script>
@@ -590,6 +628,44 @@
 
         streamView.render();
     });
+
+    function navigate(page) {
+	    var prevPage = $("#body").find("section").not(".inactive");
+	    var currPage = $("#body").find("section").filter("#page-" + page);
+	    prevPage
+		    .addClass("inactive")
+		    .hide().animate({ opacity: 1 }, 75, function() {
+			    prevPage.show().animate({ opacity: 1 }, 75, function() {
+				    prevPage.hide().animate({ opacity: 1 }, 75, function() {
+				        currPage
+						    .removeClass("inactive")
+						    .slideDown(500);
+				    });
+			    });
+	    });
+    }
+
+	$(document).ready(function() {
+		currPage = "home";
+		var navigatePrefix = "informher-to-";
+
+		$(["button", "a"]).each(function(i, tagName) {
+			$(tagName).bind("click.informher-nav", function() {
+				var classes = $(this).attr("class").split(' ');
+				for(var i = 0; i < classes.length; i++) {
+					var cls = classes[i];
+					if(cls.indexOf(navigatePrefix) == 0) {
+						var dest = cls.substr(navigatePrefix.length);
+						if(dest.length == 0)
+							return;
+						navigate(dest);
+						return;
+					}
+				}
+			});
+		})
+		$("#body").find("section").not("#page-home").addClass("inactive").hide();
+	});
 </script>
 
 </body>
