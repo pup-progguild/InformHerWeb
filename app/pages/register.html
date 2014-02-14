@@ -1,0 +1,15 @@
+<ons-page class="center">
+    <h1>Register</h1>
+    <div ng-controller="RegisterCtrl">
+        <form class="simple-form">
+            <ons-text-input ng-model="user.name" placeholder="Username"></ons-text-input>
+            <ons-text-input ng-model="user.email" placeholder="Email"></ons-text-input>
+            <ons-password-input ng-model="user.pass" placeholder="Password"></ons-password-input>
+            <ons-password-input ng-model="user.confirmPass" placeholder="Confirm password"></ons-password-input>
+            <ons-button ng-click="ons.screen.presentPage('sliding_menu.html')">
+                <!-- ng-click="submit()"> -->
+                Register
+            </ons-button>
+        </form>
+    </div>
+</ons-page>
