@@ -1,0 +1,77 @@
+/* Your app's CSS, go crazy, make it your own */
+
+.ionic-logo {
+  display: block;
+  margin: 15px auto;
+  width: 96px;
+  height: 96px;
+}
+
+#stream strong.category {
+    display: inline-block;
+    padding: 0 4px;
+    margin-right: 4px;
+    background-color: #ccc;
+    font-size: 75%;
+}
+#stream h3.title {
+    display: inline-block;
+    font-weight: bold;
+    font-size: 100%;
+}
+#stream em.author {
+    display: block;
+    font-variant: normal;
+    font-size: 100%;
+}
+#stream img.avatar-author {
+    float: left;
+    width: 40px;
+    height: 40px;
+    margin-right: 4px;
+}
+#stream p.summary {
+}
+#stream ul.tags { display: block; }
+#stream ul.tags > li {
+    display: inline-block;
+    padding: 0 4px;
+    margin-right: 4px;
+    background-color: #ccc;
+    font-size: 75%;
+}
+
+.single h3.category {
+    display: block;
+    clear: left;
+    padding: 0 4px;
+    margin-right: 4px;
+    font-size: 125%;
+}
+.single h2.title {
+    display: inline-block;
+    font-weight: 200;
+    margin: 0;
+    font-size: 175%;
+}
+.single em.author {
+    font-variant: normal;
+    font-size: 100%;
+}
+.single img.avatar-author {
+    float: left;
+    width: 80px;
+    height: 80px;
+    margin-right: 4px;
+}
+.single div.content {
+    clear: both;
+}
+.single ul.tags { display: block; }
+.single ul.tags > li {
+    display: inline-block;
+    padding: 0 4px;
+    margin-right: 4px;
+    background-color: #ccc;
+    font-size: 75%;
+}
