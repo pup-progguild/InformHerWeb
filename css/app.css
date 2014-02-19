@@ -16,13 +16,13 @@
 }
 #stream h3.title {
     display: inline-block;
-    font-weight: bold;
+    font-weight: 200;
     font-size: 100%;
 }
 #stream em.author {
     display: block;
     font-variant: normal;
-    font-size: 100%;
+    font-size: 85%;
 }
 #stream img.avatar-author {
     float: left;
@@ -31,22 +31,25 @@
     margin-right: 4px;
 }
 #stream p.summary {
+    font-size: 70%;
 }
 #stream ul.tags { display: block; }
 #stream ul.tags > li {
     display: inline-block;
     padding: 0 4px;
     margin-right: 4px;
-    background-color: #ccc;
+    background-color: rgba(0, 0, 0, 0.25);
     font-size: 75%;
+    border-radius: 2px;
 }
 
 .single h3.category {
-    display: block;
+    display: inline-block;
     clear: left;
-    padding: 0 4px;
+    padding: 4px 8px;
     margin-right: 4px;
     font-size: 125%;
+    border-radius: 4px;
 }
 .single h2.title {
     display: inline-block;
@@ -67,11 +70,38 @@
 .single div.content {
     clear: both;
 }
-.single ul.tags { display: block; }
+.single ul.tags { display: inline-block; }
 .single ul.tags > li {
     display: inline-block;
     padding: 0 4px;
     margin-right: 4px;
-    background-color: #ccc;
+    background-color: rgba(0, 0, 0, 0.25);
     font-size: 75%;
+    border-radius: 2px;
+}
+
+#stream .post > .item-content > .category,
+.single > .single-meta > .category {
+    border-radius: 4px;
+    font-family: "Segoe UI", Segoe, Tahoma, Verdana, Geneva, sans-serif;
+    font-weight: bold;
+    margin-right: 0.5em;
+}
+
+#stream .post.post-ask > .item-content > .category,
+.single.single-ask > .single-meta > .category {
+    background-color: #ffb50c;
+    color: #ffffff;
+}
+
+#stream .post.post-relate > .item-content > .category,
+.single.single-relate > .single-meta > .category {
+    background-color: #00CC3D;
+    color: #ffffff;
+}
+
+#stream .post.post-shoutout > .item-content > .category,
+.single.single-shoutout > .single-meta > .category {
+    background-color: #00A1E6;
+    color: #ffffff;
 }

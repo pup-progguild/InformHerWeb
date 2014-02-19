@@ -1984,7 +1984,8 @@ body, .ionic-body {
   color: #000;
   word-wrap: break-word;
   font-size: 14px;
-  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  /* font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; */
+  font-family: "Segoe UI", Segoe, Tahoma, Verdana, Geneva, sans-serif;
   line-height: 20px;
   text-rendering: optimizeLegibility;
   -webkit-user-drag: none; }
@@ -2224,9 +2225,10 @@ cite {
   text-align: center; }
 
 h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
-  color: #000;
-  font-weight: 500;
-  font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+  /* color: #000; */
+  font-weight: 200;
+  font-family: "Segoe UI Light", "Segoe UI", Segoe, Tahoma, Verdana, Geneva, sans-serif;
+  /* font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif; */
   line-height: 1.1; }
   h1 small, h2 small, h3 small, h4 small, h5 small, h6 small, .h1 small, .h2 small, .h3 small, .h4 small, .h5 small, .h6 small {
     font-weight: normal;

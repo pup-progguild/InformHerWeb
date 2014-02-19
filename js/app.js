@@ -111,22 +111,12 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                     }
                 }
             })
-            .state('posts', {
-                url: '/posts',
-                abstract: true,
-                views: {
-                    'viewport': {
-                        templateUrl: '',
-                        controller: 'PostCtrl'
-                    }
-                }
-            })
-            .state('posts.view', {
+            .state('stream.view', {
                 url: '/view/:postId',
                 views: {
                     'viewport': {
                         templateUrl: 'templates/pages/post.html',
-                        controller: 'PostCtrl'
+                        controller: 'StreamCtrl'
                     }
                 }
             })

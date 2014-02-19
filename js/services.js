@@ -47,21 +47,11 @@ angular.module('informher.services', [])
         ];
 
         return {
-            all: function() {
-                return posts;
-            },
             get: function(id) {
-                for(var i = 0, len = posts.length; i < len; i++)
-                    if(posts[i].id == id)
-                        return posts[i];
-                return {};
+                return _.select(posts, function(post) { return post.id == id; })[0];
             },
             filter: function(crit) {
-                var f = [];
-                for(var i = 0, len = posts.length; i < len; i++)
-                    if(crit.category == posts[i].category)
-                        f.push(posts[i]);
-                return f;
+                return _.where(posts, crit);
             }
         }
     });

@@ -4,13 +4,13 @@
         <i class="icon ion-ios7-search placeholder-icon"></i>
         <input type="search" placeholder="Search">
     </label>
+    <button class="button button-clear icon ion-gear-a"></button>
 </header>
 <view title="'Stream'">
-    <content has-header="true" padding="true">
-        <list>
-            <item ng-repeat="post in posts" id="stream" type="item-text-wrap" href="#/posts/view/{{post.id}}">
+    <content has-header="true">
+        <list id="stream">
+            <item ng-repeat="post in posts" type="item-text-wrap" href="#/stream/view/{{post.id}}" class="post post-{{post.category}}">
                 <img class="avatar-author" src="http://lorempixel.com/40/40/cats/" alt="{{post.author}}">
-
                 <strong class="category">{{post.category}}</strong>
                 <h3 class="title">{{post.title}}</h3>
                 <em class="author">Posted by {{post.author}}</em>
@@ -25,4 +25,68 @@
         </list>
         <!-- TODO implement side bar -->
     </content>
+    <div class="tabs tabs-icon-top">
+        <a class="tab-item" ng-click="openModal('new-post')">
+            <i class="icon ion-plus-circled"></i>
+            New Post
+        </a>
+        <a class="tab-item" ng-click="openModal('sort')">
+            <i class="icon ion-android-sort"></i>
+            Sort
+        </a>
+        <a class="tab-item" ng-click="filter({ category: 'shoutout' })">
+            <i class="icon ion-eye"></i>
+            Filter
+        </a>
+    </div>
 </view>
+<script id="new-post.html" type="text/ng-template">
+    <div class="modal">
+        <header class="bar bar-header bar-dark">
+            <h1 class="title">New Post</h1>
+        </header>
+        <content has-header="true" padding="true">
+            <div class="list">
+                <div>
+                    <button class="button button-block button-positive" ng-click="closeModal()">Ask</button>
+                    <p>Post here general information questions that anyone may answer.</p>
+                </div>
+                <div>
+                    <button class="button button-block button-positive" ng-click="closeModal()">Relate</button>
+                    <p>Post here credible and expert-obtained facts aimed to educate everyone.</p>
+                </div>
+                <div>
+                    <button class="button button-block button-positive" ng-click="closeModal()">Shoutout</button>
+                    <p>Report your cases on abuse here. You will be asked several questions before your reports are made available to people in InformHer who are able to help you on your case.</p>
+                </div>
+            </div>
+
+            <button class="button button-block button-positive" ng-click="closeModal()">Back</button>
+        </content>
+    </div>
+</script>
+<script id="sort.html" type="text/ng-template">
+    <div class="modal">
+        <header class="bar bar-header bar-dark">
+            <h1 class="title">Sort Posts</h1>
+        </header>
+        <content has-header="true" padding="true">
+            <div class="list">
+                <div>
+                    <button class="button button-block button-positive" ng-click="closeModal()">Ask</button>
+                    <p>Post here general information questions that anyone may answer.</p>
+                </div>
+                <div>
+                    <button class="button button-block button-positive" ng-click="closeModal()">Relate</button>
+                    <p>Post here credible and expert-obtained facts aimed to educate everyone.</p>
+                </div>
+                <div>
+                    <button class="button button-block button-positive" ng-click="closeModal()">Shoutout</button>
+                    <p>Report your cases on abuse here. You will be asked several questions before your reports are made available to people in InformHer who are able to help you on your case.</p>
+                </div>
+            </div>
+
+            <button class="button button-block button-positive" ng-click="closeModal()">Back</button>
+        </content>
+    </div>
+</script>

@@ -1,5 +1,5 @@
 <view title="'Login'">
-    <content has-header="true" padding="true">
+    <content has-header="true">
         <ul class="list">
             <li class="item item-input">
                 <span class="input-label">Username</span>
@@ -19,6 +19,19 @@
                 <a href="#!">Forgot password?</a>
             </li>
         </ul>
-        <button class="button button-block button-positive" type="button" ng-click="submit()">Login</button>
+        <div class="padding-horizontal">
+            <button class="button button-positive" type="button" ng-click="submit()">Login</button>
+        </div>
     </content>
 </view>
+<script id="modal.html" type="text/ng-template">
+    <div class="modal">
+        <header class="bar bar-header bar-dark">
+            <h1 class="title">Message</h1>
+        </header>
+        <content has-header="true" padding="true">
+            <p>{{message}}</p>
+            <button class="button button-block button-positive" ng-click="closeModal()">OK</button>
+        </content>
+    </div>
+</script>

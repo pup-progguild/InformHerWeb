@@ -6,18 +6,21 @@
 -->
 <view title="'Viewing &quot;' + post.title + '&quot;'">
     <content has-header="true" padding="true">
-        <div class="single">
-            <p><a class="button button-small icon ion-arrow-left-b" href="#/stream"> Back</a></p>
-            <div>
+        <div class="single single-{{ post.category }}">
+            <p><a class="button button-small icon ion-arrow-left-b" ng-click=""> Back</a></p>
+            <div class="single-meta">
                 <h3 class="category">{{ post.category }}</h3>
                 <img class="avatar-author" src="http://lorempixel.com/80/80/cats/" alt="{{post.author}}">
                 <h2 class="title">{{ post.title }}</h2>
-                <ul class="tags">
-                    <li ng-repeat="tag in post.tags"
-                        style="background-color: {{bgColorForTag(tag)}}; color: {{fgColorForTag(tag)}}">{{tag}}
-                    </li>
-                </ul>
-                Posted <time datetime="{{ post.date }}">{{ post.date }}</time> by <em class="author">{{ post.author }}</em>
+                <div>
+                    Tagged:
+                    <ul class="tags">
+                        <li ng-repeat="tag in post.tags"
+                            style="background-color: {{bgColorForTag(tag)}}; color: {{fgColorForTag(tag)}}">{{tag}}
+                        </li>
+                    </ul>
+                </div>
+                Posted <time datetime="{{ post.date }}">{{ formatDate(post.date) }}</time> by <em class="author">{{ post.author }}</em>
             </div>
             <div class="content">
                 {{ post.content }}

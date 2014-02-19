@@ -1,5 +1,5 @@
 <view title="'Register'">
-    <content has-header="true" padding="true">
+    <content has-header="true">
         <ul class="list">
             <li class="item item-input">
                 <span class="input-label">Username</span>
@@ -21,9 +21,30 @@
                 <label class="checkbox">
                     <input ng-model="agree" type="checkbox">
                 </label>
-                I agree to InformHer's <a href="#!">license agreement</a>.
+                I agree to InformHer's <a href="#/register" ng-click="openModal()">license agreement</a>.
             </li>
         </ul>
-        <button class="button button-block button-positive" type="button" ng-disabled="!agree" ng-click="submit()">Login</button>
+        <div class="padding-horizontal">
+            <button class="button button-block button-positive" type="button" ng-disabled="!canRegister()" ng-click="submit()">Login</button>
+        </div>
     </content>
 </view>
+<script id="modal.html" type="text/ng-template">
+    <div class="modal">
+        <header class="bar bar-header bar-dark">
+            <h1 class="title">License Agreement</h1>
+        </header>
+        <content has-header="true" padding="true">
+            <ul>
+                <li>Thou shalt not get your neighbor's lolis, nor their underwear, nor their virginity. It is strictly prohibited. You are going to jail if you do, tough guy.</li>
+                <li>Thou shalt not raep. As you always know, ceiling cat is watching you. We don't care if they came.</li>
+                <li>Thou shalt not defile the moe. Everything is moe. Those that are considered "not moe" does not exist&mdash;it is only a product of one's fickle mind.</li>
+                <li>Thou shalt not speak badly of PHP. <strong>Fatal error: T_PAAMAYIM_NEKUDOTAYIM.</strong></li>
+            </ul>
+            <p>If you do not agree to the above terms and conditions, might as well pack your things and leave your house quick. Real quick. We might send in some Tesla troopers to zap you up to your last voltage running throughout your networks, and you will bleed from all of your body's orifices (no love juice, srsly). We mean it. It would be a excruciatingly painful experience you will get.</p>
+            <p>Else if you agree, you may use any of InformHer's explicitly provided services, as long as you keep good manners and right conduct (they taught you that in school, after all) among other persons in InformHer.</p>
+            <p>We hope you have a meaningful experience using InformHer! :D</p>
+            <button class="button button-block button-positive" ng-click="closeModal()">OK</button>
+        </content>
+    </div>
+</script>
