@@ -1,13 +1,22 @@
 <view title="'Login'">
     <content has-header="true">
+        <div class="{{messageClass}}">
+            <div class="item item-divider">
+                {{messageType}}
+            </div>
+            <div class="item item-text-wrap">
+                <p>{{message}}</p>
+                <p>Error Code: <strong>{{messageTitle}}</strong></p>
+            </div>
+        </div>
         <ul class="list">
             <li class="item item-input">
                 <span class="input-label">Username</span>
-                <input ng-model="username" type="text" placeholder="Username">
+                <input ng-model="user.name" type="text" placeholder="Username">
             </li>
             <li class="item item-input">
                 <span class="input-label">Password</span>
-                <input ng-model="password" type="password" placeholder="Password">
+                <input ng-model="user.pass" type="password" placeholder="Password">
             </li>
             <li class="item item-checkbox">
                 <label class="checkbox">

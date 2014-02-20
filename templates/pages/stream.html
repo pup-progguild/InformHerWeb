@@ -1,92 +1,171 @@
-<header class="bar bar-header bar-dark item-input-inset">
-    <button class="button button-icon icon ion-navicon"></button>
-    <label class="item-input-wrapper">
-        <i class="icon ion-ios7-search placeholder-icon"></i>
-        <input type="search" placeholder="Search">
-    </label>
-    <button class="button button-clear icon ion-gear-a"></button>
-</header>
-<view title="'Stream'">
-    <content has-header="true">
-        <list id="stream">
-            <item ng-repeat="post in posts" type="item-text-wrap" href="#/stream/view/{{post.id}}" class="post post-{{post.category}}">
-                <img class="avatar-author" src="http://lorempixel.com/40/40/cats/" alt="{{post.author}}">
-                <strong class="category">{{post.category}}</strong>
-                <h3 class="title">{{post.title}}</h3>
-                <em class="author">Posted by {{post.author}}</em>
+<ion-side-menus>
+    <!-- Center content -->
+    <ion-pane ion-side-menu-content>
+        <header class="bar bar-header bar-dark item-input-inset">
+            <button class="button button-icon icon ion-navicon" ng-click="toggleLeft()"></button>
+            <label class="item-input-wrapper">
+                <i class="icon ion-ios7-search placeholder-icon"></i>
+                <input type="search" placeholder="Search">
+            </label>
+            <button class="button button-clear icon ion-gear-a" ng-click="toggleRight()"></button>
+        </header>
+        <header class="bar bar-subheader bar-stable">
+            <button class="button button-energized active">Ask</button>
+            <button class="button button-balanced active">Relate</button>
+            <button class="button button-positive active">Shoutout</button>
 
-                <p class="summary">{{post.content}}</p>
-                <ul class="tags">
-                    <li ng-repeat="tag in post.tags"
-                        style="background-color: {{bgColorForTag(tag)}}; color: {{fgColorForTag(tag)}}">{{tag}}
-                    </li>
-                </ul>
-            </item>
-        </list>
-        <!-- TODO implement side bar -->
-    </content>
-    <div class="tabs tabs-icon-top">
-        <a class="tab-item" ng-click="openModal('new-post')">
-            <i class="icon ion-plus-circled"></i>
-            New Post
-        </a>
-        <a class="tab-item" ng-click="openModal('sort')">
-            <i class="icon ion-android-sort"></i>
-            Sort
-        </a>
-        <a class="tab-item" ng-click="filter({ category: 'shoutout' })">
-            <i class="icon ion-eye"></i>
-            Filter
-        </a>
-    </div>
-</view>
-<script id="new-post.html" type="text/ng-template">
+            <button class="button button-clear button-icon ion-nuclear"></button>
+
+            <!-- <button class="button button-icon icon ion-navicon" ng-click="toggleLeft()"></button> -->
+            <!-- <h2>Hello</h2> -->
+            <!--<button class="button button-clear icon ion-gear-a" ng-click="toggleRight()"></button>-->
+        </header>
+        <view title="'Stream'">
+            <content has-header="true" has-subheader="true" on-refresh="onRefresh()">
+                <list id="stream" item-type="item-avatar">
+                    <item ng-repeat="post in posts" href="#/stream/view/{{post.id}}" class="post post-{{post.category}}">
+                        <img class="avatar-author" src="http://lorempixel.com/40/40/cats/{{post.author}}" alt="{{post.author}}">
+                        <strong class="category">{{post.category}}</strong>
+                        <h2 class="title">{{post.title}}</h2>
+                        <ul class="tags">
+                            <li ng-repeat="tag in post.tags"
+                                style="background-color: {{ colorForTag(tag).bg }}; color: {{ colorForTag(tag).fg }}">{{tag}}
+                            </li>
+                        </ul>
+                        <p class="author">Posted by {{post.author}}</p>
+
+                        <!-- <p class="summary">{{post.content}}</p> -->
+                    </item>
+                </list>
+                <ion-scroll-refresher>Pull to refresh...</ion-scroll-refresher>
+            </content>
+            <div class="tabs tabs-icon-top">
+                <a class="tab-item" ng-click="showMenu('new-post')">
+                    <i class="icon ion-plus-circled"></i>
+                    New Post
+                </a>
+                <a class="tab-item" ng-click="showMenu('sort')">
+                    <i class="icon ion-android-sort"></i>
+                    Sort
+                </a>
+                <a class="tab-item" ng-click="showMenu('filter')">
+                    <i class="icon ion-eye"></i>
+                    Filter
+                </a>
+            </div>
+        </view>
+    </ion-pane>
+
+    <!-- Left menu -->
+    <ion-side-menu side="left">
+    </ion-side-menu>
+
+    <!-- Right menu -->
+    <ion-side-menu side="right">
+    </ion-side-menu>
+</ion-side-menus>
+<script id="ask.html" type="text/ng-template">
     <div class="modal">
         <header class="bar bar-header bar-dark">
-            <h1 class="title">New Post</h1>
+            <h1 class="title">Ask</h1>
         </header>
-        <content has-header="true" padding="true">
+        <content has-header="true">
             <div class="list">
-                <div>
-                    <button class="button button-block button-positive" ng-click="closeModal()">Ask</button>
-                    <p>Post here general information questions that anyone may answer.</p>
-                </div>
-                <div>
-                    <button class="button button-block button-positive" ng-click="closeModal()">Relate</button>
-                    <p>Post here credible and expert-obtained facts aimed to educate everyone.</p>
-                </div>
-                <div>
-                    <button class="button button-block button-positive" ng-click="closeModal()">Shoutout</button>
-                    <p>Report your cases on abuse here. You will be asked several questions before your reports are made available to people in InformHer who are able to help you on your case.</p>
-                </div>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Title</span>
+                    <input ng-model="title" type="text" placeholder="Title">
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Tags</span>
+                    <div class="tags-input">
+                        <ul>
+                            <li ng-repeat="tag in tags">{{tag}}</li>
+                        </ul>
+                        <input type="text" placeholder="Tags">
+                    </div>
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Content</span>
+                    <textarea ng-model="content" placeholder="Type your question here"></textarea>
+                </label>
             </div>
-
-            <button class="button button-block button-positive" ng-click="closeModal()">Back</button>
+            <div class="padding-horizontal">
+                <button class="button button-positive" type="button" ng-click="submit()">Submit Post</button>
+                <button class="button" type="button" ng-click="closeModal()">Cancel</button>
+            </div>
         </content>
     </div>
 </script>
-<script id="sort.html" type="text/ng-template">
+<script id="relate.html" type="text/ng-template">
     <div class="modal">
         <header class="bar bar-header bar-dark">
-            <h1 class="title">Sort Posts</h1>
+            <h1 class="title">Relate</h1>
         </header>
-        <content has-header="true" padding="true">
+        <content has-header="true">
             <div class="list">
-                <div>
-                    <button class="button button-block button-positive" ng-click="closeModal()">Ask</button>
-                    <p>Post here general information questions that anyone may answer.</p>
-                </div>
-                <div>
-                    <button class="button button-block button-positive" ng-click="closeModal()">Relate</button>
-                    <p>Post here credible and expert-obtained facts aimed to educate everyone.</p>
-                </div>
-                <div>
-                    <button class="button button-block button-positive" ng-click="closeModal()">Shoutout</button>
-                    <p>Report your cases on abuse here. You will be asked several questions before your reports are made available to people in InformHer who are able to help you on your case.</p>
-                </div>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Title</span>
+                    <input ng-model="title" type="text" placeholder="Title">
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Tags</span>
+                    <div class="tags-input">
+                        <ul>
+                            <li ng-repeat="tag in tags">{{tag}}</li>
+                        </ul>
+                        <input type="text" placeholder="Tags">
+                    </div>
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Content</span>
+                    <textarea ng-model="content" placeholder="Type anything you want to share here"></textarea>
+                </label>
             </div>
-
-            <button class="button button-block button-positive" ng-click="closeModal()">Back</button>
+            <div class="padding-horizontal">
+                <button class="button button-positive" type="button" ng-click="submit()">Submit Post</button>
+                <button class="button" type="button" ng-click="closeModal()">Cancel</button>
+            </div>
+        </content>
+    </div>
+</script>
+<script id="shoutout.html" type="text/ng-template">
+    <div class="modal">
+        <header class="bar bar-header bar-dark">
+            <h1 class="title">Shoutout</h1>
+        </header>
+        <content has-header="true">
+            <ul class="list">
+                <li class="item item-input item-stacked-label">
+                    <span class="input-label">Describe the nature of your report</span>
+                    <div class="tags-input">
+                        <ul>
+                            <li ng-repeat="tag in tags">{{tag}}</li>
+                        </ul>
+                        <input type="text" placeholder="Tags">
+                    </div>
+                <li class="item item-checkbox">
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="trackLocation">
+                    </label>
+                    I want InformHer to know my current location
+                </li>
+                <li class="item item-checkbox">
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="contact" ng-click="immediateContact = contact &amp;&amp; immediateContact">
+                    </label>
+                    I want InformHer to get in touch regarding my report
+                </li>
+                <li class="item item-checkbox">
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="immediateContact" ng-checked="contact &amp;&amp; immediateContact" ng-disabled="!contact">
+                    </label>
+                    I want InformHer to contact me immediately
+                </li>
+            </ul>
+            <div class="padding-horizontal">
+                <button class="button button-positive" type="button" ng-click="submit()">Submit Report</button>
+                <button class="button" type="button" ng-click="closeModal()">Cancel</button>
+            </div>
         </content>
     </div>
 </script>

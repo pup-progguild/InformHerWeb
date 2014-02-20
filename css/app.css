@@ -14,7 +14,7 @@
     background-color: #ccc;
     font-size: 75%;
 }
-#stream h3.title {
+#stream h2.title {
     display: inline-block;
     font-weight: 200;
     font-size: 100%;
@@ -33,7 +33,10 @@
 #stream p.summary {
     font-size: 70%;
 }
-#stream ul.tags { display: block; }
+#stream ul.tags {
+    display: block;
+    float: right;
+}
 #stream ul.tags > li {
     display: inline-block;
     padding: 0 4px;
@@ -104,4 +107,19 @@
 .single.single-shoutout > .single-meta > .category {
     background-color: #00A1E6;
     color: #ffffff;
+}
+
+div.tags-input > ul {
+    display: inline-block;
+    float: left;
+}
+
+div.tags-input > ul > li {
+    display: inline-block;
+    padding: 4px 8px 3px 8px;
+    width: auto;
+}
+
+div.tags-input > input {
+    width: auto;
 }

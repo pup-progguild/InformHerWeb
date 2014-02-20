@@ -18,107 +18,81 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
         $stateProvider
             .state('home', {
                 url: '/home',
-                views: {
-                    'viewport': {
-                        templateUrl: 'templates/pages/home.html'
-                    }
-                }
+                templateUrl: 'templates/pages/home.html'
             })
             .state('login', {
                 url: '/login',
-                views: {
-                    'viewport': {
-                        templateUrl: 'templates/pages/login.html',
-                        controller: 'LoginCtrl'
-                    }
-                }
+                templateUrl: 'templates/pages/login.html',
+                controller: 'LoginCtrl'
             })
             .state('register', {
                 url: '/register',
-                views: {
-                    'viewport': {
-                        templateUrl: 'templates/pages/register.html',
-                        controller: 'RegisterCtrl'
-                    }
-                }
+                templateUrl: 'templates/pages/register.html',
+                controller: 'RegisterCtrl'
             })
+            .state('stream', {
+                url: '/stream',
+                templateUrl: 'templates/pages/stream.html',
+                controller: 'StreamCtrl'
+            })
+            .state('stream.view', {
+                url: '/view/:postId',
+                templateUrl: 'templates/pages/post.html',
+                controller: 'StreamCtrl'
+            })
+            /*
+            .state('profile', {
+                url: '/profile',
+                abstract: true,
+                templateUrl: '',
+                controller: 'ProfileCtrl'
+            })
+            .state('profile.view', {
+                url: '/view/:userId',
+                templateUrl: 'template/pages/profile-view.html',
+                controller: 'ProfileCtrl'
+            })
+            .state('profile.edit', {
+                url: '/edit',
+                templateUrl: 'template/pages/profile-edit.html',
+                controller: 'ProfileCtrl'
+            })
+            */
             .state('ask', {
                 url: '/ask',
                 abstract: true,
-                views: {
-                    'viewport': {
-                        templateUrl: '',
-                        controller: 'AskPostCtrl'
-                    }
-                }
+                templateUrl: '',
+                controller: 'AskPostCtrl'
             })
             .state('ask.post', {
                 url: '/post',
                 parent: 'ask',
-                views: {
-                    'viewport': {
-                        templateUrl: 'templates/pages/ask.html',
-                        controller: 'AskPostCtrl'
-                    }
-                }
+                templateUrl: 'templates/pages/ask.html',
+                controller: 'AskPostCtrl'
             })
             .state('relate', {
                 url: '/relate',
                 abstract: true,
-                views: {
-                    'viewport': {
-                        templateUrl: '',
-                        controller: 'RelatePostCtrl'
-                    }
-                }
+                templateUrl: '',
+                controller: 'RelatePostCtrl'
             })
             .state('relate.post', {
                 url: '/post',
                 parent: 'relate',
-                views: {
-                    'viewport': {
-                        templateUrl: 'templates/pages/relate.html',
-                        controller: 'RelatePostCtrl'
-                    }
-                }
+                templateUrl: 'templates/pages/relate.html',
+                controller: 'RelatePostCtrl'
             })
             .state('shoutout', {
                 url: '/shoutout',
                 abstract: true,
-                views: {
-                    'viewport': {
-                        templateUrl: '',
-                        controller: 'ShoutoutPostCtrl'
-                    }
-                }
+                templateUrl: '',
+                controller: 'ShoutoutPostCtrl'
             })
             .state('shoutout.post', {
                 url: '/post',
                 parent: 'shoutout',
-                views: {
-                    'viewport': {
-                        templateUrl: 'templates/pages/shoutout.html',
-                        controller: 'ShoutoutPostCtrl'
-                    }
-                }
-            })
-            .state('stream', {
-                url: '/stream',
-                views: {
-                    'viewport': {
-                        templateUrl: 'templates/pages/stream.html',
-                        controller: 'StreamCtrl'
-                    }
-                }
-            })
-            .state('stream.view', {
-                url: '/view/:postId',
-                views: {
-                    'viewport': {
-                        templateUrl: 'templates/pages/post.html',
-                        controller: 'StreamCtrl'
-                    }
-                }
+                templateUrl: 'templates/pages/shoutout.html',
+                controller: 'ShoutoutPostCtrl'
             })
         ;
 
