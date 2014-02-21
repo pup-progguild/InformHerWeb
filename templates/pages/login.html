@@ -6,41 +6,32 @@
             </div>
             <div class="item item-text-wrap">
                 <p>{{message}}</p>
+
                 <p>Error Code: <strong>{{messageTitle}}</strong></p>
             </div>
         </div>
         <ul class="list">
             <li class="item item-input">
-                <span class="input-label">Username</span>
-                <input ng-model="user.name" type="text" placeholder="Username">
+                <span class="input-label">{{ 'USERNAME' | translate }}</span>
+                <input ng-model="user.name" type="text" placeholder="{{ 'USERNAME' | translate }}">
             </li>
             <li class="item item-input">
-                <span class="input-label">Password</span>
-                <input ng-model="user.pass" type="password" placeholder="Password">
+                <span class="input-label">{{ 'PASSWORD' | translate }}</span>
+                <input ng-model="user.pass" type="password" placeholder="{{ 'PASSWORD' | translate }}">
             </li>
             <li class="item item-checkbox">
                 <label class="checkbox">
                     <input ng-model="remember" type="checkbox">
                 </label>
-                Remember me
+                {{ 'REMEMBER_ME' | translate }}
             </li>
             <li class="item">
-                <a href="#!">Forgot password?</a>
+                <a href="">{{ 'FORGOT_PASSWORD' | translate }}</a>
             </li>
         </ul>
         <div class="padding-horizontal">
-            <button class="button button-positive" type="button" ng-click="submit()">Login</button>
+            <button class="button button-positive" type="button" ng-click="submit()">{{ 'LOGIN' | translate }}</button>
+            <a class="button" type="button" href="#/home">{{ 'BACK' | translate }}</a>
         </div>
     </content>
 </view>
-<script id="modal.html" type="text/ng-template">
-    <div class="modal">
-        <header class="bar bar-header bar-dark">
-            <h1 class="title">Message</h1>
-        </header>
-        <content has-header="true" padding="true">
-            <p>{{message}}</p>
-            <button class="button button-block button-positive" ng-click="closeModal()">OK</button>
-        </content>
-    </div>
-</script>

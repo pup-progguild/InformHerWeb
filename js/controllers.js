@@ -1,5 +1,5 @@
 angular.module('informher.controllers', [])
-    .controller('LoginCtrl', function($scope, $state, $http) {
+    .controller('LoginCtrl', function($translate, $scope, $state, $http) {
 
         /* -------- *
          *  FIELDS  *
@@ -107,11 +107,87 @@ angular.module('informher.controllers', [])
         };
     })
 
+    .controller('ProfileCtrl', function($scope, $state, $stateParams, SessionService) {
+        $scope.user = SessionService.user;
+
+        $scope.backBtnText = 'Back';
+        $scope.backBtnHref = '#/stream';
+        $scope.primaryBtnText = 'Edit';
+
+        $scope.editMode = false;
+
+        $scope.repaint = function() {
+            $scope.backBtnText = $scope.editMode ? 'Cancel' : 'Back';
+            $scope.backBtnHref = $scope.editMode ? '#/profile/view/' + $scope.user.id : '#/stream';
+            $scope.primaryBtnText = $scope.editMode ? 'Save' : 'Edit';
+            $scope.disabledClass = $scope.editMode ? '' : ' disabled';
+        };
+
+        $scope.save = function() {
+
+        };
+
+        $scope.reset = function() {
+
+        };
+
+        $scope.primaryBtnClick = function() {
+            if($scope.editMode) {
+                $scope.save();
+                $scope.editMode = false;
+            }
+            else
+                $scope.editMode = true;
+            $scope.repaint();
+        };
+
+        $scope.backBtnClick = function() {
+            if($scope.editMode) {
+                $scope.reset();
+                $scope.editMode = false;
+                $scope.repaint();
+                $state.go('profile');
+            }
+            else
+                $state.go('stream');
+        };
+    })
+
 // A simple controller that fetches a list of data from a service
-    .controller('StreamCtrl', function ($scope, $stateParams, $ionicActionSheet, $ionicModal, PostService, TagService) {
+    .controller('StreamCtrl', function ($scope, $stateParams, $ionicModal, PostService, TagService, SessionService) {
+        var contentEl = document.getElementById('menu-center');
+        var content = new ionic.views.SideMenuContent({
+            el: contentEl
+        });
+
+        var leftMenuEl = document.getElementById('menu-left');
+        var leftMenu = new ionic.views.SideMenu({
+            el: leftMenuEl,
+            width: 270
+        });
+
+        var rightMenuEl = document.getElementById('menu-right');
+        var rightMenu = new ionic.views.SideMenu({
+            el: rightMenuEl,
+            width: 270
+        });
+
+        $scope.sideMenuController = new ionic.controllers.SideMenuController({
+            content: content,
+            left: leftMenu,
+            right: rightMenu
+        });
+
+        $scope.user = SessionService.user;
+
         // "Pets" is a service returning mock data (services.js)
         $scope.posts = [];// = PostService.all();
 
+        // TODO posts
+        // TODO comments
+        // TODO likes
+        // TODO settings pages: account and stream
+        // TODO saving and resetting profile edits
         $scope.postType = 'ask';
 
         $scope.title = 'hello'; // not for shoutout
@@ -123,8 +199,16 @@ angular.module('informher.controllers', [])
         $scope.immediateContact = false; // for shoutout only
 
         $scope.criteria = { ask: true, relate: true, shoutout: true };
-        $scope.sortAscending = { title: false, author: false, date: false };
+        $scope.sortAscending = { title: true, author: true, date: true };
         $scope.currentSort = 'date';
+
+        $scope.askClass = 'active';
+        $scope.relateClass = 'active';
+        $scope.shoutoutClass = 'active';
+
+        $scope.sortTitleClass = '';
+        $scope.sortAuthorClass = '';
+        $scope.sortDateClass = 'ion-arrow-down-c active';
 
         $scope.onRefresh = function() {
             console.log('Refresh complete!');
@@ -146,6 +230,24 @@ angular.module('informher.controllers', [])
 
         $scope.submit = function() {
 
+        };
+
+        $scope.toggleFilter = function(category) {
+            $scope.criteria[category] = !$scope.criteria[category];
+            $scope.askClass = $scope.criteria.ask ? 'active' : '';
+            $scope.relateClass = $scope.criteria.relate ? 'active' : '';
+            $scope.shoutoutClass = $scope.criteria.shoutout ? 'active' : '';
+        };
+
+        $scope.doSort = function(sort) {
+            if(sort != $scope.currentSort)
+                $scope.sortAscending = { title: true, author: true, date: true };
+            $scope.currentSort = sort;
+            $scope.sortAscending[sort] = !$scope.sortAscending[sort];
+
+            $scope.sortTitleClass = $scope.currentSort != 'title' ? '' : 'active ' + ($scope.sortAscending.title ? 'ion-arrow-up-c' : 'ion-arrow-down-c');
+            $scope.sortAuthorClass = $scope.currentSort != 'author' ? '' : 'active ' + ($scope.sortAscending.author ? 'ion-arrow-up-c' : 'ion-arrow-down-c');
+            $scope.sortDateClass = $scope.currentSort != 'date' ? '' : 'active ' + ($scope.sortAscending.date ? 'ion-arrow-up-c' : 'ion-arrow-down-c');
         };
 
         /* -------- *
@@ -174,77 +276,20 @@ angular.module('informher.controllers', [])
             $scope.currentModal = '';
         };
 
-        /* --------------- *
-         *  ACTION SHEETS  *
-         * --------------- */
+        $scope.toggleLeft = function() {
+            try {
+                $scope.sideMenuController.toggleLeft();
+            } catch(e) {
+                // TODO fix error triggered by toggleLeft
+            }
+        };
 
-        $scope.showMenu = function(mode) {
-            var categories = ['ask', 'relate', 'shoutout'];
-            var modes = {
-                'new-post': {
-                    buttons: [
-                        { text: 'Ask' },
-                        { text: 'Relate' },
-                        { text: 'Shoutout' }
-                    ],
-                    titleText: 'New Post',
-                    cancelText: 'Cancel',
-                    cancel: function() {},
-                    buttonClicked: function(index) {
-                        var postType = categories[index];
-                        $scope.postType = postType;
-                        $scope.openModal(postType + '.html');
-                        return true;
-                    }
-                },
-                'sort': {
-                    buttons: [
-                        { text: ($scope.currentSort == 'title' ? '-> ' : '') + 'Title' + ($scope.currentSort == 'title' ? ': ' + ($scope.sortAscending['title'] ? 'Ascending' : 'Descending') : '') },
-                        { text: ($scope.currentSort == 'author' ? '-> ' : '') + 'Author' + ($scope.currentSort == 'author' ? ': ' + ($scope.sortAscending['author'] ? 'Ascending' : 'Descending') : '') },
-                        { text: ($scope.currentSort == 'date' ? '-> ' : '') + 'Date' + ($scope.currentSort == 'date' ? ': ' + ($scope.sortAscending['date'] ? 'Ascending' : 'Descending') : '') }
-                    ],
-                    titleText: 'Sort',
-                    cancelText: 'Cancel',
-                    cancel: function() {},
-                    buttonClicked: function(index) {
-                        var sorts = ['title', 'author', 'date'];
-                        if($scope.currentSort != sorts[index])
-                            $scope.sortAscending = { title: false, author: false, date: false };
-                        $scope.currentSort = sorts[index];
-                        $scope.sortAscending[$scope.currentSort] = !$scope.sortAscending[$scope.currentSort];
-                        return $scope.showMenu('sort');
-                    }
-                },
-                'filter': {
-                    buttons: [
-                        { text: 'Ask: ' + ($scope.criteria.ask ? 'SHOW' : 'HIDE') },
-                        { text: 'Relate: ' + ($scope.criteria.relate ? 'SHOW' : 'HIDE') },
-                        { text: 'Shoutout: ' + ($scope.criteria.shoutout ? 'SHOW' : 'HIDE') }
-                    ],
-                    titleText: 'Filter',
-                    cancelText: 'Close',
-                    cancel: function() {},
-                    buttonClicked: function(index) {
-                        switch(index) {
-                            case 0:
-                                $scope.criteria.ask = !$scope.criteria.ask;
-                                break;
-                            case 1:
-                                $scope.criteria.relate = !$scope.criteria.relate;
-                                break;
-                            case 2:
-                                $scope.criteria.shoutout = !$scope.criteria.shoutout;
-                                break;
-                        }
-                        $scope.filter();
-                        return $scope.showMenu('filter');
-                    }
-                }
-            };
-
-            $ionicActionSheet.show(modes[mode]);
-
-            return true;
+        $scope.toggleRight = function() {
+            try {
+                $scope.sideMenuController.toggleRight();
+            } catch(e) {
+                // TODO fix error triggered by toggleLeft
+            }
         };
 
         /* ---------------- *

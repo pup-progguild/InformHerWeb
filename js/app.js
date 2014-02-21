@@ -5,8 +5,68 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('informher', ['ionic', 'informher.services', 'informher.controllers'])
+angular.module('informher', ['ionic', 'informher.services', 'informher.controllers', 'pascalprecht.translate'])
+    .controller('MainCtrl', function($translate, $scope) {
+        $scope.setLanguage = function(lang) {
+            $translate.use(lang);
+        };
+    })
+    .config(function($translateProvider) {
+        $translateProvider
+            .translations('en-PH', {
+                APP_ID: 'InformHer',
 
+                ENGLISH: 'English',
+                TAGALOG: 'Tagalog',
+
+                LOGIN: 'Login',
+                LOGOUT: 'Logout',
+                REGISTER: 'Register',
+
+                USERNAME: 'Username',
+                PASSWORD: 'Password',
+                REMEMBER_ME: 'Remember me',
+                FORGOT_PASSWORD: 'Forgot password?',
+
+                TERMS_OF_USE_PRE: "I agree to InformHer's ",
+                TERMS_OF_USE: "terms of use",
+                TERMS_OF_USE_POST: ".",
+
+                BACK: 'Back',
+
+                SEARCH: 'Search',
+                ASK: 'Ask',
+                RELATE: 'Relate',
+                SHOUTOUT: 'Shoutout'
+            })
+            .translations('tl-PH', {
+                APP_ID: 'InformHer',
+
+                ENGLISH: 'Ingles',
+                TAGALOG: 'Tagalog',
+
+                LOGIN: 'Mag-login',
+                LOGOUT: 'Mag-logout',
+                REGISTER: 'Mag-rehistro',
+
+                USERNAME: 'Username',
+                PASSWORD: 'Password',
+                REMEMBER_ME: 'Tandaan ako',
+                FORGOT_PASSWORD: 'Nakalimutan ang password?',
+
+                TERMS_OF_USE_PRE: "Sang-ayon ako sa ",
+                TERMS_OF_USE: "terms of use",
+                TERMS_OF_USE_POST: " ng InformHer.",
+
+                BACK: 'Bumalik',
+
+                SEARCH: 'Maghanap',
+                ASK: 'Magtanong',
+                RELATE: 'Ibahagi',
+                SHOUTOUT: 'Shoutout'
+            })
+            .preferredLanguage('en-PH');
+    })
 
     .config(function ($stateProvider, $urlRouterProvider) {
 
@@ -40,24 +100,11 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 templateUrl: 'templates/pages/post.html',
                 controller: 'StreamCtrl'
             })
-            /*
             .state('profile', {
-                url: '/profile',
-                abstract: true,
-                templateUrl: '',
+                url: '/profile/:userId',
+                templateUrl: 'templates/pages/profile.html',
                 controller: 'ProfileCtrl'
             })
-            .state('profile.view', {
-                url: '/view/:userId',
-                templateUrl: 'template/pages/profile-view.html',
-                controller: 'ProfileCtrl'
-            })
-            .state('profile.edit', {
-                url: '/edit',
-                templateUrl: 'template/pages/profile-edit.html',
-                controller: 'ProfileCtrl'
-            })
-            */
             .state('ask', {
                 url: '/ask',
                 abstract: true,

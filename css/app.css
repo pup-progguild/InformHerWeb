@@ -13,6 +13,7 @@
     margin-right: 4px;
     background-color: #ccc;
     font-size: 75%;
+    vertical-align: super;
 }
 #stream h2.title {
     display: inline-block;
@@ -34,8 +35,9 @@
     font-size: 70%;
 }
 #stream ul.tags {
-    display: block;
+    display: inline-block;
     float: right;
+    vertical-align: super;s
 }
 #stream ul.tags > li {
     display: inline-block;
@@ -122,4 +124,31 @@ div.tags-input > ul > li {
 
 div.tags-input > input {
     width: auto;
+}
+
+/*
+.informher-filter {
+    text-align: center;
+}
+*/
+
+.informher-filter > .button-bar-inline {
+    display: inline-block;
+}
+
+.informher-filter > .button-bar-inline > .informher-btn-add > i:before {
+    font-size: 75% !important;
+}
+
+.informher-sort {
+    float: right;
+}
+
+#informher-language-list > ul {
+    width: 100%;
+    text-align: right;
+}
+
+#informher-language-list > ul > li {
+    display: inline-block;
 }

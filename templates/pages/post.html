@@ -4,14 +4,15 @@
   The PetCtrl pulls data from the Pets service (service.js)
   The Pets service returns an array of pet data
 -->
-<view title="'Viewing &quot;' + post.title + '&quot;'">
-    <content has-header="true" padding="true">
+<view title="'Viewing post &quot;' + post.title + '&quot;'">
+    <content has-header="true">
         <div class="single single-{{ post.category }}">
-            <p><a class="button button-small icon ion-arrow-left-b" ng-click=""> Back</a></p>
             <div class="single-meta">
                 <h3 class="category">{{ post.category }}</h3>
                 <img class="avatar-author" src="http://lorempixel.com/80/80/cats/{{post.author}}" alt="{{post.author}}">
+
                 <h2 class="title">{{ post.title }}</h2>
+
                 <div>
                     Tagged:
                     <ul class="tags">
@@ -20,11 +21,16 @@
                         </li>
                     </ul>
                 </div>
-                Posted <time datetime="{{ post.date }}">{{ formatDate(post.date) }}</time> by <em class="author">{{ post.author }}</em>
+                Posted
+                <time datetime="{{ post.date }}">{{ formatDate(post.date) }}</time>
+                by <em class="author">{{ post.author }}</em>
             </div>
             <div class="content">
                 {{ post.content }}
             </div>
+        </div>
+        <div class="padding-horizontal">
+            <a class="button" type="button" href="#/stream">Back</a>
         </div>
     </content>
 </view>

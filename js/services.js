@@ -94,4 +94,18 @@ angular.module('informher.services', [])
             }
         }
     })
+    .factory('SessionService', function() {
+        return {
+            user: {
+                id: 0,
+                name: 'ichi-san',
+                email: 'ichi-san@example.com',
+                joined: '2014-02-14',
+                fbUrl: 'icchan',
+                twitterHandle: 'ichiSan',
+                website: 'http://ichi-san.example.com',
+                bio: 'I am number 1. あたしは一番デース～！'
+            }
+        };
+    })
 ;
