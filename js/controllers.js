@@ -1,5 +1,5 @@
 angular.module('informher.controllers', [])
-    .controller('AuthCtrl', function($scope, UserService, ApiService) {
+    .controller('AuthCtrl', function($scope, $state, UserService, ApiService) {
         $scope.registrationSuccessful = false;
 
         $scope.message = {
@@ -106,12 +106,12 @@ angular.module('informher.controllers', [])
                 }
             }
 
-            console.log('a');
             var request = ApiService.getResponse(query.method, query.path, query.body || {})
                 .success(function(response) {
                     switch(authType) {
                         case 'login':
                             UserService.setLoggedUser(response.user.id);
+                            $state.go('stream.feed');
                             break;
                         case 'register':
                             $scope.registrationSuccessful = true;
@@ -123,9 +123,9 @@ angular.module('informher.controllers', [])
                         default:
                             console.log('Unknown auth type ' + authType);
                     }
-                    console.log(response);
                 })
                 .error(function(response) {
+                    response = response || { status: 'ERR_CONNECTIVITY', description: "The app cannot communicate with InformHer's servers right now. Please try again later" };
                     $scope.displayErrorMessage(response.description, "Error: " + response.status);
                     console.log(response);
                 });
@@ -133,9 +133,9 @@ angular.module('informher.controllers', [])
 
         $scope.reset = function() {
             $scope.input = {
-                username: '',
+                username: 'ichi-san',
                 email: '', // for register only
-                password: '',
+                password: 'one_one_one',
                 passwordConfirmation: '', // for register only
                 remember: false, // for login only
                 agree: false // for register only
@@ -144,5 +144,13 @@ angular.module('informher.controllers', [])
         };
 
         $scope.reset();
+    })
+
+    .controller('StreamCtrl', function($scope, PostService, UserService) {
+        $scope.toggleLeft = function() {
+            $scope.sideMenuController.toggleLeft();
+        };
+
+        $scope.posts = PostService.getAllPosts();
     })
 ;

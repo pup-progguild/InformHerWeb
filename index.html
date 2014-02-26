@@ -35,7 +35,6 @@
 <!--
   'starter' is the name of this angular module (js/app.js)
 -->
-<!-- <body ng-app="informher" animation="slide-left-right-ios7"> -->
 <body ng-app="informher" ng-controller="SessionCtrl" animation="slide-left-right-ios7">
 <!--
   The nav bar that will be updated as we navigate between views
@@ -43,38 +42,44 @@
   Icons provided by Ionicons: http://ionicons.com/
 -->
 
-<ion-nav-bar animation="nav-title-slide-ios7"
-             type="bar-dark"
-             back-button-type="button-icon"
-             back-button-icon="ion-arrow-left-c"></ion-nav-bar>
+<ion-side-menus>
+    <!-- Center content -->
+    <ion-pane ion-side-menu-content drag-content="false">
+        <!--
+        <ion-nav-bar animation="nav-title-slide-ios7"
+                     type="bar-dark"
+                     back-button-type="button-icon"
+                     back-button-icon="ion-arrow-left-c"></ion-nav-bar>-->
 
-<!-- where the initial view template will be rendered -->
-<ion-nav-view animation="slide-left-right"></ion-nav-view>
+        <!-- where the initial view template will be rendered -->
+        <ion-nav-view animation="slide-left-right"></ion-nav-view>
+    </ion-pane>
+
+    <!-- Left menu -->
+    <ion-side-menu side="left" id="sidemenuProfile">
+        Left
+    </ion-side-menu>
+</ion-side-menus>
+
 
 <!--== PAGES ==-->
 
 <script id="pages/home.html" type="text/ng-template">
-    <ion-view title="'InformHer'">
-        <ion-nav-page id="pageHome">
-            <ion-content has-header="true" has-footer="true">
-                <div class="padding">
-                    <h1>{{ '_APP_ID' | translate }}</h1>
-                </div>
+    <ion-nav-page id="pageHome">
+        <ion-content has-footer="true">
+            <div class="padding">
+                <img src="img/informher-banner-with-icon.png" alt="{{ '_APP_ID' | translate }}" class="full-image" />
+            </div>
 
-                <div class="row">
-                    <div class="col"><a class="button button-block button-positive" href="#/auth/login">{{ 'LOGIN' | translate }}</a></div>
-                    <div class="col"><a class="button button-block button-positive" href="#/auth/register">{{ 'REGISTER' | translate }}</a></div>
-                </div>
-            </ion-content>
-            <ion-footer-bar type="padding-horizontal" id="informher-language-list">
-                <ul>
-                    <li>Language:</li>
-                    <li><a href="" ng-click="setLanguage('en-PH')">English</a></li>
-                    <li><a href="" ng-click="setLanguage('tl-PH')">Tagalog</a></li>
-                </ul>
-            </ion-footer-bar>
-        </ion-nav-page>
-    </ion-view>
+            <div class="row">
+                <div class="col"><a class="button button-block button-positive" href="#/auth/login">{{ 'LOGIN' | translate }}</a></div>
+                <div class="col"><a class="button button-block button-positive" href="#/auth/register">{{ 'REGISTER' | translate }}</a></div>
+            </div>
+        </ion-content>
+        <ion-footer-bar type="padding-horizontal" id="informher-language-list">
+            <a class="button button-clear" href="#/settings/language"><i class="icon ion-ios7-world"></i> Language</a>
+        </ion-footer-bar>
+    </ion-nav-page>
 </script>
 <script id="pages/auth/login.html" type="text/ng-template">
     <ion-nav-page id="pageLogin">
@@ -112,7 +117,8 @@
                 </li>
             </ul>
             <div class="padding-horizontal">
-                <button class="button button-positive button-block" type="button" ng-click="doAuth('login')">{{ 'LOGIN' | translate }}</button>
+                <button class="button button-positive" type="button" ng-click="doAuth('login')">{{ 'LOGIN' | translate }}</button>
+                <button class="button" type="button" ng-click="goBack()">{{ 'BACK' | translate }}</button>
             </div>
         </ion-content>
     </ion-nav-page>
@@ -158,15 +164,64 @@
                 </li>
             </ul>
             <div class="padding-horizontal">
-                <button class="button button-positive button-block" type="button" ng-click="doAuth('register')" ng-disabled="!input.agree" ng-hide="registrationSuccessful">
-                    {{ 'REGISTER' | translate }}
-                </button>
-                <a class="button button-positive button-block" href="#/home" ng-hide="!registrationSuccessful">
+                <div ng-hide="registrationSuccessful">
+                    <button class="button button-positive" type="button" ng-click="doAuth('register')" ng-disabled="!input.agree">
+                        {{ 'REGISTER' | translate }}
+                    </button>
+                    <button class="button" type="button" ng-click="goBack()">{{ 'BACK' | translate }}</button>
+                </div>
+                <a class="button button-positive button-block" ng-click="goBack()" ng-hide="!registrationSuccessful">
                     {{ 'BACK' | translate }}
                 </a>
             </div>
         </ion-content>
     </ion-nav-page>
+</script>
+<script id="pages/stream.html" type="text/ng-template">
+    <ion-nav-page id="pageStream">
+        <div class="bar bar-header bar-dark item-input-inset">
+            <button class="button button-icon" ng-click="toggleLeft()"><i class="icon ion-navicon"></i></button>
+            <label class="item-input-wrapper">
+                <i class="icon ion-ios7-search placeholder-icon"></i>
+                <input type="search" placeholder="{{ 'SEARCH' | translate }}">
+            </label>
+            <button class="button button-clear"><i class="icon ion-gear-a"></i></button>
+        </div>
+        <div class="bar bar-subheader">
+            <button class="button button-outline button-energized"><i class="icon ion-help-circled"></i></button>
+            <button class="button button-energized"><i class="icon ion-plus"></i></button>
+            <button class="button button-outline button-balanced"><i class="icon ion-information-circled"></i></button>
+            <button class="button button-balanced"><i class="icon ion-plus"></i></button>
+            <button class="button button-outline button-positive"><i class="icon ion-chatbox-working"></i></button>
+            <button class="button button-positive"><i class="icon ion-plus"></i></button>
+            <button class="button button-clear button-dark"><i class="icon ion-contrast"></i></button>
+        </div>
+        <ion-content has-header="true" has-subheader="true" has-footer="true">
+            stream
+        </ion-content>
+    </ion-nav-page>
+</script>
+
+<!--== MENUS ==-->
+<script id="menus/language.html" type="text/ng-template">
+    <div class="bar bar-header bar-dark">
+        <button class="button button-icon" ng-click="goBack()"><i class="icon ion-arrow-left-c"></i></button>
+        <h1 class="title">Language</h1>
+    </div>
+    <ion-content has-header="true">
+        <div class="list">
+            <label class="item item-radio">
+                <input type="radio" name="lang" ng-click="setLanguage('en-PH')">
+                <div class="item-content">English</div>
+                <i class="radio-icon ion-checkmark"></i>
+            </label>
+            <label class="item item-radio">
+                <input type="radio" name="lang" ng-checked="language == 'tl-PH'" ng-click="setLanguage('tl-PH')">
+                <div class="item-content">Tagalog</div>
+                <i class="radio-icon ion-checkmark"></i>
+            </label>
+        </div>
+    </ion-content>
 </script>
 
 <!--== MODALS ==-->

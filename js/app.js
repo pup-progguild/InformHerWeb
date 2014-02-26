@@ -8,8 +8,14 @@
 angular.module('informher', ['ionic', 'informher.services', 'informher.controllers', 'pascalprecht.translate'])
     .controller('SessionCtrl', function($translate, $scope, UserService) {
         $scope.setLanguage = function(lang) {
-            $translate.use(lang);
+            $translate.use($scope.language = lang);
         };
+
+        $scope.goBack = function() {
+            history.back();
+        };
+
+        $scope.setLanguage($translate.preferredLanguage());
     })
     .config(function($translateProvider) {
         $translateProvider
@@ -84,6 +90,27 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 url: '/register',
                 templateUrl: 'pages/auth/register.html',
                 controller: 'AuthCtrl'
+            })
+            .state('stream', {
+                url: '/stream',
+                abstract: true,
+                templateUrl: ''
+            })
+            .state('stream.feed', {
+                url: '/feed',
+                templateUrl: 'pages/stream.html',
+                controller: 'StreamCtrl'
+            })
+            .state('settings', {
+                url: '/settings',
+                abstract: true,
+                templateUrl: '',
+                controller: 'SessionCtrl'
+            })
+            .state('settings.language', {
+                url: '/language',
+                templateUrl: 'menus/language.html',
+                controller: 'SessionCtrl'
             })
         ;
         $urlRouterProvider.otherwise('/home');

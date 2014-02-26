@@ -3,11 +3,13 @@
     "projectSettingsVersion": "1.0",
     "creationData": {
       "type": "Import",
-      "src": "C:\\Documents and Settings\\Administrator\\My Documents\\InformHerWeb",
-      "projectGuid": "5ee8b8af-0455-4581-83fd-1155c8ac8063",
-      "lastModifiedDate": 1393371864186,
-      "creationDate": 1393371864114
+      "src": "",
+      "projectGuid": "d64fbc01-16e2-477f-8cbb-aeed20b3233b",
+      "lastModifiedDate": 1393449343066,
+      "creationDate": 1393449342956
     },
+    "sourceDirectory": "",
+    "startFile": "index.html",
     "projectFiles": {},
     "projectDirectories": {},
     "libraries": [
