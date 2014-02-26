@@ -1,339 +1,148 @@
 angular.module('informher.controllers', [])
-    .controller('LoginCtrl', function($translate, $scope, $state, $http, SessionService) {
+    .controller('AuthCtrl', function($scope, UserService, ApiService) {
+        $scope.registrationSuccessful = false;
 
-        /* -------- *
-         *  FIELDS  *
-         * -------- */
-
-        $scope.user = {
-            name: '',
-            pass: '',
-            remember: false
-        };
-
-        /* --------- *
-         *  METHODS  *
-         * --------- */
-
-        $scope.messageClass = 'card hidden';
-
-        $scope.hideMessage = function() {
-            $scope.messageClass = 'card hidden';
-        };
-
-        $scope.displayMessage = function(message, title, messageType) {
-            $scope.messageClass = 'card';
-            $scope.message = message;
-            $scope.messageTitle = title;
-            $scope.messageType = messageType;
-        };
-
-        $scope.submit = function() {
-            $scope.hideMessage();
-            console.log($scope.user.name, $scope.user.pass);
-            $http.post('http://informherapi.azurewebsites.net/user/login', {
-                    'username': $scope.user.name,
-                    'password': $scope.user.pass
+        $scope.message = {
+            displayed: false,
+            title: {
+                content: '',
+                color: {
+                    bg: 'dark',
+                    fg: 'stable'
                 }
-            )
-                .success(function() {
-                    SessionService.login($scope.user.name);
-                    $state.go('stream');
-                })
-                .error(function(data) {
-                    switch(data.status) {
-                        case "USER_LOGIN_FAILED":
-                            $scope.displayMessage(data.description, data.status, "Error");
+            },
+            body: {
+                content: '',
+                color: {
+                    bg: 'stable',
+                    fg: 'dark'
+                }
+            },
+            border: 'dark'
+        };
+
+        $scope.displayMessage = function(body, title, bg, fg) {
+            $scope.message = {
+                displayed: true,
+                title: {
+                    content: title,
+                    color: {
+                        bg: fg,
+                        fg: bg
+                    }
+                },
+                body: {
+                    content: body,
+                    color: {
+                        bg: bg,
+                        fg: fg
+                    }
+                },
+                border: fg
+            }
+        };
+
+        $scope.displayInformationMessage = function(body, title) {
+            $scope.displayMessage(body, title);
+        };
+
+        $scope.displayErrorMessage = function(body, title) {
+            $scope.displayMessage(body, title, 'stable', 'assertive');
+        };
+
+        $scope.dismissMessage = function() {
+            $scope.message = {
+                displayed: false,
+                title: '',
+                body: '',
+                bg: 'stable-bg',
+                border: 'stable-border',
+                fg: 'dark'
+            };
+        };
+
+        $scope.doAuth = function(authType) {
+            $scope.dismissMessage();
+            var queries = {
+                    'login': {
+                        'path': '/user/login',
+                        'method': 'post',
+                        'body': {
+                            'username': $scope.input.username,
+                            'password': $scope.input.password,
+                            'remember': $scope.input.remember
+                        }
+                    },
+                    'register': {
+                        'path': '/user',
+                        'method': 'post',
+                        'body': {
+                            'username': $scope.input.username,
+                            'email': $scope.input.email,
+                            'password': $scope.input.password,
+                            'password_confirmation': $scope.input.passwordConfirmation
+                        }
+                    },
+                    'logout': {
+                        'path': '/user/logout',
+                        'method': 'get'
+                    }
+                }, query = queries[authType];
+
+            if(authType == 'register') {
+                switch(!false) {
+                    case !($scope.input.username != ''):
+                        $scope.displayErrorMessage('Invalid username', 'Error: ERR_INVALID_USERNAME');
+                        return;
+                    case !($scope.input.email != ''):
+                        $scope.displayErrorMessage('Invalid email address', 'Error: ERR_INVALID_EMAIL_ADDRESS');
+                        return;
+                    case !($scope.input.password.length >= 6):
+                        $scope.displayErrorMessage('Password cannot be shorter than 6 characters', 'Error: ERR_INVALID_PASSWORD');
+                        return;
+                    case !($scope.input.password == $scope.input.passwordConfirmation):
+                        $scope.displayErrorMessage('Passwords do not match', 'Error: ERR_PASSWORDS_DO_NOT_MATCH');
+                        return;
+                }
+            }
+
+            console.log('a');
+            var request = ApiService.getResponse(query.method, query.path, query.body || {})
+                .success(function(response) {
+                    switch(authType) {
+                        case 'login':
+                            UserService.setLoggedUser(response.user.id);
+                            break;
+                        case 'register':
+                            $scope.registrationSuccessful = true;
+                            $scope.displayInformationMessage(response.description, "Message: " + response.status);
+                            break;
+                        case 'logout':
+                            UserService.setLoggedUser(null);
                             break;
                         default:
-                            $scope.displayMessage("The app cannot communicate with the InformHer server due to connectivity problems. Please try again later.", "CONNECTIVITY_ERROR", "Error");
-                            break;
+                            console.log('Unknown auth type ' + authType);
                     }
-                    console.log(data);
+                    console.log(response);
+                })
+                .error(function(response) {
+                    $scope.displayErrorMessage(response.description, "Error: " + response.status);
+                    console.log(response);
                 });
-        };
-    })
-
-    .controller('RegisterCtrl', function($scope, $ionicModal, $http) {
-
-        /* -------- *
-         *  FIELDS  *
-         * -------- */
-
-        /*
-        $scope.username = 'ichi-san';
-        $scope.email = 'ichi-san@example.com';
-        $scope.password = 'one_one_one';
-        $scope.passwordAgain = 'one_one_one';
-        $scope.agree = false;
-        */
-
-        /* --------- *
-         *  METHODS  *
-         * --------- */
-
-        $scope.submit = function() {
-            $http.post('http://informherapi.azurewebsites.net/user', {
-                    'username': $scope.username,
-                    'email': $scope.email,
-                    'password': $scope.password,
-                    'password_confirmation': $scope.passwordAgain
-                }
-            )
-        };
-
-        /* -------- *
-         *  MODALS  *
-         * -------- */
-
-        $ionicModal.fromTemplateUrl('eula.html', function(modal) {
-            $scope.modal = modal;
-        }, {
-            scope: $scope,
-            animation: 'slide-in-up'
-        });
-
-        $scope.openModal = function() {
-            $scope.modal.show();
-        };
-
-        $scope.closeModal = function() {
-            $scope.modal.hide();
-        };
-    })
-
-    .controller('ProfileCtrl', function($scope, $state, $stateParams, SessionService) {
-        $scope.user = SessionService.user;
-
-        $scope.backBtnText = 'Back';
-        $scope.backBtnHref = '#/stream';
-        $scope.primaryBtnText = 'Edit';
-
-        $scope.editMode = false;
-
-        $scope.repaint = function() {
-            $scope.backBtnText = $scope.editMode ? 'Cancel' : 'Back';
-            $scope.backBtnHref = $scope.editMode ? '#/profile/view/' + $scope.user.id : '#/stream';
-            $scope.primaryBtnText = $scope.editMode ? 'Save' : 'Edit';
-            $scope.disabledClass = $scope.editMode ? '' : ' disabled';
-        };
-
-        $scope.save = function() {
-
         };
 
         $scope.reset = function() {
-
+            $scope.input = {
+                username: '',
+                email: '', // for register only
+                password: '',
+                passwordConfirmation: '', // for register only
+                remember: false, // for login only
+                agree: false // for register only
+            };
+            $scope.registrationSuccessful = false;
         };
 
-        $scope.primaryBtnClick = function() {
-            if($scope.editMode) {
-                $scope.save();
-                $scope.editMode = false;
-            }
-            else
-                $scope.editMode = true;
-            $scope.repaint();
-        };
-
-        $scope.backBtnClick = function() {
-            if($scope.editMode) {
-                $scope.reset();
-                $scope.editMode = false;
-                $scope.repaint();
-                $state.go('profile');
-            }
-            else
-                $state.go('stream');
-        };
+        $scope.reset();
     })
-
-// A simple controller that fetches a list of data from a service
-    .controller('StreamCtrl', function ($scope, $stateParams, $state, $ionicModal, PostService, TagService, $http) {
-        var contentEl = document.getElementById('menu-center');
-        var content = new ionic.views.SideMenuContent({
-            el: contentEl,
-	        onDrag: function(e) {
-		        console.log('a');
-	        }
-        });
-
-        var leftMenuEl = document.getElementById('menu-left');
-        var leftMenu = new ionic.views.SideMenu({
-            el: leftMenuEl,
-            width: 270
-        });
-
-        $scope.sideMenuController = new ionic.controllers.SideMenuController({
-            content: content,
-            left: leftMenu,
-        });
-
-		$scope.leftButtons = [
-			{
-				type: 'button-clear',
-				content: '<i class="icon ion-navicon"></i>',
-				tap: function(e) {
-					$scope.toggleLeft();
-				}
-			},
-			{
-				type: 'button-clear',
-				content: '<i class="icon ion-search"></i>',
-				tap: function(e) {
-					alert('search');
-				}
-			}
-		];
-
-		$scope.rightButtons = [
-			{
-				type: 'button-clear',
-				content: '<i class="icon ion-gear-a"></i>',
-				tap: function(e) {
-					$state.go('settings.main');
-				}
-			}
-		];
-
-        // "Pets" is a service returning mock data (services.js)
-        $scope.posts = [];// = PostService.all();
-
-        // TODO posts
-        // TODO comments
-        // TODO likes
-        // TODO settings pages: account and stream
-        // TODO saving and resetting profile edits
-        $scope.postType = 'ask';
-
-        $scope.title = 'hello'; // not for shoutout
-        $scope.tags = ['tag1', 'tag2', 'tag3'];
-        $scope.content = 'Question'; // not for shoutout
-
-        $scope.trackLocation = false; // for shoutout only
-        $scope.contact = false; // for shoutout only
-        $scope.immediateContact = false; // for shoutout only
-
-        $scope.criteria = { ask: true, relate: true, shoutout: true };
-        $scope.sortAscending = { title: true, author: true, date: true };
-        $scope.currentSort = 'date';
-
-        $scope.askClass = 'active';
-        $scope.relateClass = 'active';
-        $scope.shoutoutClass = 'active';
-
-        $scope.sortTitleClass = '';
-        $scope.sortAuthorClass = '';
-        $scope.sortDateClass = 'ion-arrow-down-c active';
-
-        $scope.onRefresh = function() {
-            console.log('Refresh complete!');
-            $scope.posts = PostService.all();
-            $scope.$broadcast('scroll.refreshComplete');
-        };
-
-        $scope.colorForTag = function(tag) {
-            return TagService.colorForTag(tag);
-        };
-
-        $scope.filter = function() {
-            $scope.posts = PostService.filter($scope.criteria);
-        };
-
-        $scope.get = function(id) {
-            PostService.get(id);
-        };
-
-        $scope.submit = function() {
-
-        };
-
-        $scope.toggleFilter = function(category) {
-            $scope.criteria[category] = !$scope.criteria[category];
-            $scope.askClass = $scope.criteria.ask ? 'active' : '';
-            $scope.relateClass = $scope.criteria.relate ? 'active' : '';
-            $scope.shoutoutClass = $scope.criteria.shoutout ? 'active' : '';
-        };
-
-        $scope.doSort = function(sort) {
-            if(sort != $scope.currentSort)
-                $scope.sortAscending = { title: true, author: true, date: true };
-            $scope.currentSort = sort;
-            $scope.sortAscending[sort] = !$scope.sortAscending[sort];
-
-            $scope.sortTitleClass = $scope.currentSort != 'title' ? '' : 'active ' + ($scope.sortAscending.title ? 'ion-arrow-up-c' : 'ion-arrow-down-c');
-            $scope.sortAuthorClass = $scope.currentSort != 'author' ? '' : 'active ' + ($scope.sortAscending.author ? 'ion-arrow-up-c' : 'ion-arrow-down-c');
-            $scope.sortDateClass = $scope.currentSort != 'date' ? '' : 'active ' + ($scope.sortAscending.date ? 'ion-arrow-up-c' : 'ion-arrow-down-c');
-        };
-
-        $scope.logout = function() {
-            $http.get('http://informherapi.azurewebsites.net/user/logout')
-                .success(function() {
-                    SessionService.logout();
-                    $state.go('home');
-                })
-
-        };
-
-        /* -------- *
-         *  MODALS  *
-         * -------- */
-
-        $scope.modalUrls = ['ask.html', 'relate.html', 'shoutout.html', 'language.html'];
-        $scope.currentModal = '';
-        $scope.modals = [];
-
-        _.each($scope.modalUrls, function(templateUrl) {
-            $ionicModal.fromTemplateUrl(templateUrl, function(modal) { $scope.modals[templateUrl] = modal; },
-                {
-                    scope: $scope,
-                    animation: 'slide-in-up'
-                });
-        });
-
-        $scope.openModal = function(name) {
-            $scope.currentModal = name;
-            $scope.modals[name].show();
-        };
-
-        $scope.closeModal = function() {
-            $scope.modals[$scope.currentModal].hide();
-            $scope.currentModal = '';
-        };
-
-        $scope.toggleLeft = function() {
-            try {
-                $scope.sideMenuController.toggleLeft();
-            } catch(e) {
-                // TODO fix error triggered by toggleLeft
-            }
-        };
-
-        $scope.toggleRight = function() {
-            try {
-                $scope.sideMenuController.toggleRight();
-            } catch(e) {
-                // TODO fix error triggered by toggleLeft
-            }
-        };
-
-        /* ---------------- *
-         *  DEFAULT METHOD  *
-         * ---------------- */
-
-        $scope.filter($scope.criteria);
-    })
-
-// A simple controller that shows a tapped item's data
-    .controller('PostCtrl', function ($scope, $stateParams, PostService) {
-        // "Pets" is a service returning mock data (services.js)
-        $scope.post = PostService.get($stateParams.postId);
-
-        $scope.formatDate = function(date) {
-            return new Date(date).toString();
-        };
-
-        $scope.goBack = function() {
-
-        };
-    });
+;

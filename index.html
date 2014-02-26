@@ -36,24 +36,172 @@
   'starter' is the name of this angular module (js/app.js)
 -->
 <!-- <body ng-app="informher" animation="slide-left-right-ios7"> -->
-<body ng-app="informher" animation="slide-left-right" ng-controller="MainCtrl">
+<body ng-app="informher" ng-controller="SessionCtrl" animation="slide-left-right-ios7">
 <!--
   The nav bar that will be updated as we navigate between views
   Additional attributes set its look, nav-bar animation and icons
   Icons provided by Ionicons: http://ionicons.com/
 -->
 
-<nav-bar type="bar-dark"
-         animation="nav-title-slide-ios7"
-         back-button-type="button-icon"
-         back-button-icon="ion-ios7-arrow-back"></nav-bar>
+<ion-nav-bar animation="nav-title-slide-ios7"
+             type="bar-dark"
+             back-button-type="button-icon"
+             back-button-icon="ion-arrow-left-c"></ion-nav-bar>
 
-<!--
-  The views will be rendered in the <nav-view> directive below
-  Templates are in the /templates folder (but you could also
-  have templates inline in this html file if you'd like).
--->
-<nav-view></nav-view>
+<!-- where the initial view template will be rendered -->
+<ion-nav-view animation="slide-left-right"></ion-nav-view>
+
+<!--== PAGES ==-->
+
+<script id="pages/home.html" type="text/ng-template">
+    <ion-view title="'InformHer'">
+        <ion-nav-page id="pageHome">
+            <ion-content has-header="true" has-footer="true">
+                <div class="padding">
+                    <h1>{{ '_APP_ID' | translate }}</h1>
+                </div>
+
+                <div class="row">
+                    <div class="col"><a class="button button-block button-positive" href="#/auth/login">{{ 'LOGIN' | translate }}</a></div>
+                    <div class="col"><a class="button button-block button-positive" href="#/auth/register">{{ 'REGISTER' | translate }}</a></div>
+                </div>
+            </ion-content>
+            <ion-footer-bar type="padding-horizontal" id="informher-language-list">
+                <ul>
+                    <li>Language:</li>
+                    <li><a href="" ng-click="setLanguage('en-PH')">English</a></li>
+                    <li><a href="" ng-click="setLanguage('tl-PH')">Tagalog</a></li>
+                </ul>
+            </ion-footer-bar>
+        </ion-nav-page>
+    </ion-view>
+</script>
+<script id="pages/auth/login.html" type="text/ng-template">
+    <ion-nav-page id="pageLogin">
+        <ion-content has-header="true">
+            <div class="padding">
+                <h1>{{ 'LOGIN' | translate }}</h1>
+            </div>
+
+            <div class="card" ng-hide="!message.displayed">
+                <div class="item item-divider {{message.title.color.bg}}-bg {{message.title.color.bg}}-border {{message.title.color.fg}}">
+                    {{ message.title.content }}
+                </div>
+                <div class="item item-text-wrap {{message.title.color.bg}}-border">
+                    <p>{{ message.body.content }}</p>
+                </div>
+            </div>
+
+            <ul class="list">
+                <li class="item item-input">
+                    <span class="input-label">{{ 'USERNAME' | translate }}</span>
+                    <input ng-model="input.username" type="text" placeholder="{{ 'USERNAME' | translate }}">
+                </li>
+                <li class="item item-input">
+                    <span class="input-label">{{ 'PASSWORD' | translate }}</span>
+                    <input ng-model="input.password" type="password" placeholder="{{ 'PASSWORD' | translate }}">
+                </li>
+                <li class="item item-checkbox">
+                    <label class="checkbox">
+                        <input ng-model="input.remember" type="checkbox">
+                    </label>
+                    {{ 'REMEMBER_ME' | translate }}
+                </li>
+                <li class="item">
+                    <a href="">{{ 'FORGOT_PASSWORD' | translate }}</a>
+                </li>
+            </ul>
+            <div class="padding-horizontal">
+                <button class="button button-positive button-block" type="button" ng-click="doAuth('login')">{{ 'LOGIN' | translate }}</button>
+            </div>
+        </ion-content>
+    </ion-nav-page>
+</script>
+<script id="pages/auth/register.html" type="text/ng-template">
+    <ion-nav-page id="pageRegister">
+        <ion-content has-header="true">
+            <div class="padding">
+                <h1>{{ 'REGISTER' | translate }}</h1>
+            </div>
+
+            <div class="card" ng-hide="!message.displayed">
+                <div class="item item-divider {{message.title.color.bg}}-bg {{message.title.color.bg}}-border {{message.title.color.fg}}">
+                    {{ message.title.content }}
+                </div>
+                <div class="item item-text-wrap {{message.title.color.bg}}-border">
+                    <p>{{ message.body.content }}</p>
+                </div>
+            </div>
+
+            <ul class="list" ng-hide="registrationSuccessful">
+                <li class="item item-input item-stacked-label">
+                    <span class="input-label">{{ 'USERNAME' | translate }}</span>
+                    <input ng-model="input.username" type="text" placeholder="{{ 'USERNAME' | translate }}">
+                </li>
+                <li class="item item-input item-stacked-label">
+                    <span class="input-label">E-mail address</span>
+                    <input ng-model="input.email" type="email" placeholder="E-mail address">
+                </li>
+                <li class="item item-input item-stacked-label">
+                    <span class="input-label">{{ 'PASSWORD' | translate }}</span>
+                    <input ng-model="input.password" type="password" placeholder="{{ 'PASSWORD' | translate }}">
+                </li>
+                <li class="item item-input item-stacked-label">
+                    <span class="input-label">Confirm password</span>
+                    <input ng-model="input.passwordConfirmation" type="password" placeholder="Confirm password">
+                </li>
+                <li class="item item-checkbox">
+                    <label class="checkbox">
+                        <input ng-model="input.agree" type="checkbox">
+                    </label>
+                    {{ 'TERMS_OF_USE_PRE' | translate }}<a href="" ng-click="openModal()">{{ 'TERMS_OF_USE' | translate }}</a>{{ 'TERMS_OF_USE_POST' | translate }}
+                </li>
+            </ul>
+            <div class="padding-horizontal">
+                <button class="button button-positive button-block" type="button" ng-click="doAuth('register')" ng-disabled="!input.agree" ng-hide="registrationSuccessful">
+                    {{ 'REGISTER' | translate }}
+                </button>
+                <a class="button button-positive button-block" href="#/home" ng-hide="!registrationSuccessful">
+                    {{ 'BACK' | translate }}
+                </a>
+            </div>
+        </ion-content>
+    </ion-nav-page>
+</script>
+
+<!--== MODALS ==-->
+
+<script id="modals/tos.html" type="text/ng-template">
+    <div class="modal">
+        <header class="bar bar-header bar-dark">
+            <h1 class="title">Terms of Use</h1>
+        </header>
+        <content has-header="true" padding="true">
+            <ul>
+                <li>Thou shalt not get your neighbor's lolis, nor their underwear, nor their virginity. It is strictly
+                    prohibited. You are going to jail if you do, tough guy.
+                </li>
+                <li>Thou shalt not raep. As you always know, ceiling cat is watching you. We don't care if they came.
+                </li>
+                <li>Thou shalt not defile the moe. Everything is moe. Those that are considered "not moe" does not exist&mdash;it
+                    is only a product of one's fickle mind.
+                </li>
+                <li>Thou shalt not speak badly of PHP. <strong>Fatal error: T_PAAMAYIM_NEKUDOTAYIM.</strong></li>
+            </ul>
+            <p>If you do not agree to the above terms and conditions, might as well pack your things and leave your
+                house quick. Real quick. We might send in some Tesla troopers to zap you up to your last voltage running
+                throughout your networks, and you will bleed from all of your body's orifices (no love juice, srsly). We
+                mean it. It would be a excruciatingly painful experience you will get.</p>
+
+            <p>Else if you agree, you may use any of InformHer's explicitly provided services, as long as you keep good
+                manners and right conduct (they taught you that in school, after all) among other persons in
+                InformHer.</p>
+
+            <p>We hope you have a meaningful experience using InformHer! :D</p>
+            <button class="button button-block button-positive" ng-click="closeModal()">OK</button>
+        </content>
+    </div>
+</script>
 
 </body>
 </html>

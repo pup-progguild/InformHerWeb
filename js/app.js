@@ -6,28 +6,16 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('informher', ['ionic', 'informher.services', 'informher.controllers', 'pascalprecht.translate'])
-    .controller('MainCtrl', function($translate, $scope) {
+    .controller('SessionCtrl', function($translate, $scope, UserService) {
         $scope.setLanguage = function(lang) {
             $translate.use(lang);
         };
-
-		$scope.user = {
-			id: 0,
-			name: 'ichi-san',
-			email: 'ichi-san@example.com',
-			joined: '2014-02-14',
-			fbUrl: 'icchan',
-			twitterHandle: 'ichiSan',
-			website: 'http://ichi-san.example.com',
-			bio: 'I am number 1. あたしは一番デース～！'
-		};
     })
     .config(function($translateProvider) {
         $translateProvider
             .translations('en-PH', {
-                APP_ID: 'InformHer',
-
                 _LANGUAGE: 'English',
+                _APP_ID: 'InformHer',
 
                 LOGIN: 'Login',
                 LOGOUT: 'Logout',
@@ -50,9 +38,8 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 SHOUTOUT: 'Shoutout'
             })
             .translations('tl-PH', {
-                APP_ID: 'InformHer',
-
-		        _LANGUAGE: 'Tagalog',
+                _LANGUAGE: 'Tagalog',
+                _APP_ID: 'InformHer',
 
                 LOGIN: 'Mag-login',
                 LOGOUT: 'Mag-logout',
@@ -78,102 +65,27 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
     })
 
     .config(function ($stateProvider, $urlRouterProvider) {
-
-        // Ionic uses AngularUI Router which uses the concept of states
-        // Learn more here: https://github.com/angular-ui/ui-router
-        // Set up the various states which the app can be in.
-        // Each state's controller can be found in controllers.js
-
         $stateProvider
             .state('home', {
                 url: '/home',
-                templateUrl: 'templates/pages/home.html'
+                templateUrl: 'pages/home.html'
             })
-            .state('login', {
+            .state('auth', {
+                url: '/auth',
+                abstract: true,
+                templateUrl: ''
+            })
+            .state('auth.login', {
                 url: '/login',
-                templateUrl: 'templates/pages/login.html',
-                controller: 'LoginCtrl'
+                templateUrl: 'pages/auth/login.html',
+                controller: 'AuthCtrl'
             })
-            .state('register', {
+            .state('auth.register', {
                 url: '/register',
-                templateUrl: 'templates/pages/register.html',
-                controller: 'RegisterCtrl'
+                templateUrl: 'pages/auth/register.html',
+                controller: 'AuthCtrl'
             })
-            .state('stream', {
-                url: '/stream',
-                templateUrl: 'templates/pages/stream.html',
-                controller: 'StreamCtrl'
-            })
-            .state('stream.view', {
-                url: '/view/:postId',
-                templateUrl: 'templates/pages/post.html',
-                controller: 'StreamCtrl'
-            })
-            .state('profile', {
-                url: '/profile/:userId',
-                templateUrl: 'templates/pages/profile.html',
-                controller: 'ProfileCtrl'
-            })
-            .state('ask', {
-                url: '/ask',
-                abstract: true,
-                templateUrl: '',
-                controller: 'AskPostCtrl'
-            })
-            .state('ask.post', {
-                url: '/post',
-                parent: 'ask',
-                templateUrl: 'templates/pages/ask.html',
-                controller: 'AskPostCtrl'
-            })
-            .state('relate', {
-                url: '/relate',
-                abstract: true,
-                templateUrl: '',
-                controller: 'RelatePostCtrl'
-            })
-            .state('relate.post', {
-                url: '/post',
-                parent: 'relate',
-                templateUrl: 'templates/pages/relate.html',
-                controller: 'RelatePostCtrl'
-            })
-            .state('shoutout', {
-                url: '/shoutout',
-                abstract: true,
-                templateUrl: '',
-                controller: 'ShoutoutPostCtrl'
-            })
-            .state('shoutout.post', {
-                url: '/post',
-                parent: 'shoutout',
-                templateUrl: 'templates/pages/shoutout.html',
-                controller: 'ShoutoutPostCtrl'
-            })
-	        .state('settings', {
-		        url: '/settings',
-		        abstract: true,
-		        templateUrl: '',
-		        controller: 'MainCtrl'
-	        })
-	        .state('settings.main', {
-		        url: '/main',
-		        templateUrl: 'templates/pages/settings.html',
-		        controller: 'MainCtrl'
-	        })
-	        .state('settings.language', {
-		        url: '/language',
-		        parent: 'settings',
-		        templateUrl: 'templates/pages/language.html',
-		        controller: 'MainCtrl'
-	        })
-	        .state('settings.sort', {
-		        url: '/sort',
-		        templateUrl: 'templates/pages/sort.html',
-		        controller: 'MainCtrl'
-	        })
         ;
-
         $urlRouterProvider.otherwise('/home');
     });
 
