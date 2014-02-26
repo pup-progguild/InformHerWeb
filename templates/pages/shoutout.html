@@ -1,0 +1,28 @@
+<view title="'Shoutout'">
+    <content has-header="true" padding="true">
+        <ul class="list">
+            <li class="item item-input item-stacked-label">
+                <span class="input-label">Describe the nature of your report</span>
+                <input ng-model="tags" type="text" placeholder="Type some tags here"></li>
+            <li class="item item-checkbox">
+                <label class="checkbox">
+                    <input type="checkbox" ng-model="trackLocation">
+                </label>
+                I want InformHer to know my current location
+            </li>
+            <li class="item item-checkbox">
+                <label class="checkbox">
+                    <input type="checkbox" ng-model="contact" ng-click="immediateContact = contact &amp;&amp; immediateContact">
+                </label>
+                I want InformHer to get in touch regarding my report
+            </li>
+            <li class="item item-checkbox">
+                <label class="checkbox">
+                    <input type="checkbox" ng-model="immediateContact" ng-checked="contact &amp;&amp; immediateContact" ng-disabled="!contact">
+                </label>
+                I want InformHer to contact me immediately
+            </li>
+        </ul>
+        <button class="button button-block button-positive" type="button" ng-click="submit()">Post</button>
+    </content>
+</view>
