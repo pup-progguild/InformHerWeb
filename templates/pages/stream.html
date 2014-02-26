@@ -1,40 +1,32 @@
 <div id="menu-center" class="pane">
-    <header class="bar bar-header bar-dark item-input-inset">
-        <button class="button button-icon icon ion-navicon" ng-click="toggleLeft()"></button>
-        <label class="item-input-wrapper">
-            <i class="icon ion-ios7-search placeholder-icon"></i>
-            <input type="search" placeholder="{{ 'SEARCH' | translate }}"/>
-        </label>
-        <button class="button button-clear icon ion-gear-a" ng-click="toggleRight()"></button>
-    </header>
     <header class="bar bar-subheader bar-stable">
         <div class="informher-filter">
             <div class="button-bar-inline">
-                <a href="#/stream" class="button button-energized button-outline {{ askClass }}"
+                <a href="" class="button button-energized button-outline {{ askClass }}"
                    ng-click="toggleFilter('ask')"><i class="ion icon ion-help-circled"></i></a>
-                <a href="#/stream" class="informher-btn-add button button-energized" ng-click="openModal('ask.html')"><i
+                <a href="" class="informher-btn-add button button-energized" ng-click="openModal('ask.html')"><i
                         class="ion icon ion-plus"></i></a>
             </div>
             <div class="button-bar-inline">
-                <a href="#/stream" class="button button-balanced button-outline {{ relateClass }}"
+                <a href="" class="button button-balanced button-outline {{ relateClass }}"
                    ng-click="toggleFilter('relate')"><i class="ion icon ion-information-circled"></i></a>
                 <a href="#/stream" class="informher-btn-add button button-balanced" ng-click="openModal('relate.html')"><i
                         class="ion icon ion-plus"></i></a>
             </div>
             <div class="button-bar-inline">
-                <a href="#/stream" class="button button-positive button-outline {{ shoutoutClass }}"
+                <a href="" class="button button-positive button-outline {{ shoutoutClass }}"
                    ng-click="toggleFilter('shoutout')"><i class="ion icon ion-chatbox-working"></i></a>
-                <a href="#/stream" class="informher-btn-add button button-positive"
+                <a href="" class="informher-btn-add button button-positive"
                    ng-click="openModal('shoutout.html')"><i class="ion icon ion-plus"></i></a>
             </div>
         </div>
     </header>
-    <view title="'Stream'">
-        <content has-header="true" has-subheader="true" has-footer="true" has-subfooter="true" on-refresh="onRefresh()">
+    <view title="'Stream'" left-buttons="leftButtons" right-buttons="rightButtons" disable-back-button="true">
+        <content has-header="true" has-subheader="true" has-footer="true" on-refresh="onRefresh()">
             <list id="stream" item-type="item-avatar">
                 <item ng-repeat="post in posts" href="#/stream/view/{{post.id}}" class="post post-{{post.category}}">
                     <img class="avatar-author" src="http://lorempixel.com/40/40/cats/{{post.author}}"
-                         alt="{{post.author}}"/>
+                         alt="{{post.author}}">
                     <strong class="category"><i
                             class="ion icon {{ (post.category == 'ask' ? 'ion-help-circled' : (post.category == 'relate' ? 'ion-information-circled' : (post.category == 'shoutout' ? 'ion-chatbox-working' : ''))) }}"></i>
                         {{post.category}}</strong>
@@ -54,7 +46,7 @@
             <ion-scroll-refresher>Pull to refresh...</ion-scroll-refresher>
         </content>
     </view>
-    <footer class="bar bar-subfooter bar-stable">
+    <footer class="bar bar-footer bar-stable">
         <div class="informher-sort">
             <button class="button button-icon icon {{ sortTitleClass }}" ng-click="doSort('title')">Title</button>
             <button class="button button-icon icon {{ sortAuthorClass }}" ng-click="doSort('author')">Author</button>
@@ -79,19 +71,6 @@
         </list>
     </content>
 </div>
-
-<div id="menu-right" class="menu menu-right">
-    <header class="bar bar-header bar-dark">
-        <h1 class="title">Settings</h1>
-    </header>
-    <content has-header="true">
-        <list>
-            <item>Account</item>
-            <item>Stream</item>
-        </list>
-    </content>
-</div>
-
 
 <script id="ask.html" type="text/ng-template">
     <div class="modal">
@@ -202,4 +181,21 @@
             </div>
         </content>
     </div>
+</script>
+<script id="language.html" type="text/ng-template">
+	<div class="modal">
+		<header class="bar bar-header bar-dark">
+			<h1 class="title">Select language</h1>
+		</header>
+		<content has-header="true">
+			<list>
+				<item href="" ng-click="setLanguage('en-PH'); closeModal()">{{ 'ENGLISH' | translate }}</item>
+				<item href="" ng-click="setLanguage('tl-PH'); closeModal()">{{ 'TAGALOG' | translate }}</item>
+			</list>
+			<div class="padding-horizontal">
+				<button class="button button-positive" type="button" ng-click="submit()">Submit Report</button>
+				<button class="button" type="button" ng-click="closeModal()">Cancel</button>
+			</div>
+		</content>
+	</div>
 </script>

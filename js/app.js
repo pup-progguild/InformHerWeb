@@ -10,14 +10,24 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
         $scope.setLanguage = function(lang) {
             $translate.use(lang);
         };
+
+		$scope.user = {
+			id: 0,
+			name: 'ichi-san',
+			email: 'ichi-san@example.com',
+			joined: '2014-02-14',
+			fbUrl: 'icchan',
+			twitterHandle: 'ichiSan',
+			website: 'http://ichi-san.example.com',
+			bio: 'I am number 1. あたしは一番デース～！'
+		};
     })
     .config(function($translateProvider) {
         $translateProvider
             .translations('en-PH', {
                 APP_ID: 'InformHer',
 
-                ENGLISH: 'English',
-                TAGALOG: 'Tagalog',
+                _LANGUAGE: 'English',
 
                 LOGIN: 'Login',
                 LOGOUT: 'Logout',
@@ -42,8 +52,7 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
             .translations('tl-PH', {
                 APP_ID: 'InformHer',
 
-                ENGLISH: 'Ingles',
-                TAGALOG: 'Tagalog',
+		        _LANGUAGE: 'Tagalog',
 
                 LOGIN: 'Mag-login',
                 LOGOUT: 'Mag-logout',
@@ -141,6 +150,28 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 templateUrl: 'templates/pages/shoutout.html',
                 controller: 'ShoutoutPostCtrl'
             })
+	        .state('settings', {
+		        url: '/settings',
+		        abstract: true,
+		        templateUrl: '',
+		        controller: 'MainCtrl'
+	        })
+	        .state('settings.main', {
+		        url: '/main',
+		        templateUrl: 'templates/pages/settings.html',
+		        controller: 'MainCtrl'
+	        })
+	        .state('settings.language', {
+		        url: '/language',
+		        parent: 'settings',
+		        templateUrl: 'templates/pages/language.html',
+		        controller: 'MainCtrl'
+	        })
+	        .state('settings.sort', {
+		        url: '/sort',
+		        templateUrl: 'templates/pages/sort.html',
+		        controller: 'MainCtrl'
+	        })
         ;
 
         $urlRouterProvider.otherwise('/home');

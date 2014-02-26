@@ -149,10 +149,13 @@ angular.module('informher.controllers', [])
     })
 
 // A simple controller that fetches a list of data from a service
-    .controller('StreamCtrl', function ($scope, $stateParams, $ionicModal, PostService, TagService, SessionService, $http) {
+    .controller('StreamCtrl', function ($scope, $stateParams, $state, $ionicModal, PostService, TagService, $http) {
         var contentEl = document.getElementById('menu-center');
         var content = new ionic.views.SideMenuContent({
-            el: contentEl
+            el: contentEl,
+	        onDrag: function(e) {
+		        console.log('a');
+	        }
         });
 
         var leftMenuEl = document.getElementById('menu-left');
@@ -161,19 +164,37 @@ angular.module('informher.controllers', [])
             width: 270
         });
 
-        var rightMenuEl = document.getElementById('menu-right');
-        var rightMenu = new ionic.views.SideMenu({
-            el: rightMenuEl,
-            width: 270
-        });
-
         $scope.sideMenuController = new ionic.controllers.SideMenuController({
             content: content,
             left: leftMenu,
-            right: rightMenu
         });
 
-        $scope.user = SessionService.user;
+		$scope.leftButtons = [
+			{
+				type: 'button-clear',
+				content: '<i class="icon ion-navicon"></i>',
+				tap: function(e) {
+					$scope.toggleLeft();
+				}
+			},
+			{
+				type: 'button-clear',
+				content: '<i class="icon ion-search"></i>',
+				tap: function(e) {
+					alert('search');
+				}
+			}
+		];
+
+		$scope.rightButtons = [
+			{
+				type: 'button-clear',
+				content: '<i class="icon ion-gear-a"></i>',
+				tap: function(e) {
+					$state.go('settings.main');
+				}
+			}
+		];
 
         // "Pets" is a service returning mock data (services.js)
         $scope.posts = [];// = PostService.all();
@@ -258,7 +279,7 @@ angular.module('informher.controllers', [])
          *  MODALS  *
          * -------- */
 
-        $scope.modalUrls = ['ask.html', 'relate.html', 'shoutout.html'];
+        $scope.modalUrls = ['ask.html', 'relate.html', 'shoutout.html', 'language.html'];
         $scope.currentModal = '';
         $scope.modals = [];
 
