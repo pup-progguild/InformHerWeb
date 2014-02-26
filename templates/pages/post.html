@@ -1,36 +1,28 @@
-<!--
-  This template loads for the 'tab.pet-detail' state (app.js)
-  'pet' is a $scope variable created in the PetCtrl controller (controllers.js)
-  The PetCtrl pulls data from the Pets service (service.js)
-  The Pets service returns an array of pet data
--->
-<view title="'Viewing post &quot;' + post.title + '&quot;'">
-    <content has-header="true">
-        <div class="single single-{{ post.category }}">
-            <div class="single-meta">
-                <h3 class="category">{{ post.category }}</h3>
-                <img class="avatar-author" src="http://lorempixel.com/80/80/cats/{{post.author}}" alt="{{post.author}}">
+<content has-header="true">
+    <div class="single single-{{ post.category }}">
+        <div class="single-meta">
+            <h3 class="category">{{ post.category }}</h3>
+            <img class="avatar-author" src="http://lorempixel.com/80/80/cats/{{post.author}}" alt="{{post.author}}">
 
-                <h2 class="title">{{ post.title }}</h2>
+            <h2 class="title">{{ post.title }}</h2>
 
-                <div>
-                    Tagged:
-                    <ul class="tags">
-                        <li ng-repeat="tag in post.tags"
-                            style="background-color: {{bgColorForTag(tag)}}; color: {{fgColorForTag(tag)}}">{{tag}}
-                        </li>
-                    </ul>
-                </div>
-                Posted
-                <time datetime="{{ post.date }}">{{ formatDate(post.date) }}</time>
-                by <em class="author">{{ post.author }}</em>
+            <div>
+                Tagged:
+                <ul class="tags">
+                    <li ng-repeat="tag in post.tags"
+                        style="background-color: {{bgColorForTag(tag)}}; color: {{fgColorForTag(tag)}}">{{tag}}
+                    </li>
+                </ul>
             </div>
-            <div class="content">
-                {{ post.content }}
-            </div>
+            Posted
+            <time datetime="{{ post.date }}">{{ formatDate(post.date) }}</time>
+            by <em class="author">{{ post.author }}</em>
         </div>
-        <div class="padding-horizontal">
-            <a class="button" type="button" href="#/stream">Back</a>
+        <div class="content">
+            {{ post.content }}
         </div>
-    </content>
-</view>
+    </div>
+    <div class="padding-horizontal">
+        <a class="button" type="button" href="#/stream">Back</a>
+    </div>
+</content>

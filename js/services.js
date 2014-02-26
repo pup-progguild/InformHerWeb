@@ -3,12 +3,21 @@ angular.module('informher.services', [])
 /**
  * A simple example service that returns some data.
  */
-    .factory('PostService', function () {
+    .factory('PostService', function ($http) {
         // Might use a resource here that returns a JSON array
+        var posts;
 
+        $http.get('http://informherapi.azurewebsites.net/posts')
+            .success(function(data) {
+                posts = data.content;
+                console.log(data);
+            })
+            .error(function(data) {
+                console.log(data);
+            });
 
         // Some fake testing data
-        var posts = [
+        posts = [
             {
                 id: 0,
                 category: 'ask',
@@ -95,16 +104,23 @@ angular.module('informher.services', [])
         }
     })
     .factory('SessionService', function() {
+        var currentUser = {
+            id: 0,
+            name: 'ichi-san',
+            email: 'ichi-san@example.com',
+            joined: '2014-02-14',
+            fbUrl: 'icchan',
+            twitterHandle: 'ichiSan',
+            website: 'http://ichi-san.example.com',
+            bio: 'I am number 1. あたしは一番デース～！'
+        };
         return {
-            user: {
-                id: 0,
-                name: 'ichi-san',
-                email: 'ichi-san@example.com',
-                joined: '2014-02-14',
-                fbUrl: 'icchan',
-                twitterHandle: 'ichiSan',
-                website: 'http://ichi-san.example.com',
-                bio: 'I am number 1. あたしは一番デース～！'
+            user: currentUser,
+            login: function(username) {
+
+            },
+            logout: function() {
+                currentUser = null;
             }
         };
     })

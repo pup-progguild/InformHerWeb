@@ -1,5 +1,5 @@
 angular.module('informher.controllers', [])
-    .controller('LoginCtrl', function($translate, $scope, $state, $http) {
+    .controller('LoginCtrl', function($translate, $scope, $state, $http, SessionService) {
 
         /* -------- *
          *  FIELDS  *
@@ -30,18 +30,24 @@ angular.module('informher.controllers', [])
 
         $scope.submit = function() {
             $scope.hideMessage();
-            $http.post('http://192.168.7.5/InformHerAPI/wwwroot/user/login', {
+            console.log($scope.user.name, $scope.user.pass);
+            $http.post('http://informherapi.azurewebsites.net/user/login', {
                     'username': $scope.user.name,
                     'password': $scope.user.pass
                 }
             )
                 .success(function() {
+                    SessionService.login($scope.user.name);
                     $state.go('stream');
                 })
                 .error(function(data) {
                     switch(data.status) {
                         case "USER_LOGIN_FAILED":
                             $scope.displayMessage(data.description, data.status, "Error");
+                            break;
+                        default:
+                            $scope.displayMessage("The app cannot communicate with the InformHer server due to connectivity problems. Please try again later.", "CONNECTIVITY_ERROR", "Error");
+                            break;
                     }
                     console.log(data);
                 });
@@ -66,23 +72,12 @@ angular.module('informher.controllers', [])
          *  METHODS  *
          * --------- */
 
-        $scope.canRegister = function() {
-            return ($scope.username != '')
-                && ($scope.email != '')
-                && ($scope.acceptPassword($scope.password))
-                && ($scope.password == $scope.passwordAgain)
-                && ($scope.agree);
-        };
-
-        $scope.acceptPassword = function() {
-            return ('' + $scope.password).length > 6;
-        };
-
         $scope.submit = function() {
-            $http.post('http://192.168.7.5/InformHerAPI/wwwroot/index.php/user/login', {
+            $http.post('http://informherapi.azurewebsites.net/user', {
                     'username': $scope.username,
                     'email': $scope.email,
-                    'password': $scope.password
+                    'password': $scope.password,
+                    'password_confirmation': $scope.passwordAgain
                 }
             )
         };
@@ -154,7 +149,7 @@ angular.module('informher.controllers', [])
     })
 
 // A simple controller that fetches a list of data from a service
-    .controller('StreamCtrl', function ($scope, $stateParams, $ionicModal, PostService, TagService, SessionService) {
+    .controller('StreamCtrl', function ($scope, $stateParams, $ionicModal, PostService, TagService, SessionService, $http) {
         var contentEl = document.getElementById('menu-center');
         var content = new ionic.views.SideMenuContent({
             el: contentEl
@@ -248,6 +243,15 @@ angular.module('informher.controllers', [])
             $scope.sortTitleClass = $scope.currentSort != 'title' ? '' : 'active ' + ($scope.sortAscending.title ? 'ion-arrow-up-c' : 'ion-arrow-down-c');
             $scope.sortAuthorClass = $scope.currentSort != 'author' ? '' : 'active ' + ($scope.sortAscending.author ? 'ion-arrow-up-c' : 'ion-arrow-down-c');
             $scope.sortDateClass = $scope.currentSort != 'date' ? '' : 'active ' + ($scope.sortAscending.date ? 'ion-arrow-up-c' : 'ion-arrow-down-c');
+        };
+
+        $scope.logout = function() {
+            $http.get('http://informherapi.azurewebsites.net/user/logout')
+                .success(function() {
+                    SessionService.logout();
+                    $state.go('home');
+                })
+
         };
 
         /* -------- *
