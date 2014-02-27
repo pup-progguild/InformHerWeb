@@ -162,6 +162,10 @@ angular.module('informher.controllers', [])
             $scope.sideMenuController.toggleLeft();
         };
 
+        $scope.onRefresh = function() {
+            console.log("TODO refresh");
+        };
+
         PostService.get('*')
             .then(function (response) {
                 if (response.data.status == "POST_SHOW_SUCCESSFUL") {
@@ -171,6 +175,10 @@ angular.module('informher.controllers', [])
     })
 
     .controller('PostCtrl', function ($scope, $stateParams, PostService, CommentService, UserService) {
+        $scope.onRefresh = function() {
+            console.log("TODO refresh");
+        };
+
         PostService.get('postId', $stateParams.postId)
             .then(function (response) {
                 if (response.data.status == "POST_SHOW_SUCCESSFUL") {
