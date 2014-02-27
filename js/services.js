@@ -1,16 +1,5 @@
 (function() {
     angular.module('informher.services', [])
-        .service('UserService', function() {
-            this.user = null;
-
-            this.getLoggedUser = function() {
-                return this.user;
-            };
-
-            this.setLoggedUser = function(user) {
-                this.user = user;
-            }
-        })
         .service('ApiService', function($http) {
             var requestBaseProtocol = 'http';
             //var requestBase = requestBaseProtocol + '://192.168.137.91/InformHerAPI/wwwroot';
@@ -19,10 +8,27 @@
             var requestBase = requestBaseProtocol + '://informherapi.cloudapp.net';
 
             this.getResponse = function(method, path, body) {
-                return $http[method](requestBase + path, body);
+                return $http[method](requestBase + path, body || {});
             };
         })
-        .factory('PostService', function($q, $timeout, ApiService) {
+        .service('UserService', function($http, $q, $timeout, ApiService) {
+            this.getProfile = function(id) { // TODO get own user profile
+                var deferred = $q.defer();
+                $timeout(function() {
+                    deferred.resolve(ApiService.getResponse('get', id === undefined ? '/user' : '/user/profile/' + id));
+                }, 1000);
+                return deferred.promise;
+            };
+
+            this.getUserData = function(id) { // TODO make use of ID
+                var deferred = $q.defer();
+                $timeout(function() {
+                    deferred.resolve(ApiService.getResponse('get', id === undefined ? '/user' : '/user'));
+                }, 1000);
+                return deferred.promise;
+            };
+        })
+        .service('PostService', function($q, $timeout, ApiService) {
             var queries = {
                 '*': {
                     timeout: 1000,
@@ -36,7 +42,7 @@
                 }
             };
 
-            var get = function(which) {
+            this.get = function(which) {
                 var query = queries[which];
                 var args = Array.prototype.slice.call(arguments);
                 args.shift();
@@ -52,12 +58,8 @@
                 }, query.timeout);
                 return deferred.promise;
             };
-
-            return {
-                get: get
-            };
         })
-        .factory('CommentService', function($q, $timeout, ApiService) {
+        .service('CommentService', function($q, $timeout, ApiService) {
             var queries = {
                 'postId.*': {
                     timeout: 1000,
@@ -71,7 +73,7 @@
                 }
             };
 
-            var get = function(which) {
+            this.get = function(which) {
                 var query = queries[which];
                 var args = Array.prototype.slice.call(arguments);
                 args.shift();
@@ -86,10 +88,6 @@
                     );
                 }, query.timeout);
                 return deferred.promise;
-            };
-
-            return {
-                get: get
             };
         })
     ;

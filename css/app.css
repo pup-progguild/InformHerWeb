@@ -2,3 +2,12 @@
     float: left;
     margin-right: 1em;
 }
+
+.informher-comment-item > h3 {
+    float: left;
+    margin-right: 2em;
+}
+
+.informher-comment-item > p.timestamp {
+    font-size: 75%;
+}

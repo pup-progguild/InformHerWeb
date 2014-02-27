@@ -7,21 +7,36 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('informher', ['ionic', 'informher.services', 'informher.controllers', 'pascalprecht.translate'])
     .controller('SessionCtrl', function($translate, $scope, UserService) {
+        $scope.user = null;
+
+        var defaults = {
+            'informher-language': $translate.preferredLanguage()
+        };
+
         $scope.setLanguage = function(lang) {
             $translate.use($scope.language = lang);
+            localStorage.setItem('informher-language', lang);
         };
 
         $scope.goBack = function() {
             history.back();
         };
 
-        $scope.setLanguage($translate.preferredLanguage());
+        for(var key in defaults)
+            if(localStorage.getItem(key) == null)
+                localStorage.setItem(key, defaults[key]);
+
+        $scope.user = JSON.parse(localStorage.getItem('informher-current-user'));
+        $scope.setLanguage(localStorage.getItem('informher-language'));
+
     })
     .config(function($translateProvider) {
         $translateProvider
             .translations('en-PH', {
-                _LANGUAGE: 'English',
+                _LANGUAGE_ID: 'English',
                 _APP_ID: 'InformHer',
+
+                LANGUAGE: 'Language',
 
                 LOGIN: 'Login',
                 LOGOUT: 'Logout',
@@ -44,8 +59,10 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 SHOUTOUT: 'Shoutout'
             })
             .translations('tl-PH', {
-                _LANGUAGE: 'Tagalog',
+                _LANGUAGE_ID: 'Tagalog',
                 _APP_ID: 'InformHer',
+
+                LANGUAGE: 'Wika',
 
                 LOGIN: 'Mag-login',
                 LOGOUT: 'Mag-logout',
@@ -67,7 +84,8 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 RELATE: 'Ibahagi',
                 SHOUTOUT: 'Shoutout'
             })
-            .preferredLanguage('en-PH');
+            .preferredLanguage('en-PH')
+            .fallbackLanguage('en-PH');
     })
 
     .config(function ($stateProvider, $urlRouterProvider) {
@@ -115,6 +133,11 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 url: '/settings',
                 abstract: true,
                 templateUrl: '',
+                controller: 'SessionCtrl'
+            })
+            .state('settings.main', {
+                url: '/main',
+                templateUrl: 'menus/settings.html',
                 controller: 'SessionCtrl'
             })
             .state('settings.language', {

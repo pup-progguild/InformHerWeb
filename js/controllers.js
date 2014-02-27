@@ -1,5 +1,5 @@
 angular.module('informher.controllers', [])
-    .controller('AuthCtrl', function ($scope, $state, UserService, ApiService) {
+    .controller('AuthCtrl', function ($scope, $state, ApiService, UserService) {
         $scope.registrationSuccessful = false;
 
         $scope.message = {
@@ -106,19 +106,30 @@ angular.module('informher.controllers', [])
                 }
             }
 
-            var request = ApiService.getResponse(query.method, query.path, query.body || {})
+            var request = ApiService.getResponse(query.method, query.path, query.body)
                 .success(function (response) {
                     switch (authType) {
                         case 'login':
-                            UserService.setLoggedUser(response.user.id);
-                            $state.go('stream.feed');
+                            UserService.getProfile(response.user.id)
+                                .then(function(response2) {
+                                    if(response2.data.status == "USER_PROFILE_FETCH_SUCESS") {
+                                        $scope.user = response2.data.profile;
+                                        $scope.user.id = response.user.id;
+                                        $scope.user.username = response.user.username;
+                                        $scope.user.email = response.user.email;
+                                        localStorage.setItem('informher-current-user', JSON.stringify($scope.user));
+                                    }
+                                    $state.go('stream.feed');
+                                });
                             break;
                         case 'register':
                             $scope.registrationSuccessful = true;
                             $scope.displayInformationMessage(response.description, "Message: " + response.status);
                             break;
                         case 'logout':
-                            UserService.setLoggedUser(null);
+                            $scope.user = null;
+                            localStorage.removeItem('informher-current-user');
+                            $state.go('home');
                             break;
                         default:
                             console.log('Unknown auth type ' + authType);
@@ -157,15 +168,6 @@ angular.module('informher.controllers', [])
                     $scope.posts = response.data.posts.result;
                 }
             });
-
-        /*
-         PostService.getAllPosts()
-         .then(function(response) {
-         if(response.data.status == "POST_SHOW_SUCCESSFUL") {
-         $scope.posts = response.data.posts.result;
-         }
-         });
-         */
     })
 
     .controller('PostCtrl', function ($scope, $stateParams, PostService, CommentService, UserService) {

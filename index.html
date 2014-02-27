@@ -57,7 +57,21 @@
 
     <!-- Left menu -->
     <ion-side-menu side="left" id="sidemenuProfile">
-        Left
+        <div class="bar bar-header bar-dark item-input-inset">
+            <h2 class="title">You</h2>
+        </div>
+        <ion-content has-header="true">
+            <div class="list">
+                <div class="item item-thumbnail-left">
+                    <img class="avatar-author" src="http://lorempixel.com/48/48/cats/{{user.id}}" alt="{{user.username}}" />
+                    <h2>{{user.username}}</h2>
+                    <p>Joined <time>{{user.created_at}}</time></p>
+                </div>
+                <a class="item">
+                    Logout
+                </a>
+            </div>
+        </ion-content>
     </ion-side-menu>
 </ion-side-menus>
 
@@ -77,7 +91,7 @@
             </div>
         </ion-content>
         <ion-footer-bar type="padding-horizontal" id="informher-language-list">
-            <a class="button button-clear" href="#/settings/language"><i class="icon ion-ios7-world"></i> Language</a>
+            <a class="button button-clear" href="#/settings/language"><i class="icon ion-ios7-world"></i> {{ 'LANGUAGE' | translate }}</a>
         </ion-footer-bar>
     </ion-nav-page>
 </script>
@@ -186,7 +200,7 @@
                 <i class="icon ion-ios7-search placeholder-icon"></i>
                 <input type="search" placeholder="{{ 'SEARCH' | translate }}">
             </label>
-            <button class="button button-clear"><i class="icon ion-gear-a"></i></button>
+            <a class="button button-clear" href="#/settings/main"><i class="icon ion-gear-a"></i></a>
         </div>
         <div class="bar bar-subheader">
             <button class="button button-outline button-energized"><i class="icon ion-help-circled"></i></button>
@@ -203,7 +217,7 @@
                     <img class="avatar-author" src="http://lorempixel.com/48/48/cats/{{post.author.id}}" alt="{{post.author.username}}" />
                     <strong>{{post.category.name}}</strong>
                     <h2>{{post.title}}</h2>
-                    <p>Posted by {{post.author.username}} on {{post.created_at}}</p>
+                    <p>Posted by {{post.author.username}} on <time>{{post.created_at}}</time></p>
                 </a>
             </ion-list>
         </ion-content>
@@ -222,7 +236,7 @@
                     <img class="avatar-author" src="http://lorempixel.com/48/48/cats/{{post.author.id}}" alt="{{post.author.username}}" />
                     <strong>{{post.category.name}}</strong>
                     <h2>{{post.title}}</h2>
-                    <p>Posted by <a href="#/profile/{{post.author.id}}">{{post.author.username}}</a> on {{post.created_at}}</p>
+                    <p>Posted by <a href="#/profile/{{post.author.id}}">{{post.author.username}}</a> on <time>{{post.created_at}}</time></p>
                 </div>
                 <div class="item item-text-wrap">
                     <p>{{post.content}}</p>
@@ -230,11 +244,19 @@
                 <div class="item item-divider">
                     <em>{{post.likers}}</em> likes &middot; <em>{{post.comments.length}}</em> comments
                 </div>
-                <div ng-repeat="comment in post.comments" class="item item-avatar">
+                <div ng-repeat="comment in post.comments" class="item item-avatar informher-comment-item">
                     <img class="avatar-author" src="http://lorempixel.com/32/32/cats/{{comment.author.id}}" alt="{{comment.author.username}}" />
                     <h3><a href="#/profile/{{comment.author.id}}">{{comment.author.username}}</a></h3>
-                    <time>{{comment.created_at}}</time>
+                    <p class="timestamp">Commented on <time>{{comment.created_at}}</time></p>
                     <p>{{comment.message}}</p>
+                </div>
+                <div class="item item-divider">
+                    Post a comment
+                </div>
+                <div class="item item-avatar">
+                    <img class="avatar-author" src="http://lorempixel.com/32/32/cats/{{user.id}}" alt="{{user.username}}" />
+                    <textarea></textarea>
+                    <button class="button" ng-click="postComment()">Post</button>
                 </div>
             </div>
         </ion-content>
@@ -253,15 +275,45 @@
 </script>
 
 <!--== MENUS ==-->
+<script id="menus/settings.html" type="text/ng-template">
+    <div class="bar bar-header bar-dark">
+        <button class="button button-icon" ng-click="goBack()"><i class="icon ion-arrow-left-c"></i></button>
+        <h1 class="title">Settings</h1>
+    </div>
+    <ion-content has-header="true">
+        <div class="list">
+            <div class="item item-divider">Account</div>
+            <div class="item item-toggle">
+                Track my location and display it in profile
+                <label class="toggle">
+                    <input type="checkbox">
+                    <div class="track">
+                        <div class="handle"></div>
+                    </div>
+                </label>
+            </div>
+            <div class="item item-divider">Stream</div>
+            <a class="item" href="#/settings/language">
+                Language
+                <span class="item-note">English</span>
+            </a>
+            <a class="item" href="#/settings/sort">
+                Default Sort
+                <span class="item-note">Date, older</span>
+            </a>
+        </div>
+    </ion-content>
+</script>
+
 <script id="menus/language.html" type="text/ng-template">
     <div class="bar bar-header bar-dark">
         <button class="button button-icon" ng-click="goBack()"><i class="icon ion-arrow-left-c"></i></button>
-        <h1 class="title">Language</h1>
+        <h1 class="title">{{ 'LANGUAGE' | translate }}</h1>
     </div>
     <ion-content has-header="true">
         <div class="list">
             <label class="item item-radio">
-                <input type="radio" name="lang" ng-click="setLanguage('en-PH')">
+                <input type="radio" name="lang" ng-checked="language == 'en-PH'" ng-click="setLanguage('en-PH')">
                 <div class="item-content">English</div>
                 <i class="radio-icon ion-checkmark"></i>
             </label>
