@@ -8,6 +8,39 @@
     margin-right: 2em;
 }
 
-.informher-comment-item > p.timestamp {
+.informher-comment-item > .timestamp {
     font-size: 75%;
+}
+
+.informher-comment-item > button.informher-btn-like {
+    font-size: 75%;
+}
+
+.informher-category-tag {
+    padding: 0 0.25em;
+}
+
+.informher-ask {
+    background-color: #ffb50c;
+    color: #ffffff;
+}
+
+.informher-relate {
+    background-color: #00cc3d;
+    color: #ffffff;
+}
+
+.informher-shoutout {
+    background-color: #00a0e5;
+    color: #ffffff;
+}
+
+.informher-post-tags > .informher-post-tag {
+    margin-left: 1em;
+    padding: 0.25em 0.5em;
+    background-color: #ddd;
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 80%;
 }

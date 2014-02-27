@@ -1,5 +1,5 @@
 angular.module('informher.controllers', [])
-    .controller('AuthCtrl', function ($scope, $state, ApiService, UserService) {
+    .controller('AuthCtrl', function ($scope, $state, ApiService, UserService, Base64, Auth) {
         $scope.registrationSuccessful = false;
 
         $scope.message = {
@@ -110,6 +110,7 @@ angular.module('informher.controllers', [])
                 .success(function (response) {
                     switch (authType) {
                         case 'login':
+                            //Auth.setCredentials($scope.input.username, $scope.input.password);
                             UserService.getProfile(response.user.id)
                                 .then(function(response2) {
                                     if(response2.data.status == "USER_PROFILE_FETCH_SUCESS") {
@@ -117,6 +118,7 @@ angular.module('informher.controllers', [])
                                         $scope.user.id = response.user.id;
                                         $scope.user.username = response.user.username;
                                         $scope.user.email = response.user.email;
+                                        localStorage.setItem('informher-auth', Base64.encode($scope.input.username + ":" + $scope.input.password));
                                         localStorage.setItem('informher-current-user', JSON.stringify($scope.user));
                                     }
                                     $state.go('stream.feed');
@@ -128,6 +130,7 @@ angular.module('informher.controllers', [])
                             break;
                         case 'logout':
                             $scope.user = null;
+                            localStorage.removeItem('informher-auth');
                             localStorage.removeItem('informher-current-user');
                             $state.go('home');
                             break;
@@ -157,7 +160,7 @@ angular.module('informher.controllers', [])
         $scope.reset();
     })
 
-    .controller('StreamCtrl', function ($scope, PostService, UserService) {
+    .controller('StreamCtrl', function ($scope, Auth, PostService, UserService) {
         $scope.toggleLeft = function () {
             $scope.sideMenuController.toggleLeft();
         };
@@ -166,7 +169,7 @@ angular.module('informher.controllers', [])
             console.log("TODO refresh");
         };
 
-        PostService.get('*')
+        PostService.do('GET:*')
             .then(function (response) {
                 if (response.data.status == "POST_SHOW_SUCCESSFUL") {
                     $scope.posts = response.data.posts.result;
@@ -174,26 +177,35 @@ angular.module('informher.controllers', [])
             });
     })
 
-    .controller('PostCtrl', function ($scope, $stateParams, PostService, CommentService, UserService) {
+    .controller('PostCtrl', function ($scope, $stateParams, PostService, CommentService, Auth) {
+        $scope.message = 'this is a post by temotius';
+
         $scope.onRefresh = function() {
             console.log("TODO refresh");
         };
 
-        PostService.get('postId', $stateParams.postId)
+        $scope.postComment = function() {
+            CommentService.do('POST:postId.+', $stateParams.postId, { 'message': $scope.message })
+                .then(function (response) {
+                    console.log(response);
+                });
+        };
+
+        PostService.do('GET:postId', $stateParams.postId)
             .then(function (response) {
                 if (response.data.status == "POST_SHOW_SUCCESSFUL") {
                     $scope.post = response.data.posts;
 
-                    CommentService.get('postId.*', $stateParams.postId)
+                    CommentService.do('GET:postId.*', $stateParams.postId)
                         .then(function (response) {
                             if (response.data.status == "POST_COMMENT_RETRIEVE_SUCCESSFUL") {
-                                $scope.post.comments = response.data.comments;
-                                console.log($scope.post.comments);
+                                $scope.post.comments = response.data.comment.result;
                             }
                         });
                 }
             })
         ;
+
         /*
          PostService.getPost($stateParams.postId)
          .then(function(response) {

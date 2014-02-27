@@ -75,7 +75,6 @@
     </ion-side-menu>
 </ion-side-menus>
 
-
 <!--== PAGES ==-->
 
 <script id="pages/home.html" type="text/ng-template">
@@ -215,7 +214,7 @@
             <ion-list>
                 <a ng-repeat="post in posts" class="item item-avatar informher-stream-item-meta" href="#/stream/view/{{post.id}}">
                     <img class="avatar-author" src="http://lorempixel.com/48/48/cats/{{post.author.id}}" alt="{{post.author.username}}" />
-                    <strong>{{post.category.name}}</strong>
+                    <strong class="informher-{{post.category.name}} informher-category-tag">{{post.category.name}}</strong>
                     <h2>{{post.title}}</h2>
                     <p>Posted by {{post.author.username}} on <time>{{post.created_at}}</time></p>
                 </a>
@@ -224,6 +223,13 @@
                 <i class="icon ion-loading-a"></i>
             </ion-scroll-refresher>
         </ion-content>
+        <div class="bar bar-footer">
+            <div class="button-bar">
+                <button class="button icon-left">Title</button>
+                <button class="button icon-left">Author</button>
+                <button class="button icon-left icon ion-arrow-down-a">Date</button>
+            </div>
+        </div>
     </ion-nav-page>
 </script>
 
@@ -231,17 +237,21 @@
     <ion-nav-page id="pagePost">
         <div class="bar bar-header bar-dark item-input-inset">
             <button class="button button-icon" ng-click="goBack()"><i class="icon ion-arrow-left-c"></i></button>
-            <h1 class="title">Viewing post: {{post.title}}</h1>
+            <h1 class="title">Post &mdash; View</h1>
         </div>
         <ion-content has-header="true" has-footer="true" on-refresh="onRefresh()">
             <div class="list">
                 <div class="item item-thumbnail-left informher-stream-item-meta">
                     <img class="avatar-author" src="http://lorempixel.com/48/48/cats/{{post.author.id}}" alt="{{post.author.username}}" />
-                    <strong>{{post.category.name}}</strong>
+                    <strong class="informher-{{post.category.name}} informher-category-tag">{{post.category.name}}</strong>
                     <h2>{{post.title}}</h2>
-                    <p>Posted by <a href="#/profile/{{post.author.id}}">{{post.author.username}}</a> on <time>{{post.created_at}}</time></p>
-                    <button class="button button-small"><i class="icon ion-thumbsup icon-left"></i> {{post.likers}}</button>
-                    <button class="button button-small">Edit</button>
+                    <p><a href="#/profile/{{post.author.id}}">{{post.author.username}}</a> &middot; <time>{{post.created_at}}</time></p>
+                    <button class="button icon-left button-small ion-thumbsup">Like ({{post.likers}})</button>
+                    <button class="button icon-left button-small ion-compose">Edit</button>
+                </div>
+                <div class="item item-text-wrap informher-post-tags">
+                    Tags:
+                    <a class="informher-post-tag" ng-repeat="tag in post.tags" href="#/stream/tag/{{tag.id}}">{{tag.tagname}}</a>
                 </div>
                 <div class="item item-text-wrap">
                     {{post.content}}
@@ -251,14 +261,15 @@
                 </div>
                 <div class="item item-avatar">
                     <img class="avatar-author" src="http://lorempixel.com/32/32/cats/{{user.id}}" alt="{{user.username}}" />
-                    <textarea placeholder="Tap to begin writing"></textarea>
+                    <textarea ng-model="message" placeholder="Tap to begin writing"></textarea>
                     <button class="button button-small button-positive" ng-click="postComment()">Submit</button>
                 </div>
                 <div ng-repeat="comment in post.comments" class="item item-avatar informher-comment-item">
                     <img class="avatar-author" src="http://lorempixel.com/32/32/cats/{{comment.author.id}}" alt="{{comment.author.username}}" />
                     <h3><a href="#/profile/{{comment.author.id}}">{{comment.author.username}}</a></h3>
-                    <p class="timestamp">Commented on <time>{{comment.created_at}}</time></p>
+                    <time class="timestamp">{{comment.created_at}}</time>
                     <p>{{comment.message}}</p>
+                    <button class="button button-clear button-small icon-left ion-thumbsup informher-btn-like">Like ({{comment.likers}})</button>
                 </div>
             </div>
         </ion-content>
