@@ -9,3 +9,6 @@ Thumbs.db
 # IDE
 /.idea
 
+# XDK
+*.xdk
+*.xdke

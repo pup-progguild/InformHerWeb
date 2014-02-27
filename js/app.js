@@ -101,6 +101,16 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 templateUrl: 'pages/stream.html',
                 controller: 'StreamCtrl'
             })
+            .state('stream.view', {
+                url: '/view/:postId',
+                templateUrl: 'pages/post.html',
+                controller: 'PostCtrl'
+            })
+            .state('profile', {
+                url: '/profile/:userId',
+                templateUrl: 'pages/profile.html',
+                controller: 'UserCtrl'
+            })
             .state('settings', {
                 url: '/settings',
                 abstract: true,

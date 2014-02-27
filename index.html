@@ -177,6 +177,7 @@
         </ion-content>
     </ion-nav-page>
 </script>
+
 <script id="pages/stream.html" type="text/ng-template">
     <ion-nav-page id="pageStream">
         <div class="bar bar-header bar-dark item-input-inset">
@@ -197,7 +198,56 @@
             <button class="button button-clear button-dark"><i class="icon ion-contrast"></i></button>
         </div>
         <ion-content has-header="true" has-subheader="true" has-footer="true">
-            stream
+            <ion-list>
+                <a ng-repeat="post in posts" class="item item-avatar informher-stream-item-meta" href="#/stream/view/{{post.id}}">
+                    <img class="avatar-author" src="http://lorempixel.com/48/48/cats/{{post.author.id}}" alt="{{post.author.username}}" />
+                    <strong>{{post.category.name}}</strong>
+                    <h2>{{post.title}}</h2>
+                    <p>Posted by {{post.author.username}} on {{post.created_at}}</p>
+                </a>
+            </ion-list>
+        </ion-content>
+    </ion-nav-page>
+</script>
+
+<script id="pages/post.html" type="text/ng-template">
+    <ion-nav-page id="pagePost">
+        <div class="bar bar-header bar-dark item-input-inset">
+            <button class="button button-icon" ng-click="goBack()"><i class="icon ion-arrow-left-c"></i></button>
+            <h1 class="title">Viewing post: {{post.title}}</h1>
+        </div>
+        <ion-content has-header="true" has-footer="true">
+            <div class="list">
+                <div class="item item-thumbnail-left informher-stream-item-meta">
+                    <img class="avatar-author" src="http://lorempixel.com/48/48/cats/{{post.author.id}}" alt="{{post.author.username}}" />
+                    <strong>{{post.category.name}}</strong>
+                    <h2>{{post.title}}</h2>
+                    <p>Posted by <a href="#/profile/{{post.author.id}}">{{post.author.username}}</a> on {{post.created_at}}</p>
+                </div>
+                <div class="item item-text-wrap">
+                    <p>{{post.content}}</p>
+                </div>
+                <div class="item item-divider">
+                    <em>{{post.likers}}</em> likes &middot; <em>{{post.comments.length}}</em> comments
+                </div>
+                <div ng-repeat="comment in post.comments" class="item item-avatar">
+                    <img class="avatar-author" src="http://lorempixel.com/32/32/cats/{{comment.author.id}}" alt="{{comment.author.username}}" />
+                    <h3><a href="#/profile/{{comment.author.id}}">{{comment.author.username}}</a></h3>
+                    <time>{{comment.created_at}}</time>
+                    <p>{{comment.message}}</p>
+                </div>
+            </div>
+        </ion-content>
+    </ion-nav-page>
+</script>
+
+<script id="pages/profile.html" type="text/ng-template">
+    <ion-nav-page id="pageProfile">
+        <div class="bar bar-header bar-dark item-input-inset">
+            <button class="button button-icon" ng-click="goBack()"><i class="icon ion-arrow-left-c"></i></button>
+            <h1 class="title">Viewing profile</h1>
+        </div>
+        <ion-content has-header="true" has-footer="true">
         </ion-content>
     </ion-nav-page>
 </script>
