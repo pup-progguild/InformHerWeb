@@ -64,10 +64,10 @@
             <div class="list">
                 <div class="item item-thumbnail-left">
                     <img class="avatar-author" src="http://lorempixel.com/48/48/cats/{{user.id}}" alt="{{user.username}}" />
-                    <h2>{{user.username}}</h2>
+                    <h2><a href="#/profile/{{user.id}}">{{user.username}}</a></h2>
                     <p>Joined <time>{{user.created_at}}</time></p>
                 </div>
-                <a class="item">
+                <a class="item" ng-controller="AuthCtrl" ng-click="doAuth('logout')">
                     Logout
                 </a>
             </div>
@@ -295,12 +295,51 @@
             <div class="item item-divider">Stream</div>
             <a class="item" href="#/settings/language">
                 Language
-                <span class="item-note">English</span>
+                <span class="item-note">{{ '_LANGUAGE_ID' | translate }}</span>
             </a>
-            <a class="item" href="#/settings/sort">
-                Default Sort
-                <span class="item-note">Date, older</span>
-            </a>
+            <div class="item item-divider">Default sort</div>
+            <label class="item item-radio">
+                <input type="radio" name="sort">
+                <div class="item-content">
+                    Title, ascending
+                </div>
+                <i class="radio-icon ion-checkmark"></i>
+            </label>
+            <label class="item item-radio">
+                <input type="radio" name="sort">
+                <div class="item-content">
+                    Title, descending
+                </div>
+                <i class="radio-icon ion-checkmark"></i>
+            </label>
+            <label class="item item-radio">
+                <input type="radio" name="sort">
+                <div class="item-content">
+                    Author, ascending
+                </div>
+                <i class="radio-icon ion-checkmark"></i>
+            </label>
+            <label class="item item-radio">
+                <input type="radio" name="sort">
+                <div class="item-content">
+                    Author, descending
+                </div>
+                <i class="radio-icon ion-checkmark"></i>
+            </label>
+            <label class="item item-radio">
+                <input type="radio" name="sort">
+                <div class="item-content">
+                    Date, recent
+                </div>
+                <i class="radio-icon ion-checkmark"></i>
+            </label>
+            <label class="item item-radio">
+                <input type="radio" name="sort">
+                <div class="item-content">
+                    Date, older
+                </div>
+                <i class="radio-icon ion-checkmark"></i>
+            </label>
         </div>
     </ion-content>
 </script>
