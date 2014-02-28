@@ -13,7 +13,7 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
             loaded: []
         };
 
-        $scope.user = null;
+        $scope.currentUser = null;
 
         var defaults = {
             'informher-language': $translate.preferredLanguage()
@@ -38,7 +38,7 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
         };
 
         // initialize persistence in app-wide vars
-        $scope.user = JSON.parse(localStorage.getItem('informher-current-user'));
+        $scope.currentUser = JSON.parse(localStorage.getItem('informher-current-user'));
         $scope.setLanguage(localStorage.getItem('informher-language'));
     })
     .config(function($translateProvider) {

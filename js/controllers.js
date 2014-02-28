@@ -111,14 +111,14 @@ angular.module('informher.controllers', [])
                     switch (authType) {
                         case 'login':
                             Auth.setCredentials($scope.input.username, $scope.input.password);
-                            UserService.getProfile(response.user.id)
+                            UserService.getProfile(response.currentUser.id)
                                 .then(function(response2) {
                                     if(response2.data.status == "USER_PROFILE_FETCH_SUCESS") {
-                                        $scope.user = response2.data.profile;
-                                        $scope.user.id = response.user.id;
-                                        $scope.user.username = response.user.username;
-                                        $scope.user.email = response.user.email;
-                                        localStorage.setItem('informher-current-user', JSON.stringify($scope.user));
+                                        $scope.currentUser = response2.data.profile;
+                                        $scope.currentUser.id = response.currentUser.id;
+                                        $scope.currentUser.username = response.currentUser.username;
+                                        $scope.currentUser.email = response.currentUser.email;
+                                        localStorage.setItem('informher-current-user', JSON.stringify($scope.currentUser));
                                     }
                                     $state.go('stream.feed');
                                 });
@@ -129,7 +129,7 @@ angular.module('informher.controllers', [])
                             break;
                         case 'logout':
                             Auth.clearCredentials();
-                            $scope.user = null;
+                            $scope.currentUser = null;
                             localStorage.removeItem('informher-current-user');
                             $state.go('home');
                             break;
@@ -219,7 +219,7 @@ angular.module('informher.controllers', [])
         $scope.flipFilter = function() {
             $scope.toggleFilter('ask');
             $scope.toggleFilter('relate');
-            $scope.toggleFilter('shoutout');
+            //$scope.toggleFilter('shoutout');
         };
 
         $scope.post = function(category) {
@@ -306,6 +306,42 @@ angular.module('informher.controllers', [])
     })
 
     .controller('UserCtrl', function ($scope, $stateParams, UserService) {
+        $scope.user = {};
 
+        $scope.isEditMode = false;
+
+        $scope.editMode = function() {
+            $scope.isEditMode = true;
+        };
+
+        $scope.reset = function() {
+            $scope.doReset();
+            $scope.isEditMode = false;
+        };
+
+        $scope.doReset = function() {
+            $scope.user = $scope.pristineUser;
+        };
+
+        $scope.save = function() {
+            $scope.doSave();
+        };
+
+        $scope.doSave = function() {
+            UserService.saveProfile($scope.user)
+                .then(function(response) {
+                    if(response.data.status == "USER_PROFILE_UPDATE_SUCCESSFUL") {
+                        $scope.isEditMode = false;
+                    }
+                });
+        };
+
+        UserService.getProfile($stateParams.userId)
+            .then(function(response) {
+                if(response.data.status == "USER_PROFILE_FETCH_SUCESS") {
+                    $scope.user = response.data.profile;
+                    $scope.pristineUser = response.data.profile;
+                }
+            });
     })
 ;

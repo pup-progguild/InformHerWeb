@@ -136,6 +136,14 @@
                 return deferred.promise;
             };
 
+            this.saveProfile = function(profileData) {
+                var deferred = $q.defer();
+                $timeout(function() {
+                    deferred.resolve(ApiService.getResponse('post', '/user/profile', profileData, true));
+                }, 1000);
+                return deferred.promise;
+            };
+
             this.getUserData = function(id) { // TODO make use of ID
                 var deferred = $q.defer();
                 $timeout(function() {
