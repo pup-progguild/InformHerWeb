@@ -141,9 +141,9 @@ angular.module('informher.controllers', [])
 
         $scope.reset = function () {
             $scope.input = {
-                username: 'ichi-san',
+                username: '',
                 email: '', // for register only
-                password: 'one_one_one',
+                password: '',
                 passwordConfirmation: '', // for register only
                 remember: false, // for login only
                 agree: false // for register only
@@ -165,9 +165,9 @@ angular.module('informher.controllers', [])
         $scope.posts = [];
 
         $scope.input = {
-            'title': 'Can I has extra napkinz?',
-            'content': 'I has the menstrueishunzz.',
-            'tags': ['education', 'health', 'news', 'moe'],
+            'title': '',
+            'content': '',
+            'tags': [],
             'category': ''
         };
 
@@ -214,7 +214,7 @@ angular.module('informher.controllers', [])
         $scope.flipFilter = function() {
             $scope.toggleFilter('ask');
             $scope.toggleFilter('relate');
-            //$scope.toggleFilter('shoutout');
+            $scope.toggleFilter('shoutout');
         };
 
         $scope.post = function(category) {
@@ -261,6 +261,7 @@ angular.module('informher.controllers', [])
                 .then(function (response) {
                     if(response.data.status == "POST_COMMENT_CREATE_SUCCESS") {
                         $scope.post.comments.unshift(response.data.comment[0]);
+                        $scope.input = '';
                     }
                 });
         };
