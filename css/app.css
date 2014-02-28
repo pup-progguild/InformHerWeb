@@ -52,3 +52,11 @@
 .informher-tags-input .informher-tags-input-tag {
     margin-right: 1em;
 }
+
+.informher-terms-of-service {
+    list-style-type: decimal;
+}
+
+.informher-terms-of-service > li {
+    list-style-type: decimal;
+}

@@ -158,7 +158,7 @@
                     <input ng-model="input.username" type="text" placeholder="{{ 'USERNAME' | translate }}">
                 </li>
                 <li class="item item-input item-stacked-label">
-                    <span class="input-label">{{ 'EMAIL_ADDRESS' }}</span>
+                    <span class="input-label">{{ 'EMAIL_ADDRESS' | translate }}</span>
                     <input ng-model="input.email" type="email" placeholder="{{ 'EMAIL_ADDRESS' | translate }}">
                 </li>
                 <li class="item item-input item-stacked-label">
@@ -454,27 +454,23 @@
             <h1 class="title">{{ 'TERMS_OF_SERVICE' | translate }}</h1>
         </header>
         <ion-content has-header="true" padding="true">
-            <ul>
-                <li>Thou shalt not get your neighbor's lolis, nor their underwear, nor their virginity. It is strictly
-                    prohibited. You are going to jail if you do, tough guy.
-                </li>
-                <li>Thou shalt not raep. As you always know, ceiling cat is watching you. We don't care if they came.
-                </li>
-                <li>Thou shalt not defile the moe. Everything is moe. Those that are considered "not moe" does not exist&mdash;it
-                    is only a product of one's fickle mind.
-                </li>
-                <li>Thou shalt not speak badly of PHP. <strong>Fatal error: T_PAAMAYIM_NEKUDOTAYIM.</strong></li>
+            <ul class="informher-terms-of-service list">
+                <li class="item item-text-wrap">Please read these Terms of Use carefully before using the services offered by informher. This Agreement sets forth the legally binding terms and conditions for your use of the application. By using the service in any manner, including, but not limited to, browsing the application or contributing content, information, or other materials or services to the application, you agree to be bound by this Agreement.</li>
+                <li class="item item-divider">Terms</li>
+                <li class="item item-text-wrap">You must be at least 13 years old to use the Service.</li>
+                <li class="item item-text-wrap">InformHer’s content may be copied, reproduced, republished, uploaded, posted, transmitted, distributed, or used for the creation of derivative works without the author’s prior written consent.</li>
+                <li class="item item-text-wrap">You may not post violent, nude, partially nude, discriminatory, unlawful, infringing, hateful, pornographic or sexually suggestive photos or other content via the Service.</li>
+                <li class="item item-text-wrap">You may not create an account for anyone other than yourself. You also represent that all information you provide or provided to InformHer upon registration and at all other times will be true, accurate, current and complete and you agree to update your information as necessary to maintain its truth and accuracy.</li>
+                <li class="item item-text-wrap">You agree that you will not solicit, collect or use the login credentials of other InformHer users.</li>
+                <li class="item item-text-wrap">You are responsible for keeping your password secret and secure.</li>
+                <li class="item item-text-wrap">You must not defame, stalk, bully, abuse, harass, threaten, impersonate or intimidate people or entities and you must not post private or confidential information.</li>
+                <li class="item item-text-wrap">You may not use the service for any illegal or unauthorized purpose.</li>
+                <li class="item item-text-wrap">You are solely responsible for your conduct and any data, text, files, information, usernames, images, graphics, photos, profiles, audio and video clips, sounds, musical works, works of authorship, applications, links and other content or materials you submit, post or display.</li>
+                <li class="item item-text-wrap">You must not create or submit unwanted email, comments, likes or other forms of commercial or harassing communications to any InformHer users.</li>
+                <li class="item item-text-wrap">You must not attempt to restrict another user from using or enjoying the Service and you must not encourage or facilitate violations of these Terms of Use.</li>
+                <li class="item item-text-wrap">Violation of these Terms of Use may, in InformHer sole discretion, result in termination of your account.</li>
             </ul>
-            <p>If you do not agree to the above terms and conditions, might as well pack your things and leave your
-                house quick. Real quick. We might send in some Tesla troopers to zap you up to your last voltage running
-                throughout your networks, and you will bleed from all of your body's orifices (no love juice, srsly). We
-                mean it. It would be a excruciatingly painful experience you will get.</p>
 
-            <p>Else if you agree, you may use any of InformHer's explicitly provided services, as long as you keep good
-                manners and right conduct (they taught you that in school, after all) among other persons in
-                InformHer.</p>
-
-            <p>We hope you have a meaningful experience using InformHer! :D</p>
             <button class="button button-block button-positive" ng-click="closeModal()">{{ 'OK' | translate }}</button>
         </ion-content>
     </div>
