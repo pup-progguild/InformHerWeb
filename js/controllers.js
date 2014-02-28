@@ -167,6 +167,8 @@ angular.module('informher.controllers', [])
 
     // displaying of stream's posts
     .controller('StreamCtrl', function ($scope, PostService, ModalService) {
+        $scope.posts = [];
+
         $scope.input = {
             'title': 'Can I has extra napkinz?',
             'content': 'I has the menstrueishunzz.',
@@ -185,32 +187,27 @@ angular.module('informher.controllers', [])
         };
 
         $scope.onRefresh = function() {
-            console.log("TODO refresh");
-        };
+            PostService.query('GET:*')
+                .then(function (response) {
+                    if (response.data.status == "POST_SHOW_SUCCESSFUL") {
+                        var newPosts = response.data.posts.data;
+                        for(var i = 0, len = newPosts.length; i < len; i++)
+                            $scope.posts.push(newPosts[i]);
 
-        PostService.query('GET:*')
-            .then(function (response) {
-                if (response.data.status == "POST_SHOW_SUCCESSFUL") {
-                    $scope.posts = response.data.posts.result;
-
-                    for(var i = 0, len = $scope.posts.length; i < len; i++) {
-                        var post = $scope.posts[i];
-                        post.visible = true;
+                        for(var i = 0, len = $scope.posts.length; i < len; i++) {
+                            var post = $scope.posts[i];
+                            post.visible = true;
+                        }
                     }
-                }
-            });
+                });
+        };
 
         $scope.filter = function() {
             for(var i = 0, len = $scope.posts.length; i < len; i++) {
                 var post = $scope.posts[i];
                 post.visible = false;
 
-                if(post.category.name == 'ask')
-                    post.visible = $scope.filterCriteria.ask;
-                if(post.category.name == 'relate')
-                    post.visible = $scope.filterCriteria.relate;
-                if(post.category.name == 'shoutout')
-                    post.visible = $scope.filterCriteria.shoutout;
+                post.visible = $scope.filterCriteria[post.category.name];
             }
         };
 
@@ -219,11 +216,17 @@ angular.module('informher.controllers', [])
             $scope.filter();
         };
 
+        $scope.flipFilter = function() {
+            $scope.toggleFilter('ask');
+            $scope.toggleFilter('relate');
+            $scope.toggleFilter('shoutout');
+        };
+
         $scope.post = function(category) {
             $scope.input.category = category;
             PostService.query('POST', $scope.input)
                 .then(function (response) {
-                    console.log(response);
+                    ModalService.closeModal();
                 });
         };
 
@@ -238,40 +241,68 @@ angular.module('informher.controllers', [])
         ModalService.loadModal('modalAsk', 'modals/ask.html', $scope);
         ModalService.loadModal('modalRelate', 'modals/relate.html', $scope);
         ModalService.loadModal('modalShoutout', 'modals/shoutout.html', $scope);
+
+        $scope.onRefresh();
     })
 
     // displaying of posts' comments
-    .controller('PostCtrl', function ($scope, $stateParams, PostService, CommentService) {
+    .controller('PostCtrl', function ($scope, $stateParams, PostService, CommentService, ModalService) {
         $scope.input = { 'message': '' };
 
         $scope.onRefresh = function() {
-            console.log("TODO refresh");
+            // TODO configure for pagination
+            CommentService.query('GET:postId.*', $stateParams.postId)
+                .then(function (response) {
+                    if (response.data.status == "POST_COMMENT_RETRIEVE_SUCCESSFUL") {
+                        var newPosts = response.data.comment.data;
+                        for(var i = 0, len = newPosts.length; i < len; i++)
+                            $scope.post.comments.push(newPosts[i]);
+                    }
+                });
         };
 
         $scope.addComment = function() {
             CommentService.query('POST:postId.+', $stateParams.postId, $scope.input)
                 .then(function (response) {
-                    console.log(response);
                     if(response.data.status == "POST_COMMENT_CREATE_SUCCESS")
-                        $scope.post.comments.unshift(response.data.comment.result[0]);
+                        $scope.post.comments.unshift(response.data.comment.data[0]);
                 });
         };
 
         PostService.query('GET:postId', $stateParams.postId)
             .then(function (response) {
+                console.log(response);
                 if (response.data.status == "POST_SHOW_SUCCESSFUL") {
                     $scope.post = response.data.posts;
 
+                    ModalService.loadModal('modalEdit', 'modals/' + $scope.post.category.name + '.html', $scope);
                     CommentService.query('GET:postId.*', $stateParams.postId)
                         .then(function (response) {
                             if (response.data.status == "POST_COMMENT_RETRIEVE_SUCCESSFUL") {
-                                $scope.post.comments = response.data.comment.result;
-                                console.log($scope.post.comments);
+                                $scope.post.comments = response.data.comment.data;
                             }
                         });
                 }
             })
         ;
+
+        $scope.likePost = function() {
+            PostService.query('POST:postId.like', $stateParams.postId, {})
+                .then(function(response) {
+                    console.log(response);
+                });
+        };
+
+        $scope.likeComment = function(id) {
+            CommentService.query('POST:postId.commentId.like', $stateParams.postId, id, {})
+                .then(function(response) {
+                    console.log(response);
+                });
+        };
+
+        $scope.edit = function() {
+            ModalService.openModal('modalEdit');
+        };
     })
 
     .controller('UserCtrl', function ($scope, $stateParams, UserService) {

@@ -159,7 +159,12 @@
                 'POST': {
                     timeout: 1000,
                     method: 'post',
-                    path: function(id) { return '/posts'; }
+                    path: function() { return '/posts'; }
+                },
+                'POST:postId.like': {
+                    timeout: 1000,
+                    method: 'post',
+                    path: function(postId) { return '/posts/' + postId + '/like'; }
                 }
             };
 
@@ -198,6 +203,11 @@
                     timeout: 1000,
                     method: 'post',
                     path: function(postId) { return '/posts/' + postId + '/comments'; }
+                },
+                'POST:postId.commentId.like': {
+                    timeout: 1000,
+                    method: 'post',
+                    path: function(postId, id) { return '/posts/' + postId + '/comments/' + id + '/like'; }
                 }
             };
 
@@ -206,7 +216,6 @@
                 var args = Array.prototype.slice.call(arguments);
                 args.shift();
 
-                console.log(args);
                 var deferred = $q.defer();
                 $timeout(function() {
                     deferred.resolve(

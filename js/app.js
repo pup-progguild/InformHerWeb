@@ -25,8 +25,6 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
         };
 
         $scope.goBack = function() {
-            //$scope.sideMenuController.close();
-            //console.log($scope.sideMenuController);
             history.back();
         };
 
@@ -42,7 +40,6 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
         // initialize persistence in app-wide vars
         $scope.user = JSON.parse(localStorage.getItem('informher-current-user'));
         $scope.setLanguage(localStorage.getItem('informher-language'));
-
     })
     .config(function($translateProvider) {
         $translateProvider
