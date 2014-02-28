@@ -64,6 +64,8 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 REMEMBER_ME: 'Remember me',
                 FORGOT_PASSWORD: 'Forgot password?',
 
+                YOU: 'You',
+
                 TERMS_OF_USE_PRE: "I agree to InformHer's ",
                 TERMS_OF_USE: "terms of use",
                 TERMS_OF_USE_POST: ".",
@@ -73,7 +75,66 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 SEARCH: 'Search',
                 ASK: 'Ask',
                 RELATE: 'Relate',
-                SHOUTOUT: 'Shoutout'
+                SHOUTOUT: 'Shoutout',
+
+                TITLE: 'Title',
+                AUTHOR: 'Author',
+                DATE: 'Date',
+
+                POST: 'Post',
+                VIEW: 'View',
+
+                COMMENTS: 'Comments',
+                TAP_TO_BEGIN_WRITING: 'Tap to begin writing',
+
+                LIKE: 'Like',
+                EDIT: 'Edit',
+
+                EMAIL_ADDRESS: 'E-mail address',
+                CONFIRM_PASSWORD: 'Confirm password',
+
+                VIEWING_PROFILE: 'Viewing profile',
+                REGISTERED: 'Registered',
+                BADGE: 'Badge',
+                BIO: 'Bio',
+                TELL_SOMETHING_ABOUT_YOUR_LIFE: 'Tell something about your life',
+
+                CONTACT_INFORMATION: 'Contact Information',
+                FACEBOOK_URL: 'Facebook URL',
+                TWITTER_HANDLE: 'Twitter handle',
+                WEBSITE_URL: 'Website URL',
+                SAVE: 'Save',
+                CANCEL: 'Cancel',
+
+                SETTINGS: 'Settings',
+                ACCOUNT: 'Account',
+                TRACK_MY_LOCATION: 'Track my location',
+
+                STREAM: 'Stream',
+                DEFAULT_SORT: 'Default sort',
+
+                TITLE_ASCENDING: 'Title, ascending',
+                TITLE_DESCENDING: 'Title, descending',
+                AUTHOR_ASCENDING: 'Author, ascending',
+                AUTHOR_DESCENDING: 'Author, descending',
+                DATE_RECENT: 'Date, recent',
+                DATE_OLDER: 'Date, older',
+
+                TERMS_OF_SERVICE: 'Terms of Service',
+
+                TAGS: 'Tags',
+                TAG: 'Tag',
+
+                CONTENT: 'Content',
+                TYPE_YOUR_QUESTION_HERE: 'Type your question here',
+
+                SUBMIT: 'Submit',
+                ANYTHING_YOU_WANT_TO_SHARE_HERE: 'Type anything you want to share here',
+                NATURE_OF_YOUR_REPORT: 'Describe the nature of your report',
+                KNOW_MY_CURRENT_LOCATION: 'I want InformHer to know my current location',
+                CONTACT_ME: 'I want InformHer to get in touch regarding my report',
+                CONTACT_ME_IMMEDIATELY: 'I want InformHer to contact me immediately'
+
             })
             .translations('tl-PH', {
                 _LANGUAGE_ID: 'Tagalog',
@@ -90,6 +151,8 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 REMEMBER_ME: 'Tandaan ako',
                 FORGOT_PASSWORD: 'Nakalimutan ang password?',
 
+                YOU: 'Ikaw',
+
                 TERMS_OF_USE_PRE: "Sang-ayon ako sa ",
                 TERMS_OF_USE: "terms of use",
                 TERMS_OF_USE_POST: " ng InformHer.",
@@ -99,7 +162,65 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 SEARCH: 'Maghanap',
                 ASK: 'Magtanong',
                 RELATE: 'Ibahagi',
-                SHOUTOUT: 'Shoutout'
+                SHOUTOUT: 'Shoutout',
+
+                TITLE: 'Pamagat',
+                AUTHOR: 'May-akda',
+                DATE: 'Petsa',
+
+                POST: 'Post',
+                VIEW: 'Tingnan',
+
+                COMMENTS: 'Mga pahayag',
+                TAP_TO_BEGIN_WRITING: 'Pindutin at magsimulang mag-type',
+
+                LIKE: 'Like',
+                EDIT: 'Baguhin',
+
+                EMAIL_ADDRESS: 'E-mail address',
+                CONFIRM_PASSWORD: 'Ikumpirma ang password',
+
+                VIEWING_PROFILE: 'Tinitingnan ang profile',
+                REGISTERED: 'Nag-rehistro noong',
+                BADGE: 'Tsapa',
+                BIO: 'Bio',
+                TELL_SOMETHING_ABOUT_YOUR_LIFE: 'Magsulat ng tungkol sa iyong buhay',
+
+                CONTACT_INFORMATION: 'Pakikipag-ugnayan',
+                FACEBOOK_URL: 'Facebook URL',
+                TWITTER_HANDLE: 'Twitter handle',
+                WEBSITE_URL: 'Website URL',
+                SAVE: 'I-save',
+                CANCEL: 'Kanselahin',
+
+                SETTINGS: 'Mga setting',
+                ACCOUNT: 'Account',
+                TRACK_MY_LOCATION: 'Tiyakin ang aking lokasyon',
+
+                STREAM: 'Stream',
+                DEFAULT_SORT: 'Default na pag-aayos',
+
+                TITLE_ASCENDING: 'Pamagat, ascending',
+                TITLE_DESCENDING: 'Pamagat, descending',
+                AUTHOR_ASCENDING: 'May-akda, ascending',
+                AUTHOR_DESCENDING: 'May-akda, descending',
+                DATE_RECENT: 'Petsa, mas bago',
+                DATE_OLDER: 'Petsa, mas luma',
+
+                TERMS_OF_SERVICE: 'Mga Tuntunin ng Serbisyo',
+
+                TAGS: 'Mga tag',
+                TAG: 'Tag',
+
+                CONTENT: 'Nilalaman',
+                TYPE_YOUR_QUESTION_HERE: 'I-type ang iyong katanungan dito',
+
+                SUBMIT: 'Ipasa',
+                ANYTHING_YOU_WANT_TO_SHARE_HERE: 'I-type ang anumang nais mong ibahagi dito',
+                NATURE_OF_YOUR_REPORT: 'Ilarawan ang detalye ng iyong kaso',
+                KNOW_MY_CURRENT_LOCATION: 'Nais kong matiyak ng InformHer ang aking lokasyon',
+                CONTACT_ME: 'Nais kong makipag-ugnayan ang InformHer sa akin ukol sa aking kaso',
+                CONTACT_ME_IMMEDIATELY: 'Nais kong makipag-ugnayan ang InformHer sa akin agad-agad'
             })
             .preferredLanguage('en-PH')
             .fallbackLanguage('en-PH');
