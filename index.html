@@ -63,9 +63,9 @@
         <ion-content has-header="true">
             <div class="list">
                 <div class="item item-text-wrap item-thumbnail-left">
-                    <img class="avatar-author" ng-src="{{user.avatar_url}}" alt="{{user.username}}" />
-                    <h2><a href="#/profile/{{user.id}}">{{user.username}}</a></h2>
-                    <p>Joined <time>{{user.created_at}}</time></p>
+                    <img class="avatar-author" ng-src="{{currentUser.avatar_url}}" alt="{{currentUser.username}}" />
+                    <h2><a href="#/profile/{{currentUser.user_id}}">{{currentUser.username}}</a></h2>
+                    <p>Joined <time>{{currentUser.created_at}}</time></p>
                 </div>
                 <a class="item" ng-controller="AuthCtrl" ng-click="doAuth('logout')">
                     Logout
@@ -206,9 +206,7 @@
             <button class="button button-energized" ng-click="openModal('modalAsk')"><i class="icon ion-plus"></i></button>
             <button class="button button-outline button-balanced" ng-click="toggleFilter('relate')" ng-class="filterCriteria.relate ? 'active' : ''"><i class="icon ion-information-circled"></i></button>
             <button class="button button-balanced" ng-click="openModal('modalRelate')"><i class="icon ion-plus"></i></button>
-            <!--
             <button class="button button-outline button-positive" ng-click="toggleFilter('shoutout')" ng-class="filterCriteria.shoutout ? 'active' : ''"><i class="icon ion-chatbox-working"></i></button>
-            -->
             <button class="button button-positive"  ng-click="openModal('modalShoutout')"><i class="icon ion-plus"></i></button>
             <button class="button button-clear button-dark" ng-click="flipFilter()"><i class="icon ion-contrast"></i></button>
         </div>
@@ -290,7 +288,7 @@
         <ion-content has-header="true" has-footer="true">
             <ul class="list">
                 <li class="item item-image">
-                    <img class="full-image" ng-src="{{user.avatar_url}}">
+                    <img class="full-image" ng-src="{{user.avatar_url}}" alt="{{user.username}}">
                 </li>
                 <li class="item item-input">
                     <span class="input-label">Username</span>

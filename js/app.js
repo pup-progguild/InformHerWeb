@@ -6,17 +6,17 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('informher', ['ionic', 'informher.services', 'informher.controllers', 'pascalprecht.translate'])
-    .controller('SessionCtrl', function($scope, $translate, ModalService, Auth) {
+    .controller('SessionCtrl', function($scope, $translate, ModalService, UserService) {
         $scope.modals = {
             urls: ['modals/tos.html', 'modals/ask.html', 'modals/relate.html', 'modals/shoutout.html'],
             current: '',
             loaded: []
         };
 
-        $scope.currentUser = null;
-
         var defaults = {
-            'informher-language': $translate.preferredLanguage()
+            'informher-language': $translate.preferredLanguage(),
+            'informher-auth': '',
+            'informher-current-user': null
         };
 
         $scope.setLanguage = function(lang) {
@@ -28,6 +28,8 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
             history.back();
         };
 
+        localStorage.setItem('informher-auth', null);
+        localStorage.setItem('informher-current-user', null);
         // load default app-wide vars
         for(var key in defaults)
             if(localStorage.getItem(key) == null)
@@ -37,8 +39,12 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
             ModalService.closeModal();
         };
 
+        $scope.updateCurrentUser = function() {
+            $scope.currentUser = UserService.getCurrentUserProfile();
+        };
+
         // initialize persistence in app-wide vars
-        $scope.currentUser = JSON.parse(localStorage.getItem('informher-current-user'));
+        $scope.updateCurrentUser();
         $scope.setLanguage(localStorage.getItem('informher-language'));
     })
     .config(function($translateProvider) {

@@ -110,28 +110,23 @@ angular.module('informher.controllers', [])
                 .success(function (response) {
                     switch (authType) {
                         case 'login':
-                            Auth.setCredentials($scope.input.username, $scope.input.password);
-                            UserService.getProfile(response.currentUser.id)
-                                .then(function(response2) {
-                                    if(response2.data.status == "USER_PROFILE_FETCH_SUCESS") {
-                                        $scope.currentUser = response2.data.profile;
-                                        $scope.currentUser.id = response.currentUser.id;
-                                        $scope.currentUser.username = response.currentUser.username;
-                                        $scope.currentUser.email = response.currentUser.email;
-                                        localStorage.setItem('informher-current-user', JSON.stringify($scope.currentUser));
-                                    }
-                                    $state.go('stream.feed');
-                                });
+                            if(response.status == "USER_LOGIN_SUCCESS") {
+                                Auth.setCredentials($scope.input.username, $scope.input.password, response.user.profile);
+                                $scope.updateCurrentUser();
+                                $state.go('stream.feed');
+                            }
                             break;
                         case 'register':
                             $scope.registrationSuccessful = true;
                             $scope.displayInformationMessage(response.description, "Message: " + response.status);
                             break;
                         case 'logout':
-                            Auth.clearCredentials();
-                            $scope.currentUser = null;
-                            localStorage.removeItem('informher-current-user');
-                            $state.go('home');
+                            if(response.status == "USER_LOGGED_OUT_SUCCESS") {
+                                Auth.clearCredentials();
+                                $scope.currentUser = null;
+                                localStorage.removeItem('informher-current-user');
+                                $state.go('home');
+                            }
                             break;
                         default:
                             console.log('Unknown auth type ' + authType);
@@ -264,14 +259,14 @@ angular.module('informher.controllers', [])
         $scope.addComment = function() {
             CommentService.query('POST:postId.+', $stateParams.postId, $scope.input)
                 .then(function (response) {
-                    if(response.data.status == "POST_COMMENT_CREATE_SUCCESS")
-                        $scope.post.comments.unshift(response.data.comment.data[0]);
+                    if(response.data.status == "POST_COMMENT_CREATE_SUCCESS") {
+                        $scope.post.comments.unshift(response.data.comment[0]);
+                    }
                 });
         };
 
         PostService.query('GET:postId', $stateParams.postId)
             .then(function (response) {
-                console.log(response);
                 if (response.data.status == "POST_SHOW_SUCCESSFUL") {
                     $scope.post = response.data.posts;
 
@@ -336,12 +331,16 @@ angular.module('informher.controllers', [])
                 });
         };
 
-        UserService.getProfile($stateParams.userId)
-            .then(function(response) {
-                if(response.data.status == "USER_PROFILE_FETCH_SUCESS") {
-                    $scope.user = response.data.profile;
-                    $scope.pristineUser = response.data.profile;
-                }
-            });
+        $scope.updateUserProfile = function() {
+            UserService.getProfile($stateParams.userId)
+                .then(function(response) {
+                    if(response.data.status == "USER_PROFILE_FETCH_SUCESS") {
+                        $scope.user = response.data.profile;
+                        $scope.pristineUser = response.data.profile;
+                    }
+                });
+        };
+
+        $scope.updateUserProfile();
     })
 ;

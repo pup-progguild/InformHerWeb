@@ -84,25 +84,24 @@
                 }
             };
         })
-        .factory('Auth', function (Base64, $http) {
+        .factory('Auth', function (Base64, $http, UserService) {
             // initialize to whatever is in the cookie, if anything
-
-            if(localStorage.getItem('informher-auth') == null)
-                localStorage.setItem('informher-auth', '');
-
             var authKey = localStorage.getItem('informher-auth');
 
             $http.defaults.headers.common.Authentication = 'Basic ' + (authKey != null ? authKey : '');
 
             return {
-                setCredentials: function (username, password) {
+                setCredentials: function (username, password, profile) {
                     var encoded = Base64.encode(username + ':' + password);
                     $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
                     localStorage.setItem('informher-auth', encoded);
+                    profile.username = username;
+                    UserService.setCurrentUserProfile(profile);
                 },
                 clearCredentials: function () {
                     $http.defaults.headers.common.Authorization = 'Basic ';
                     localStorage.setItem('informher-auth', '');
+                    UserService.setCurrentUserProfile(null);
                 }
             };
         })
@@ -131,7 +130,7 @@
             this.getProfile = function(id) { // TODO get own user profile
                 var deferred = $q.defer();
                 $timeout(function() {
-                    deferred.resolve(ApiService.getResponse('get', id === undefined ? '/user' : '/user/profile/' + id));
+                    deferred.resolve(ApiService.getResponse('get', '/user/profile/' + id, {}, true));
                 }, 1000);
                 return deferred.promise;
             };
@@ -150,6 +149,14 @@
                     deferred.resolve(ApiService.getResponse('get', id === undefined ? '/user' : '/user'));
                 }, 1000);
                 return deferred.promise;
+            };
+
+            this.getCurrentUserProfile = function() {
+                return JSON.parse(localStorage.getItem('informher-current-user'));
+            };
+
+            this.setCurrentUserProfile = function(profile) {
+                localStorage.setItem('informher-current-user', JSON.stringify(profile));
             };
         })
         .service('PostService', function($q, $timeout, ApiService) {
