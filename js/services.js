@@ -86,7 +86,13 @@
         })
         .factory('Auth', function (Base64, $http) {
             // initialize to whatever is in the cookie, if anything
-            $http.defaults.headers.common.Authentication = 'Basic ' + localStorage.getItem('informher-auth');
+
+            if(localStorage.getItem('informher-auth') == null)
+                localStorage.setItem('informher-auth', '');
+
+            var authKey = localStorage.getItem('informher-auth');
+
+            $http.defaults.headers.common.Authentication = 'Basic ' + (authKey != null ? authKey : '');
 
             return {
                 setCredentials: function (username, password) {
@@ -96,7 +102,7 @@
                 },
                 clearCredentials: function () {
                     $http.defaults.headers.common.Authorization = 'Basic ';
-                    localStorage.removeItem('informher-auth');
+                    localStorage.setItem('informher-auth', '');
                 }
             };
         })
@@ -107,10 +113,18 @@
             //var requestBase = requestBaseProtocol + '://informherapi.azurewebsites.net';
             var requestBase = requestBaseProtocol + '://informherapi.cloudapp.net';
 
-            this.getResponse = function(method, path, body) {
+            this.getResponse = function(method, path, body, withCredentials) {
+                if(withCredentials === undefined)
+                    withCredentials = false;
                 //$http.defaults.headers.common.Authentication = 'Basic ' + localStorage.getItem('informher-auth');
 
-                return $http[method](requestBase + path, body || {}, {withCredentials: true}); //TODO: modified by awk
+                //return $http[method](requestBase + path, body || {}, {withCredentials: true}); //TODO: modified by awk
+                return $http({
+                    method: method,
+                    url: requestBase + path,
+                    data: (body || {}),
+                    withCredentials: withCredentials
+                });
             };
         })
         .service('UserService', function($http, $q, $timeout, ApiService) {
@@ -160,7 +174,8 @@
                         ApiService.getResponse(
                             q.method,
                             q.path.apply(this, args),
-                            q.method == 'post' ? args[args.length - 1] : {}
+                            q.method == 'post' ? args[args.length - 1] : {},
+                            true
                         )
                     );
                 }, q.timeout);
@@ -198,11 +213,37 @@
                         ApiService.getResponse(
                             q.method,
                             q.path.apply(this, args),
-                            q.method == 'post' ? args[args.length - 1] : {}
+                            q.method == 'post' ? args[args.length - 1] : {},
+                            true
                         )
                     );
                 }, q.timeout);
                 return deferred.promise;
+            };
+        })
+        .service('ModalService', function($ionicModal) {
+            var modals = {
+                current: '',
+                loaded: {}
+            };
+
+            this.loadModal = function(key, url, scope) {
+                $ionicModal.fromTemplateUrl(url, function(modal) {
+                    modals.loaded[key] = modal;
+                }, {
+                    scope: scope,
+                    animation: 'slide-in-up'
+                });
+            };
+
+            this.openModal = function(key) {
+                modals.loaded[key].show();
+                modals.current = key;
+            };
+
+            this.closeModal = function() {
+                modals.loaded[modals.current].hide();
+                modals.current = '';
             };
         })
     ;

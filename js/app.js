@@ -6,7 +6,7 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('informher', ['ionic', 'informher.services', 'informher.controllers', 'pascalprecht.translate'])
-    .controller('SessionCtrl', function($scope, $translate, $ionicModal) {
+    .controller('SessionCtrl', function($scope, $translate, ModalService, Auth) {
         $scope.modals = {
             urls: ['modals/tos.html', 'modals/ask.html', 'modals/relate.html', 'modals/shoutout.html'],
             current: '',
@@ -25,6 +25,8 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
         };
 
         $scope.goBack = function() {
+            //$scope.sideMenuController.close();
+            //console.log($scope.sideMenuController);
             history.back();
         };
 
@@ -33,24 +35,8 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
             if(localStorage.getItem(key) == null)
                 localStorage.setItem(key, defaults[key]);
 
-        // load modals
-        $scope.modals.urls.forEach(function(modalUrl) {
-            $ionicModal.fromTemplateUrl(modalUrl, function(modal) {
-                $scope.modals.loaded[modalUrl] = modal;
-            }, {
-                scope: $scope,
-                animation: 'slide-in-up'
-            });
-        });
-
-        $scope.openModal = function(modalUrl) {
-            $scope.modals.current = modalUrl;
-            $scope.modals.loaded[modalUrl].show();
-        };
-
         $scope.closeModal = function() {
-            $scope.modals.loaded[$scope.modals.current].hide();
-            $scope.modals.current = '';
+            ModalService.closeModal();
         };
 
         // initialize persistence in app-wide vars

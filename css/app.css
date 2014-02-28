@@ -44,3 +44,11 @@
     font-weight: bold;
     font-size: 80%;
 }
+
+.modal {
+    background-color: #fff;
+}
+
+.informher-tags-input .informher-tags-input-tag {
+    margin-right: 1em;
+}

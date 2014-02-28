@@ -1,5 +1,5 @@
 angular.module('informher.controllers', [])
-    .controller('AuthCtrl', function ($scope, $state, ApiService, UserService, Auth) {
+    .controller('AuthCtrl', function ($scope, $state, ApiService, UserService, Auth, ModalService) {
         $scope.registrationSuccessful = false;
 
         $scope.message = {
@@ -106,7 +106,7 @@ angular.module('informher.controllers', [])
                 }
             }
 
-            var request = ApiService.getResponse(query.method, query.path, query.body)
+            ApiService.getResponse(query.method, query.path, query.body)
                 .success(function (response) {
                     switch (authType) {
                         case 'login':
@@ -156,15 +156,28 @@ angular.module('informher.controllers', [])
             $scope.registrationSuccessful = false;
         };
 
+        $scope.openTouModal = function() {
+            ModalService.openModal('modalTou');
+        };
+
         $scope.reset();
+
+        ModalService.loadModal('modalTou', 'modals/tos.html', $scope);
     })
 
     // displaying of stream's posts
-    .controller('StreamCtrl', function ($scope, PostService, Auth) {
+    .controller('StreamCtrl', function ($scope, PostService, ModalService) {
         $scope.input = {
             'title': 'Can I has extra napkinz?',
             'content': 'I has the menstrueishunzz.',
+            'tags': ['education', 'health', 'news', 'moe'],
             'category': ''
+        };
+
+        $scope.filterCriteria = {
+            ask: true,
+            relate: true,
+            shoutout: true
         };
 
         $scope.toggleLeft = function () {
@@ -179,16 +192,52 @@ angular.module('informher.controllers', [])
             .then(function (response) {
                 if (response.data.status == "POST_SHOW_SUCCESSFUL") {
                     $scope.posts = response.data.posts.result;
+
+                    for(var i = 0, len = $scope.posts.length; i < len; i++) {
+                        var post = $scope.posts[i];
+                        post.visible = true;
+                    }
                 }
             });
 
+        $scope.filter = function() {
+            for(var i = 0, len = $scope.posts.length; i < len; i++) {
+                var post = $scope.posts[i];
+                post.visible = false;
+
+                if(post.category.name == 'ask')
+                    post.visible = $scope.filterCriteria.ask;
+                if(post.category.name == 'relate')
+                    post.visible = $scope.filterCriteria.relate;
+                if(post.category.name == 'shoutout')
+                    post.visible = $scope.filterCriteria.shoutout;
+            }
+        };
+
+        $scope.toggleFilter = function(which) {
+            $scope.filterCriteria[which] = !$scope.filterCriteria[which];
+            $scope.filter();
+        };
+
         $scope.post = function(category) {
-            $scope.input.post.category = category;
+            $scope.input.category = category;
             PostService.query('POST', $scope.input)
                 .then(function (response) {
                     console.log(response);
                 });
         };
+
+        $scope.openModal = function(key) {
+            ModalService.openModal(key);
+        };
+
+        $scope.addTag = function(tag) {
+            $scope.input.tags.push(tag);
+        };
+
+        ModalService.loadModal('modalAsk', 'modals/ask.html', $scope);
+        ModalService.loadModal('modalRelate', 'modals/relate.html', $scope);
+        ModalService.loadModal('modalShoutout', 'modals/shoutout.html', $scope);
     })
 
     // displaying of posts' comments
