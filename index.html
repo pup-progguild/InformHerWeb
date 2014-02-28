@@ -173,7 +173,7 @@
                     <label class="checkbox">
                         <input ng-model="input.agree" type="checkbox">
                     </label>
-                    {{ 'TERMS_OF_USE_PRE' | translate }}<a href="" ng-click="openModal()">{{ 'TERMS_OF_USE' | translate }}</a>{{ 'TERMS_OF_USE_POST' | translate }}
+                    {{ 'TERMS_OF_USE_PRE' | translate }}<a href="" ng-click="openModal('modals/tos.html')">{{ 'TERMS_OF_USE' | translate }}</a>{{ 'TERMS_OF_USE_POST' | translate }}
                 </li>
             </ul>
             <div class="padding-horizontal">
@@ -203,11 +203,11 @@
         </div>
         <div class="bar bar-subheader">
             <button class="button button-outline button-energized"><i class="icon ion-help-circled"></i></button>
-            <button class="button button-energized"><i class="icon ion-plus"></i></button>
+            <button class="button button-energized" ng-click="openModal('modals/ask.html')"><i class="icon ion-plus"></i></button>
             <button class="button button-outline button-balanced"><i class="icon ion-information-circled"></i></button>
-            <button class="button button-balanced"><i class="icon ion-plus"></i></button>
+            <button class="button button-balanced" ng-click="openModal('modals/relate.html')"><i class="icon ion-plus"></i></button>
             <button class="button button-outline button-positive"><i class="icon ion-chatbox-working"></i></button>
-            <button class="button button-positive"><i class="icon ion-plus"></i></button>
+            <button class="button button-positive"  ng-click="openModal('modals/shoutout.html')"><i class="icon ion-plus"></i></button>
             <button class="button button-clear button-dark"><i class="icon ion-contrast"></i></button>
         </div>
         <ion-content has-header="true" has-subheader="true" has-footer="true" scroll="true" on-refresh="onRefresh()">
@@ -216,7 +216,7 @@
                     <img class="avatar-author" src="http://lorempixel.com/48/48/cats/{{post.author.id}}" alt="{{post.author.username}}" />
                     <strong class="informher-{{post.category.name}} informher-category-tag">{{post.category.name}}</strong>
                     <h2>{{post.title}}</h2>
-                    <p>Posted by {{post.author.username}} on <time>{{post.created_at}}</time></p>
+                    <p>{{post.author.username}} &middot; <time>{{post.created_at}}</time></p>
                 </a>
             </ion-list>
             <ion-scroll-refresher>
@@ -241,7 +241,7 @@
         </div>
         <ion-content has-header="true" has-footer="true" on-refresh="onRefresh()">
             <div class="list">
-                <div class="item item-thumbnail-left informher-stream-item-meta">
+                <div class="item item-text-wrap item-thumbnail-left informher-stream-item-meta">
                     <img class="avatar-author" src="http://lorempixel.com/48/48/cats/{{post.author.id}}" alt="{{post.author.username}}" />
                     <strong class="informher-{{post.category.name}} informher-category-tag">{{post.category.name}}</strong>
                     <h2>{{post.title}}</h2>
@@ -259,12 +259,12 @@
                 <div class="item item-divider">
                     Comments
                 </div>
-                <div class="item item-avatar">
+                <div class="item item-avatar item-text-wrap">
                     <img class="avatar-author" src="http://lorempixel.com/32/32/cats/{{user.id}}" alt="{{user.username}}" />
-                    <textarea ng-model="message" placeholder="Tap to begin writing"></textarea>
-                    <button class="button button-small button-positive" ng-click="postComment()">Submit</button>
+                    <textarea ng-model="input.message" placeholder="Tap to begin writing"></textarea>
+                    <button class="button button-small button-positive" ng-click="addComment()">Submit</button>
                 </div>
-                <div ng-repeat="comment in post.comments" class="item item-avatar informher-comment-item">
+                <div ng-repeat="comment in post.comments" class="item item-text-wrap item-avatar informher-comment-item">
                     <img class="avatar-author" src="http://lorempixel.com/32/32/cats/{{comment.author.id}}" alt="{{comment.author.username}}" />
                     <h3><a href="#/profile/{{comment.author.id}}">{{comment.author.username}}</a></h3>
                     <time class="timestamp">{{comment.created_at}}</time>
@@ -437,7 +437,7 @@
         <header class="bar bar-header bar-dark">
             <h1 class="title">Terms of Use</h1>
         </header>
-        <content has-header="true" padding="true">
+        <ion-content has-header="true" padding="true">
             <ul>
                 <li>Thou shalt not get your neighbor's lolis, nor their underwear, nor their virginity. It is strictly
                     prohibited. You are going to jail if you do, tough guy.
@@ -460,7 +460,117 @@
 
             <p>We hope you have a meaningful experience using InformHer! :D</p>
             <button class="button button-block button-positive" ng-click="closeModal()">OK</button>
+        </ion-content>
+    </div>
+</script>
+<script id="modals/ask.html" type="text/ng-template">
+    <div class="modal">
+        <header class="bar bar-header bar-dark">
+            <h1 class="title">Ask</h1>
+        </header>
+        <ion-content has-header="true">
+            <div class="list">
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Title</span>
+                    <input ng-model="input.title" type="text" placeholder="Title">
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Tags</span>
+
+                    <div class="tags-input">
+                        <ul>
+                            <li ng-repeat="tag in tags">{{tag}}</li>
+                        </ul>
+                        <input type="text" placeholder="Tags">
+                    </div>
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Content</span>
+                    <textarea ng-model="input.content" placeholder="Type your question here"></textarea>
+                </label>
+            </div>
+            <div class="row">
+                <div class="col"><button class="button button-block button-positive" type="button" ng-click="post('ask')">Submit Post</button></div>
+                <div class="col"><button class="button button-block" type="button" ng-click="closeModal()">Cancel</button></div>
+            </div>
+        </ion-content>
+    </div>
+</script>
+<script id="modals/relate.html" type="text/ng-template">
+    <div class="modal">
+        <header class="bar bar-header bar-dark">
+            <h1 class="title">Relate</h1>
+        </header>
+        <ion-content has-header="true">
+            <div class="list">
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Title</span>
+                    <input ng-model="input.title" type="text" placeholder="Title">
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Tags</span>
+
+                    <div class="tags-input">
+                        <ul>
+                            <li ng-repeat="tag in tags">{{tag}}</li>
+                        </ul>
+                        <input type="text" placeholder="Tags">
+                    </div>
+                </label>
+                <label class="item item-input item-stacked-label">
+                    <span class="input-label">Content</span>
+                    <textarea ng-model="input.content" placeholder="Type anything you want to share here"></textarea>
+                </label>
+            </div>
+            <div class="row">
+                <div class="col"><button class="button button-block button-positive" type="button" ng-click="post('relate')">Submit Post</button></div>
+                <div class="col"><button class="button button-block" type="button" ng-click="closeModal()">Cancel</button></div>
+            </div>
         </content>
+    </div>
+</script>
+<script id="modals/shoutout.html" type="text/ng-template">
+    <div class="modal">
+        <header class="bar bar-header bar-dark">
+            <h1 class="title">Shoutout</h1>
+        </header>
+        <ion-content has-header="true">
+            <ul class="list">
+                <li class="item item-input item-stacked-label">
+                    <span class="input-label">Describe the nature of your report</span>
+
+                    <div class="tags-input">
+                        <ul>
+                            <li ng-repeat="tag in tags">{{tag}}</li>
+                        </ul>
+                        <input type="text" placeholder="Tags">
+                    </div>
+                <li class="item item-checkbox">
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="trackLocation">
+                    </label>
+                    I want InformHer to know my current location
+                </li>
+                <li class="item item-checkbox">
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="contact"
+                               ng-click="immediateContact = contact &amp;&amp; immediateContact">
+                    </label>
+                    I want InformHer to get in touch regarding my report
+                </li>
+                <li class="item item-checkbox">
+                    <label class="checkbox">
+                        <input type="checkbox" ng-model="immediateContact"
+                               ng-checked="contact &amp;&amp; immediateContact" ng-disabled="!contact">
+                    </label>
+                    I want InformHer to contact me immediately
+                </li>
+            </ul>
+            <div class="row">
+                <div class="col"><button class="button button-block button-positive" type="button" ng-click="post('shoutout')">Submit Post</button></div>
+                <div class="col"><button class="button button-block" type="button" ng-click="closeModal()">Cancel</button></div>
+            </div>
+        </ion-content>
     </div>
 </script>
 

@@ -89,9 +89,10 @@
             $http.defaults.headers.common.Authentication = 'Basic ' + localStorage.getItem('informher-auth');
 
             return {
-                setCredentials: function (encoded) {
+                setCredentials: function (username, password) {
+                    var encoded = Base64.encode(username + ':' + password);
                     $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
-                    //localStorage.setItem('informher-auth', encoded);
+                    localStorage.setItem('informher-auth', encoded);
                 },
                 clearCredentials: function () {
                     $http.defaults.headers.common.Authorization = 'Basic ';
@@ -106,10 +107,10 @@
             //var requestBase = requestBaseProtocol + '://informherapi.azurewebsites.net';
             var requestBase = requestBaseProtocol + '://informherapi.cloudapp.net';
 
-            this.getResponse = function(method, path, body, config) {
+            this.getResponse = function(method, path, body) {
                 //$http.defaults.headers.common.Authentication = 'Basic ' + localStorage.getItem('informher-auth');
 
-                return $http[method](requestBase + path, body, {withCredentials: true} || {}); //TODO: modified by awk
+                return $http[method](requestBase + path, body || {}, {withCredentials: true}); //TODO: modified by awk
             };
         })
         .service('UserService', function($http, $q, $timeout, ApiService) {
@@ -140,11 +141,16 @@
                     timeout: 1000,
                     method: 'get',
                     path: function(id) { return '/posts/' + id; }
+                },
+                'POST': {
+                    timeout: 1000,
+                    method: 'post',
+                    path: function(id) { return '/posts'; }
                 }
             };
 
-            this.do = function(which) {
-                var query = queries[which];
+            this.query = function(which) {
+                var q = queries[which];
                 var args = Array.prototype.slice.call(arguments);
                 args.shift();
 
@@ -152,11 +158,12 @@
                 $timeout(function() {
                     deferred.resolve(
                         ApiService.getResponse(
-                            query.method,
-                            query.path.apply(this, args)
+                            q.method,
+                            q.path.apply(this, args),
+                            q.method == 'post' ? args[args.length - 1] : {}
                         )
                     );
-                }, query.timeout);
+                }, q.timeout);
                 return deferred.promise;
             };
         })
@@ -170,7 +177,7 @@
                 'GET:postId.commentId': {
                     timeout: 1000,
                     method: 'get',
-                    path: function(postId, id) { return '/posts/' + id; }
+                    path: function(postId, id) { return '/posts/' + postId + '/comments/' + id; }
                 },
                 'POST:postId.+': {
                     timeout: 1000,
@@ -179,8 +186,8 @@
                 }
             };
 
-            this.do = function(which) {
-                var query = queries[which];
+            this.query = function(which) {
+                var q = queries[which];
                 var args = Array.prototype.slice.call(arguments);
                 args.shift();
 
@@ -189,11 +196,12 @@
                 $timeout(function() {
                     deferred.resolve(
                         ApiService.getResponse(
-                            query.method,
-                            query.path.apply(this, args)
+                            q.method,
+                            q.path.apply(this, args),
+                            q.method == 'post' ? args[args.length - 1] : {}
                         )
                     );
-                }, query.timeout);
+                }, q.timeout);
                 return deferred.promise;
             };
         })

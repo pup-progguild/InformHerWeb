@@ -1,5 +1,5 @@
 angular.module('informher.controllers', [])
-    .controller('AuthCtrl', function ($scope, $state, ApiService, UserService, Base64, Auth) {
+    .controller('AuthCtrl', function ($scope, $state, ApiService, UserService, Auth) {
         $scope.registrationSuccessful = false;
 
         $scope.message = {
@@ -110,7 +110,7 @@ angular.module('informher.controllers', [])
                 .success(function (response) {
                     switch (authType) {
                         case 'login':
-                            //Auth.setCredentials($scope.input.username, $scope.input.password);
+                            Auth.setCredentials($scope.input.username, $scope.input.password);
                             UserService.getProfile(response.user.id)
                                 .then(function(response2) {
                                     if(response2.data.status == "USER_PROFILE_FETCH_SUCESS") {
@@ -118,7 +118,6 @@ angular.module('informher.controllers', [])
                                         $scope.user.id = response.user.id;
                                         $scope.user.username = response.user.username;
                                         $scope.user.email = response.user.email;
-                                        localStorage.setItem('informher-auth', Base64.encode($scope.input.username + ":" + $scope.input.password));
                                         localStorage.setItem('informher-current-user', JSON.stringify($scope.user));
                                     }
                                     $state.go('stream.feed');
@@ -129,8 +128,8 @@ angular.module('informher.controllers', [])
                             $scope.displayInformationMessage(response.description, "Message: " + response.status);
                             break;
                         case 'logout':
+                            Auth.clearCredentials();
                             $scope.user = null;
-                            localStorage.removeItem('informher-auth');
                             localStorage.removeItem('informher-current-user');
                             $state.go('home');
                             break;
@@ -160,7 +159,14 @@ angular.module('informher.controllers', [])
         $scope.reset();
     })
 
-    .controller('StreamCtrl', function ($scope, Auth, PostService, UserService) {
+    // displaying of stream's posts
+    .controller('StreamCtrl', function ($scope, PostService, Auth) {
+        $scope.input = {
+            'title': 'Can I has extra napkinz?',
+            'content': 'I has the menstrueishunzz.',
+            'category': ''
+        };
+
         $scope.toggleLeft = function () {
             $scope.sideMenuController.toggleLeft();
         };
@@ -169,52 +175,54 @@ angular.module('informher.controllers', [])
             console.log("TODO refresh");
         };
 
-        PostService.do('GET:*')
+        PostService.query('GET:*')
             .then(function (response) {
                 if (response.data.status == "POST_SHOW_SUCCESSFUL") {
                     $scope.posts = response.data.posts.result;
                 }
             });
+
+        $scope.post = function(category) {
+            $scope.input.post.category = category;
+            PostService.query('POST', $scope.input)
+                .then(function (response) {
+                    console.log(response);
+                });
+        };
     })
 
-    .controller('PostCtrl', function ($scope, $stateParams, PostService, CommentService, Auth) {
-        $scope.message = 'this is a post by temotius';
+    // displaying of posts' comments
+    .controller('PostCtrl', function ($scope, $stateParams, PostService, CommentService) {
+        $scope.input = { 'message': '' };
 
         $scope.onRefresh = function() {
             console.log("TODO refresh");
         };
 
-        $scope.postComment = function() {
-            CommentService.do('POST:postId.+', $stateParams.postId, { 'message': $scope.message })
+        $scope.addComment = function() {
+            CommentService.query('POST:postId.+', $stateParams.postId, $scope.input)
                 .then(function (response) {
                     console.log(response);
+                    if(response.data.status == "POST_COMMENT_CREATE_SUCCESS")
+                        $scope.post.comments.unshift(response.data.comment.result[0]);
                 });
         };
 
-        PostService.do('GET:postId', $stateParams.postId)
+        PostService.query('GET:postId', $stateParams.postId)
             .then(function (response) {
                 if (response.data.status == "POST_SHOW_SUCCESSFUL") {
                     $scope.post = response.data.posts;
 
-                    CommentService.do('GET:postId.*', $stateParams.postId)
+                    CommentService.query('GET:postId.*', $stateParams.postId)
                         .then(function (response) {
                             if (response.data.status == "POST_COMMENT_RETRIEVE_SUCCESSFUL") {
                                 $scope.post.comments = response.data.comment.result;
+                                console.log($scope.post.comments);
                             }
                         });
                 }
             })
         ;
-
-        /*
-         PostService.getPost($stateParams.postId)
-         .then(function(response) {
-         if(response.data.status == "POST_SHOW_SUCCESSFUL") {
-         $scope.post = response.data.posts;
-         console.log($scope.post);
-         }
-         });
-         */
     })
 
     .controller('UserCtrl', function ($scope, $stateParams, UserService) {

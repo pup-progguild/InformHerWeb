@@ -6,7 +6,13 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('informher', ['ionic', 'informher.services', 'informher.controllers', 'pascalprecht.translate'])
-    .controller('SessionCtrl', function($translate, $scope, UserService) {
+    .controller('SessionCtrl', function($scope, $translate, $ionicModal) {
+        $scope.modals = {
+            urls: ['modals/tos.html', 'modals/ask.html', 'modals/relate.html', 'modals/shoutout.html'],
+            current: '',
+            loaded: []
+        };
+
         $scope.user = null;
 
         var defaults = {
@@ -22,10 +28,32 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
             history.back();
         };
 
+        // load default app-wide vars
         for(var key in defaults)
             if(localStorage.getItem(key) == null)
                 localStorage.setItem(key, defaults[key]);
 
+        // load modals
+        $scope.modals.urls.forEach(function(modalUrl) {
+            $ionicModal.fromTemplateUrl(modalUrl, function(modal) {
+                $scope.modals.loaded[modalUrl] = modal;
+            }, {
+                scope: $scope,
+                animation: 'slide-in-up'
+            });
+        });
+
+        $scope.openModal = function(modalUrl) {
+            $scope.modals.current = modalUrl;
+            $scope.modals.loaded[modalUrl].show();
+        };
+
+        $scope.closeModal = function() {
+            $scope.modals.loaded[$scope.modals.current].hide();
+            $scope.modals.current = '';
+        };
+
+        // initialize persistence in app-wide vars
         $scope.user = JSON.parse(localStorage.getItem('informher-current-user'));
         $scope.setLanguage(localStorage.getItem('informher-language'));
 
