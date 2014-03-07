@@ -84,9 +84,10 @@
                 }
             };
         })
-        .factory('Auth', function (Base64, $http, UserService) {
+        .factory('Auth', function (Base64, $http, UserService, PersistenceService) {
             // initialize to whatever is in the cookie, if anything
-            var authKey = localStorage.getItem('informher-auth');
+            //var authKey = localStorage.getItem('informher-auth');
+            var authKey = PersistenceService.get('informher-auth');
 
             $http.defaults.headers.common.Authentication = 'Basic ' + (authKey != null ? authKey : '');
 
@@ -94,13 +95,13 @@
                 setCredentials: function (username, password, profile) {
                     var encoded = Base64.encode(username + ':' + password);
                     $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
-                    localStorage.setItem('informher-auth', encoded);
+                    PersistenceService.set('informher-auth', encoded);
                     profile.username = username;
                     UserService.setCurrentUserProfile(profile);
                 },
                 clearCredentials: function () {
                     $http.defaults.headers.common.Authorization = 'Basic ';
-                    localStorage.setItem('informher-auth', '');
+                    PersistenceService.set('informher-auth', '');
                     UserService.setCurrentUserProfile(null);
                 }
             };
@@ -126,7 +127,7 @@
                 });
             };
         })
-        .service('UserService', function($http, $q, $timeout, ApiService) {
+        .service('UserService', function($http, $q, $timeout, ApiService, PersistenceService) {
             this.getProfile = function(id) { // TODO get own user profile
                 var deferred = $q.defer();
                 $timeout(function() {
@@ -152,11 +153,11 @@
             };
 
             this.getCurrentUserProfile = function() {
-                return JSON.parse(localStorage.getItem('informher-current-user'));
+                return PersistenceService.get('informher-current-user');
             };
 
             this.setCurrentUserProfile = function(profile) {
-                localStorage.setItem('informher-current-user', JSON.stringify(profile));
+                PersistenceService.set('informher-current-user', profile);
             };
         })
         .service('PostService', function($q, $timeout, ApiService) {
@@ -268,6 +269,97 @@
             this.closeModal = function() {
                 modals.loaded[modals.current].hide();
                 modals.current = '';
+            };
+        })
+        .factory('MessageService', function() {
+            var message = {
+                displayed: false,
+                title: {
+                    content: '',
+                    color: {
+                        bg: 'dark',
+                        fg: 'stable'
+                    }
+                },
+                body: {
+                    content: '',
+                    color: {
+                        bg: 'stable',
+                        fg: 'dark'
+                    }
+                },
+                border: 'dark'
+            };
+
+            var displayMessage = function (body, title, bg, fg) {
+                message = {
+                    displayed: true,
+                    title: {
+                        content: title,
+                        color: {
+                            bg: fg,
+                            fg: bg
+                        }
+                    },
+                    body: {
+                        content: body,
+                        color: {
+                            bg: bg,
+                            fg: fg
+                        }
+                    },
+                    border: fg
+                };
+                return message;
+            };
+
+            var dismissMessage = function() {
+                message.displayed = false;
+                return message;
+            };
+            return {
+                informationMessage: function(body, title) {
+                    return displayMessage(body, title, 'stable', 'dark');
+                },
+                errorMessage: function(body, title) {
+                    return displayMessage(body, title, 'stable', 'assertive');
+                },
+                dismissMessage: function() {
+                    return dismissMessage();
+                }
+            };
+        })
+        .service('PersistenceService', function() {
+            var defaults = {
+                'informher-language': '',
+                'informher-auth': '',
+                'informher-remember': '',
+                'informher-current-user': null
+            };
+
+            this.get = function(key) {
+                var value;
+                try {
+                    value = JSON.parse(localStorage.getItem(key));
+                }
+                catch(e) {
+                    value = localStorage.getItem(key);
+                }
+                return value;
+            };
+
+            this.set = function(key, value) {
+                if(value instanceof Object)
+                    value = JSON.stringify(value);
+                return localStorage.setItem(key, value);
+            };
+
+            this.reset = function(key) {
+                if(key !== undefined)
+                    this.set(key, defaults[key]);
+                else
+                    for(var defaultsKey in defaults)
+                        this.set(defaultsKey, defaults[defaultsKey]);
             };
         })
     ;

@@ -12,16 +12,17 @@
     <link href="css/app.css" rel="stylesheet">
 
     <!-- core app scripts -->
-    <script src="lib/js/underscore/underscore.js"></script>
+    <script src="lib/js/underscore/underscore-min.js"></script>
 
     <!-- angularjs scripts -->
-    <script src="lib/js/ionic.js"></script>
+    <script src="lib/js/ionic.bundle.min.js"></script>
+    <!-- <script src="lib/js/ionic.js"></script>
     <script src="lib/js/angular/angular.js"></script>
-    <script src="lib/js/angular/angular-animate.js"></script>
+    <script src="lib/js/angular/angular-animate.js"></script> -->
     <script src="lib/js/angular/angular-sanitize.js"></script>
-    <script src="lib/js/angular-ui/angular-ui-router.js"></script>
+    <!-- <script src="lib/js/angular-ui/angular-ui-router.js"></script> -->
     <script src="lib/js/angular-translate/angular-translate.js"></script>
-    <script src="lib/js/ionic-angular.js"></script>
+    <!-- <script src="lib/js/ionic-angular.js"></script> -->
 
     <!-- cordova script -->
     <!-- <script src="cordova.js"></script> -->
@@ -96,6 +97,10 @@
 </script>
 <script id="pages/auth/login.html" type="text/ng-template">
     <ion-nav-page id="pageLogin">
+        <div class="bar bar-header bar-dark">
+            <button class="button button-icon" ng-click="goBack()"><i class="icon ion-arrow-left-c"></i></button>
+            <h1 class="title">{{ 'LOGIN' | translate }}</h1>
+        </div>
         <ion-content has-header="true">
             <div class="padding">
                 <h1>{{ 'LOGIN' | translate }}</h1>
@@ -129,15 +134,19 @@
                     <a href="">{{ 'FORGOT_PASSWORD' | translate }}</a>
                 </li>
             </ul>
-            <div class="padding-horizontal">
-                <button class="button button-positive" type="button" ng-click="doAuth('login')">{{ 'LOGIN' | translate }}</button>
-                <button class="button" type="button" ng-click="goBack()">{{ 'BACK' | translate }}</button>
+            <div class="row">
+                <div class="col"><button class="button button-block button-positive" type="button" ng-click="doAuth('login')">{{ 'LOGIN' | translate }}</button></div>
+                <div class="col"><button class="button button-block" type="button" ng-click="goBack()">{{ 'BACK' | translate }}</button></div>
             </div>
         </ion-content>
     </ion-nav-page>
 </script>
 <script id="pages/auth/register.html" type="text/ng-template">
     <ion-nav-page id="pageRegister">
+        <div class="bar bar-header bar-dark">
+            <button class="button button-icon" ng-click="goBack()"><i class="icon ion-arrow-left-c"></i></button>
+            <h1 class="title">{{ 'REGISTER' | translate }}</h1>
+        </div>
         <ion-content has-header="true">
             <div class="padding">
                 <h1>{{ 'REGISTER' | translate }}</h1>
@@ -169,23 +178,30 @@
                     <span class="input-label">{{ 'CONFIRM_PASSWORD' | translate }}</span>
                     <input ng-model="input.passwordConfirmation" type="password" placeholder="{{ 'CONFIRM_PASSWORD' | translate }}">
                 </li>
-                <li class="item item-checkbox">
+                <li class="item item-checkbox item-text-wrap">
                     <label class="checkbox">
                         <input ng-model="input.agree" type="checkbox">
                     </label>
                     {{ 'TERMS_OF_USE_PRE' | translate }}<a href="" ng-click="openTouModal()">{{ 'TERMS_OF_USE' | translate }}</a>{{ 'TERMS_OF_USE_POST' | translate }}
                 </li>
             </ul>
+
+            <div class="row">
+                <div class="col" ng-hide="registrationSuccessful">
+                    <button class="button button-block button-positive" type="button" ng-click="doAuth('register')" ng-disabled="!input.agree">{{ 'REGISTER' | translate }}</button>
+                </div>
+                <div class="col" ng-hide="registrationSuccessful">
+                    <button class="button button-block" type="button" ng-click="goBack()">{{ 'BACK' | translate }}</button>
+                </div>
+                <div class="col" ng-hide="!registrationSuccessful">
+                    <a class="button button-positive button-block" ng-click="goBack()">{{ 'BACK' | translate }}</a>
+                </div>
+            </div>
             <div class="padding-horizontal">
                 <div ng-hide="registrationSuccessful">
-                    <button class="button button-positive" type="button" ng-click="doAuth('register')" ng-disabled="!input.agree">
-                        {{ 'REGISTER' | translate }}
-                    </button>
-                    <button class="button" type="button" ng-click="goBack()">{{ 'BACK' | translate }}</button>
+
                 </div>
-                <a class="button button-positive button-block" ng-click="goBack()" ng-hide="!registrationSuccessful">
-                    {{ 'BACK' | translate }}
-                </a>
+
             </div>
         </ion-content>
     </ion-nav-page>
@@ -363,7 +379,6 @@
             <div class="item item-divider">{{ 'ACCOUNT' | translate }}</div>
             <div class="item item-toggle">
                 {{ 'TRACK_MY_LOCATION' | translate }}
-                Track my location and display it in profile
                 <label class="toggle">
                     <input type="checkbox">
                     <div class="track">
