@@ -34,13 +34,13 @@
     
     <icon src="icon.png" />
     
-    <icon src="res/icons/android/ldpi.png" gap:platform="android" gap:density="ldpi" />
-    <icon src="res/icons/android/mdpi.png" gap:platform="android" gap:density="mdpi" />
-    <icon src="res/icons/android/hdpi.png" gap:platform="android" gap:density="hdpi" />
-    <icon src="res/icons/android/xhdpi.png" gap:platform="android" gap:density="xhdpi" />
+    <icon src="res/icon/android/ldpi.png" gap:platform="android" gap:density="ldpi" />
+    <icon src="res/icon/android/mdpi.png" gap:platform="android" gap:density="mdpi" />
+    <icon src="res/icon/android/hdpi.png" gap:platform="android" gap:density="hdpi" />
+    <icon src="res/icon/android/xhdpi.png" gap:platform="android" gap:density="xhdpi" />
     
-    <gap:splash src="res/splash/android/ldpi.png" gap:platform="android" gap:density="ldpi" />
-    <gap:splash src="res/splash/android/mdpi.png" gap:platform="android" gap:density="mdpi" />
-    <gap:splash src="res/splash/android/hdpi.png" gap:platform="android" gap:density="hdpi" />
-    <gap:splash src="res/splash/android/xhdpi.png" gap:platform="android" gap:density="xhdpi" />
+    <gap:splash src="res/screen/android/ldpi.png" gap:platform="android" gap:density="ldpi" />
+    <gap:splash src="res/screen/android/mdpi.png" gap:platform="android" gap:density="mdpi" />
+    <gap:splash src="res/screen/android/hdpi.png" gap:platform="android" gap:density="hdpi" />
+    <gap:splash src="res/screen/android/xhdpi.png" gap:platform="android" gap:density="xhdpi" />
 </widget>
