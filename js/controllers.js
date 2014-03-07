@@ -1,68 +1,9 @@
 angular.module('informher.controllers', [])
-    .controller('AuthCtrl', function ($scope, $state, ApiService, UserService, Auth, ModalService) {
+    .controller('AuthCtrl', function ($scope, $state, ApiService, UserService, Auth, ModalService, MessageService, PersistenceService, Base64) {
         $scope.registrationSuccessful = false;
 
-        $scope.message = {
-            displayed: false,
-            title: {
-                content: '',
-                color: {
-                    bg: 'dark',
-                    fg: 'stable'
-                }
-            },
-            body: {
-                content: '',
-                color: {
-                    bg: 'stable',
-                    fg: 'dark'
-                }
-            },
-            border: 'dark'
-        };
-
-        $scope.displayMessage = function (body, title, bg, fg) {
-            $scope.message = {
-                displayed: true,
-                title: {
-                    content: title,
-                    color: {
-                        bg: fg,
-                        fg: bg
-                    }
-                },
-                body: {
-                    content: body,
-                    color: {
-                        bg: bg,
-                        fg: fg
-                    }
-                },
-                border: fg
-            }
-        };
-
-        $scope.displayInformationMessage = function (body, title) {
-            $scope.displayMessage(body, title);
-        };
-
-        $scope.displayErrorMessage = function (body, title) {
-            $scope.displayMessage(body, title, 'stable', 'assertive');
-        };
-
-        $scope.dismissMessage = function () {
-            $scope.message = {
-                displayed: false,
-                title: '',
-                body: '',
-                bg: 'stable-bg',
-                border: 'stable-border',
-                fg: 'dark'
-            };
-        };
-
         $scope.doAuth = function (authType) {
-            $scope.dismissMessage();
+            $scope.message = MessageService.dismissMessage();
             var queries = {
                 'login': {
                     'path': '/user/login',
@@ -92,16 +33,16 @@ angular.module('informher.controllers', [])
             if (authType == 'register') {
                 switch (!false) {
                     case !($scope.input.username != ''):
-                        $scope.displayErrorMessage('Invalid username', 'Error: ERR_INVALID_USERNAME');
+                        $scope.message = MessageService.errorMessage('Invalid username', 'Error: ERR_INVALID_USERNAME');
                         return;
                     case !($scope.input.email != ''):
-                        $scope.displayErrorMessage('Invalid email address', 'Error: ERR_INVALID_EMAIL_ADDRESS');
+                        $scope.message = MessageService.errorMessage('Invalid email address', 'Error: ERR_INVALID_EMAIL_ADDRESS');
                         return;
                     case !($scope.input.password.length >= 6):
-                        $scope.displayErrorMessage('Password cannot be shorter than 6 characters', 'Error: ERR_INVALID_PASSWORD');
+                        $scope.message = MessageService.errorMessage('Password cannot be shorter than 6 characters', 'Error: ERR_INVALID_PASSWORD');
                         return;
                     case !($scope.input.password == $scope.input.passwordConfirmation):
-                        $scope.displayErrorMessage('Passwords do not match', 'Error: ERR_PASSWORDS_DO_NOT_MATCH');
+                        $scope.message = MessageService.errorMessage('Passwords do not match', 'Error: ERR_PASSWORDS_DO_NOT_MATCH');
                         return;
                 }
             }
@@ -113,12 +54,17 @@ angular.module('informher.controllers', [])
                             if(response.status == "USER_LOGIN_SUCCESS") {
                                 Auth.setCredentials($scope.input.username, $scope.input.password, response.user.profile);
                                 $scope.updateCurrentUser();
+                                console.log($scope.input.remember);
+                                if($scope.input.remember)
+                                    PersistenceService.set('informher-remember', Base64.encode($scope.input.username + ':' + $scope.input.password));
+                                else
+                                    PersistenceService.reset('informher-remember');
                                 $state.go('stream.feed');
                             }
                             break;
                         case 'register':
                             $scope.registrationSuccessful = true;
-                            $scope.displayInformationMessage(response.description, "Message: " + response.status);
+                            $scope.message = MessageService.informationMessage(response.description, "Message: " + response.status);
                             break;
                         case 'logout':
                             if(response.status == "USER_LOGGED_OUT_SUCCESS") {
@@ -134,18 +80,21 @@ angular.module('informher.controllers', [])
                 })
                 .error(function (response) {
                     response = response || { status: 'ERR_CONNECTIVITY', description: "The app cannot communicate with InformHer's servers right now. Please try again later" };
-                    $scope.displayErrorMessage(response.description, "Error: " + response.status);
+                    $scope.message = MessageService.errorMessage(response.description, "Error: " + response.status);
                     console.log(response);
                 });
         };
 
         $scope.reset = function () {
+            var authPair = Base64.decode(PersistenceService.get('informher-remember'));
+            var username = authPair.substring(0, authPair.indexOf(':'));
+            var password = authPair.substring(authPair.indexOf(':') + 1);
             $scope.input = {
-                username: '',
+                username: username,
                 email: '', // for register only
-                password: '',
+                password: password,
                 passwordConfirmation: '', // for register only
-                remember: false, // for login only
+                remember: PersistenceService.get('informher-remember') != '', // for login only
                 agree: false // for register only
             };
             $scope.registrationSuccessful = false;
@@ -189,7 +138,7 @@ angular.module('informher.controllers', [])
                         for(var i = 0, len = newPosts.length; i < len; i++)
                             $scope.posts.push(newPosts[i]);
 
-                        for(var i = 0, len = $scope.posts.length; i < len; i++) {
+                        for(i = 0, len = $scope.posts.length; i < len; i++) {
                             var post = $scope.posts[i];
                             post.visible = true;
                         }

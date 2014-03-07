@@ -6,34 +6,22 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('informher', ['ionic', 'informher.services', 'informher.controllers', 'pascalprecht.translate'])
-    .controller('SessionCtrl', function($scope, $translate, ModalService, UserService) {
+    .controller('SessionCtrl', function($scope, $translate, ModalService, UserService, PersistenceService) {
         $scope.modals = {
             urls: ['modals/tos.html', 'modals/ask.html', 'modals/relate.html', 'modals/shoutout.html'],
             current: '',
             loaded: []
         };
 
-        var defaults = {
-            'informher-language': $translate.preferredLanguage(),
-            'informher-auth': '',
-            'informher-current-user': null
-        };
-
+        /* GLOBAL METHODS */
         $scope.setLanguage = function(lang) {
             $translate.use($scope.language = lang);
-            localStorage.setItem('informher-language', lang);
+            PersistenceService.set('informher-language', lang);
         };
 
         $scope.goBack = function() {
             history.back();
         };
-
-        localStorage.setItem('informher-auth', null);
-        localStorage.setItem('informher-current-user', null);
-        // load default app-wide vars
-        for(var key in defaults)
-            if(localStorage.getItem(key) == null)
-                localStorage.setItem(key, defaults[key]);
 
         $scope.closeModal = function() {
             ModalService.closeModal();
@@ -45,7 +33,11 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
 
         // initialize persistence in app-wide vars
         $scope.updateCurrentUser();
-        $scope.setLanguage(localStorage.getItem('informher-language'));
+
+        if(PersistenceService.get('informher-language') == null) {
+            PersistenceService.reset();
+            $scope.setLanguage($translate.preferredLanguage());
+        }
     })
     .config(function($translateProvider) {
         $translateProvider
