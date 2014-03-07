@@ -128,11 +128,11 @@
             };
         })
         .service('UserService', function($http, $q, $timeout, ApiService, PersistenceService) {
-            this.getProfile = function(id) { // TODO get own user profile
+            this.getProfile = function(id) {
                 var deferred = $q.defer();
                 $timeout(function() {
                     deferred.resolve(ApiService.getResponse('get', '/user/profile/' + id, {}, true));
-                }, 1000);
+                }, 300);
                 return deferred.promise;
             };
 
@@ -140,15 +140,15 @@
                 var deferred = $q.defer();
                 $timeout(function() {
                     deferred.resolve(ApiService.getResponse('post', '/user/profile', profileData, true));
-                }, 1000);
+                }, 300);
                 return deferred.promise;
             };
 
-            this.getUserData = function(id) { // TODO make use of ID
+            this.getUserData = function() {
                 var deferred = $q.defer();
                 $timeout(function() {
-                    deferred.resolve(ApiService.getResponse('get', id === undefined ? '/user' : '/user'));
-                }, 1000);
+                    deferred.resolve(ApiService.getResponse('get', '/user'));
+                }, 300);
                 return deferred.promise;
             };
 
@@ -163,22 +163,22 @@
         .service('PostService', function($q, $timeout, ApiService) {
             var queries = {
                 'GET:*': {
-                    timeout: 1000,
+                    timeout: 300,
                     method: 'get',
                     path: function(page) { return '/posts?page=' + page; }
                 },
                 'GET:postId': {
-                    timeout: 1000,
+                    timeout: 300,
                     method: 'get',
                     path: function(id) { return '/posts/' + id; }
                 },
                 'POST': {
-                    timeout: 1000,
+                    timeout: 300,
                     method: 'post',
                     path: function() { return '/posts'; }
                 },
                 'POST:postId.like': {
-                    timeout: 1000,
+                    timeout: 300,
                     method: 'post',
                     path: function(postId) { return '/posts/' + postId + '/like'; }
                 }
@@ -206,22 +206,22 @@
         .service('CommentService', function($q, $timeout, ApiService) {
             var queries = {
                 'GET:postId.*': {
-                    timeout: 1000,
+                    timeout: 300,
                     method: 'get',
                     path: function(postId) { return '/posts/' + postId + '/comments'; }
                 },
                 'GET:postId.commentId': {
-                    timeout: 1000,
+                    timeout: 300,
                     method: 'get',
                     path: function(postId, id) { return '/posts/' + postId + '/comments/' + id; }
                 },
                 'POST:postId.+': {
-                    timeout: 1000,
+                    timeout: 300,
                     method: 'post',
                     path: function(postId) { return '/posts/' + postId + '/comments'; }
                 },
                 'POST:postId.commentId.like': {
-                    timeout: 1000,
+                    timeout: 300,
                     method: 'post',
                     path: function(postId, id) { return '/posts/' + postId + '/comments/' + id + '/like'; }
                 }

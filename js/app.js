@@ -28,7 +28,7 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
         $scope.showLoading = function(content) {
             $scope.loading = $ionicLoading.show({
                 // The text to display in the loading indicator
-                content: content,
+                content: '<i class="icon ion-loading-a"></i><br>' + content,
 
                 // The animation to use
                 animation: 'fade-in',
@@ -38,7 +38,7 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
 
                 // The maximum width of the loading indicator
                 // Text will be wrapped if longer than maxWidth
-                maxWidth: 200,
+                maxWidth: 270,
 
                 // The delay in showing the indicator
                 showDelay: 500
@@ -148,7 +148,13 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 SEARCH_IN: 'Search in...',
                 DATE_RANGE: 'Date Range',
                 DATE_FROM: 'From',
-                DATE_TO: 'To'
+                DATE_TO: 'To',
+
+                MOBILE: 'Mobile',
+                HELP: 'Help',
+
+                POSTS: 'Posts',
+                LIKES: 'Likes'
             })
             .translations('tl-PH', {
                 _LANGUAGE_ID: 'Tagalog',
@@ -239,7 +245,13 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 SEARCH_IN: 'Maghanap sa...',
                 DATE_RANGE: 'Sakop ng Petsa',
                 DATE_FROM: 'Mula',
-                DATE_TO: 'Hanggang'
+                DATE_TO: 'Hanggang',
+
+                MOBILE: 'Mobile',
+                HELP: 'Help',
+
+                POSTS: 'Mga Post',
+                LIKES: 'Mga Like'
             })
             .preferredLanguage('en-PH')
             .fallbackLanguage('en-PH');

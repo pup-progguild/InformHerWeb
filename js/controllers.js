@@ -57,28 +57,39 @@ angular.module('informher.controllers', [])
 
             ApiService.getResponse(query.method, query.path, query.body)
                 .success(function (response) {
-                    $scope.hideLoading();
                     switch (authType) {
                         case 'login':
                             if(response.status == "USER_LOGIN_SUCCESS") {
                                 Auth.setCredentials($scope.input.username, $scope.input.password, response.user.profile);
-                                $scope.updateCurrentUser();
-                                if($scope.input.remember)
-                                    PersistenceService.set('informher-remember', Base64.encode($scope.input.username + ':' + $scope.input.password));
-                                else
-                                    PersistenceService.reset('informher-remember');
-                                $state.go('stream.feed');
+                                UserService.getUserData()
+                                    .then(function(response2) {
+                                        if(response2.data.status == "USER_HOME_RETRIEVE_SUCCESS") {
+                                            response.user.profile = _.extend(response.user.profile, _.omit(response2.data, 'status'));
+                                            UserService.setCurrentUserProfile(response.user.profile);
+
+                                            $scope.updateCurrentUser();
+
+                                            if($scope.input.remember)
+                                                PersistenceService.set('informher-remember', Base64.encode($scope.input.username + ':' + $scope.input.password));
+                                            else
+                                                PersistenceService.reset('informher-remember');
+                                            $scope.hideLoading();
+                                            $state.go('stream.feed');
+                                        }
+                                    });
                             }
                             break;
                         case 'register':
                             $scope.registrationSuccessful = true;
+                            $scope.hideLoading();
                             $scope.message = MessageService.informationMessage(response.description, "Message: " + response.status);
                             break;
                         case 'logout':
                             if(response.status == "USER_LOGGED_OUT_SUCCESS") {
                                 Auth.clearCredentials();
                                 $scope.currentUser = null;
-                                localStorage.removeItem('informher-current-user');
+                                PersistenceService.set('informher-current-user', null);
+                                $scope.hideLoading();
                                 $state.go('home');
                             }
                             break;
@@ -94,10 +105,11 @@ angular.module('informher.controllers', [])
                 });
         };
 
-        $scope.reset = function () {
+        $scope.reset = function(authType) {
             var authPair = Base64.decode(PersistenceService.get('informher-remember'));
             var username = authPair.substring(0, authPair.indexOf(':'));
             var password = authPair.substring(authPair.indexOf(':') + 1);
+            var isLogin = authType == 'login';
             $scope.input = {
                 username: username,
                 email: '', // for register only
@@ -113,8 +125,7 @@ angular.module('informher.controllers', [])
             ModalService.openModal('modalTou');
         };
 
-        $scope.reset();
-
+        $scope.reset('login');
         ModalService.loadModal('modalTou', 'modals/tos.html', $scope);
     })
 
@@ -142,7 +153,7 @@ angular.module('informher.controllers', [])
             shoutout: true
         };
 
-        $scope.search = false;
+        $scope.searchMode = false;
 
         $scope.toggleLeft = function () {
             $scope.sideMenuController.toggleLeft();
@@ -153,8 +164,12 @@ angular.module('informher.controllers', [])
                 .then(function (response) {
                     if (response.data.status == "POST_SHOW_SUCCESSFUL") {
                         var newPosts = response.data.posts.data;
-                        for(var i = 0, len = newPosts.length; i < len; i++)
-                            $scope.posts.push(newPosts[i]);
+
+                        for(var i = 0, len = newPosts.length; i < len; i++) {
+                            var newPost = newPosts[i];
+                            if(_.find($scope.posts, function(post) { return post.id == newPost.id }) === undefined)
+                                $scope.posts.push(newPost);
+                        }
 
                         for(i = 0, len = $scope.posts.length; i < len; i++) {
                             var post = $scope.posts[i];
@@ -162,14 +177,16 @@ angular.module('informher.controllers', [])
                         }
                     }
                 });
+            $scope.$emit('scroll.refreshComplete');
         };
 
         $scope.filter = function() {
+            console.log($scope.posts);
             for(var i = 0, len = $scope.posts.length; i < len; i++) {
                 var post = $scope.posts[i];
                 post.visible = false;
 
-                if(!$scope.search)
+                if(!$scope.searchMode)
                     post.visible = $scope.filterCriteria[post.category.name];
             }
         };
@@ -180,13 +197,58 @@ angular.module('informher.controllers', [])
         };
 
         $scope.toggleSearchMode = function() {
-            $scope.search = !$scope.search;
+            $scope.searchMode = !$scope.searchMode;
+            $scope.filter();
+        };
+
+        $scope.search = function() {
+            $scope.searchMode = true;
             $scope.filter();
         };
 
         $scope.post = function(category) {
-            $scope.input.category = category;
-            PostService.query('POST', $scope.input)
+            var input = { category: category };
+            switch(category) {
+                case 'ask':
+                case 'relate':
+                    input = _.extend(input, _.pick($scope.input, 'title', 'tags', 'content'));
+                    break;
+                case 'shoutout':
+                    var flags = {
+                        'track': $scope.input.track,
+                        'contact': $scope.input.contact,
+                        'urgent': $scope.input.urgent
+                    };
+                    var flagArray = [];
+                    var messageArray = [];
+                    for(var flagKey in flags)
+                        if(flags[flagKey]) {
+                            flagArray.push(flagKey.toUpperCase());
+                            switch(flagKey) {
+                                case 'track':
+                                    messageArray.push('My current location is ' + '0' + '.');
+                                    break;
+                                case 'contact':
+                                    var hasEmail = $scope.input.email != '';
+                                    var hasMobile = $scope.input.mobile != '';
+                                    messageArray.push(
+                                        'You can contact me '
+                                        + (hasEmail ? 'via email: ' + $scope.input.email : '')
+                                        + (hasEmail && hasMobile ? ', or ' : '')
+                                        + (hasMobile ? 'via mobile: ' + $scope.input.mobile : '')
+                                        + '.'
+                                    );
+                                    break;
+                                case 'urgent':
+                                    messageArray.push('I am expecting your response as soon as possible.');
+                                    break;
+                            }
+                        }
+                    messageArray.push('');
+                    input.title = flagArray.join(', ');
+                    break;
+            }
+            PostService.query('POST', input)
                 .then(function (response) {
                     ModalService.closeModal();
                 });
@@ -211,6 +273,7 @@ angular.module('informher.controllers', [])
     // displaying of posts' comments
     .controller('PostCtrl', function ($scope, $stateParams, PostService, CommentService, ModalService) {
         $scope.input = { 'message': '' };
+        $scope.editPost = {};
 
         $scope.onRefresh = function() {
             // TODO configure for pagination
@@ -222,6 +285,8 @@ angular.module('informher.controllers', [])
                             $scope.post.comments.push(newPosts[i]);
                     }
                 });
+
+            $scope.$broadcast('scroll.refreshComplete');
         };
 
         $scope.addComment = function() {
@@ -238,6 +303,24 @@ angular.module('informher.controllers', [])
             .then(function (response) {
                 if (response.data.status == "POST_SHOW_SUCCESSFUL") {
                     $scope.post = response.data.posts;
+
+                    switch($scope.post.category.name) {
+                        case 'ask':
+                        case 'relate':
+                            $scope.input = {
+                                title: $scope.post.title,
+                                tags: _.pluck($scope.post.tags, 'tagname'),
+                                content: $scope.post.content
+                            };
+                            break;
+                        case 'shoutout':
+                            $scope.input = {
+                                tags: _.pluck($scope.post.tags, 'tagname'),
+
+                            };
+                            break;
+                    }
+                    console.log($scope.post);
 
                     ModalService.loadModal('modalEdit', 'modals/' + $scope.post.category.name + '.html', $scope);
                     CommentService.query('GET:postId.*', $stateParams.postId)

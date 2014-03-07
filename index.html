@@ -13,6 +13,7 @@
 
     <!-- core app scripts -->
     <script src="lib/js/underscore/underscore-min.js"></script>
+    <script src="lib/js/underscore/underscore.string.min.js"></script>
 
     <!-- angularjs scripts -->
     <script src="lib/js/ionic.bundle.min.js"></script>
@@ -62,12 +63,28 @@
             <h2 class="title">{{ 'YOU' | translate }}</h2>
         </div>
         <ion-content has-header="true">
-            <div class="list">
+            <div class="card">
                 <div class="item item-text-wrap item-thumbnail-left">
                     <img class="avatar-author" ng-src="{{currentUser.avatar_url}}" alt="{{currentUser.username}}" />
                     <h2><a href="#/profile/{{currentUser.user_id}}">{{currentUser.username}}</a></h2>
-                    <p>Joined <time>{{currentUser.created_at}}</time></p>
+                    <p><i class="icon ion-thumbsup"></i></p>
+
                 </div>
+
+                <a class="item">
+                    <span class="input-label">{{ 'POSTS' | translate }}</span>
+                    <span href="#" class="badge badge-royal">{{currentUser.posts.ask.length}}</span>
+                </a>
+                <a class="item">
+                    <span class="input-label">{{ 'COMMENTS' | translate }}</span>
+                    <span href="#" class="badge badge-royal">{{currentUser.posts.ask.length}}</span>
+                </a>
+            </div>
+
+            <div class="list">
+                <a class="item">
+                    {{ 'HELP' | translate }}
+                </a>
                 <a class="item" ng-controller="AuthCtrl" ng-click="doAuth('logout')">
                     {{ 'LOGOUT' | translate }}
                 </a>
@@ -197,12 +214,6 @@
                     <a class="button button-positive button-block" ng-click="goBack()">{{ 'BACK' | translate }}</a>
                 </div>
             </div>
-            <div class="padding-horizontal">
-                <div ng-hide="registrationSuccessful">
-
-                </div>
-
-            </div>
         </ion-content>
     </ion-nav-page>
 </script>
@@ -281,14 +292,16 @@
             <button class="button button-icon" ng-click="goBack()"><i class="icon ion-arrow-left-c"></i></button>
             <h1 class="title">{{ 'POST' | translate }} &mdash; {{ 'VIEW' | translate }}</h1>
         </div>
-        <ion-content has-header="true" has-footer="true" on-refresh="onRefresh()">
+        <ion-content has-header="true" on-refresh="onRefresh()">
             <div class="list">
                 <div class="item item-text-wrap item-thumbnail-left informher-stream-item-meta">
                     <img class="avatar-author" ng-src="{{post.author.profile.avatar_url}}" alt="{{post.author.username}}" />
                     <strong class="informher-{{post.category.name}} informher-category-tag">{{post.category.name}}</strong>
                     <h2>{{post.title}}</h2>
                     <p><a href="#/profile/{{post.author.id}}">{{post.author.username}}</a> &middot; <time>{{post.created_at}}</time></p>
-                    <button class="button icon-left button-small ion-thumbsup" ng-click="likePost()">{{ 'LIKE' | translate}} ({{post.likers}})</button>
+                    <button class="button icon-left button-small ion-thumbsup" ng-click="likePost()">{{ 'LIKE' | translate}}
+                        <span ng-hide="post.likers <= 0 || isNaN(post.likers)">({{post.likers}})</span>
+                    </button>
                     <button class="button icon-left button-small ion-compose" ng-click="edit()">{{ 'EDIT' | translate }}</button>
                 </div>
                 <div class="item item-text-wrap informher-post-tags">
@@ -300,6 +313,7 @@
                 </div>
                 <div class="item item-divider">
                     {{ 'COMMENTS' | translate }}
+                    <span ng-hide="post.comments_count <= 0 || isNaN(post.comments_count)">({{post.comments_count}})</span>
                 </div>
                 <div class="item item-avatar item-text-wrap">
                     <img class="avatar-author" ng-src="{{user.avatar_url}}" alt="{{user.username}}" />
@@ -311,7 +325,10 @@
                     <h3><a href="#/profile/{{comment.author.id}}">{{comment.author.username}}</a></h3>
                     <time class="timestamp">{{comment.created_at}}</time>
                     <p>{{comment.message}}</p>
-                    <button class="button button-clear button-small icon-left ion-thumbsup informher-btn-like"  ng-click="likeComment(comment.id)">{{ 'LIKE' | translate }} ({{comment.likers}})</button>
+                    <button class="button button-clear button-small icon-left ion-thumbsup informher-btn-like"  ng-click="likeComment(comment.id)">
+                        {{ 'LIKE' | translate }}
+                        <span ng-hide="comment.likers <= 0 || isNaN(comment.likers)">({{comment.likers}})</span>
+                    </button>
                 </div>
             </div>
             <ion-scroll-refresher>
@@ -327,7 +344,7 @@
             <button class="button button-icon" ng-click="goBack()"><i class="icon ion-arrow-left-c"></i></button>
             <h1 class="title">{{ 'VIEWING_PROFILE' | translate }} &mdash; {{user.username}}</h1>
         </div>
-        <ion-content has-header="true" has-footer="true">
+        <ion-content has-header="true">
             <ul class="list">
                 <li class="item item-image">
                     <img class="full-image" ng-src="{{user.avatar_url}}" alt="{{user.username}}">
@@ -570,25 +587,33 @@
                     </label>
                 <li class="item item-checkbox item-text-wrap">
                     <label class="checkbox">
-                        <input type="checkbox" ng-model="trackLocation">
+                        <input type="checkbox" ng-model="input.track">
                     </label>
                     {{ 'KNOW_MY_CURRENT_LOCATION' | translate }}
                 </li>
                 <li class="item item-checkbox item-text-wrap">
                     <label class="checkbox">
-                        <input type="checkbox" ng-model="contact"
-                               ng-click="immediateContact = contact &amp;&amp; immediateContact">
+                        <input type="checkbox" ng-model="input.contact">
                     </label>
                     {{ 'CONTACT_ME' | translate }}
                 </li>
-                <li class="item item-checkbox item-text-wrap">
+                <li class="item item-checkbox item-text-wrap" ng-hide="!input.contact">
                     <label class="checkbox">
-                        <input type="checkbox" ng-model="immediateContact"
-                               ng-checked="contact &amp;&amp; immediateContact" ng-disabled="!contact">
+                        <input type="checkbox" ng-model="input.urgent">
                     </label>
                     {{ 'CONTACT_ME_IMMEDIATELY' | translate }}
                 </li>
+                <li class="item item-checkbox item-divider" ng-hide="!input.contact">{{ 'CONTACT_INFORMATION' | translate }}</li>
+                <li class="item item-input" ng-hide="!input.contact">
+                    <span class="input-label">{{ 'MOBILE' | translate }}</span>
+                    <input ng-model="input.mobile" type="text" placeholder="{{ 'MOBILE' | translate }}">
+                </li>
+                <li class="item item-input" ng-hide="!input.contact">
+                    <span class="input-label">{{ 'EMAIL_ADDRESS' | translate }}</span>
+                    <input ng-model="input.email" type="text" placeholder="{{ 'EMAIL_ADDRESS' | translate }}">
+                </li>
             </ul>
+
             <div class="row">
                 <div class="col"><button class="button button-block button-positive" type="button" ng-click="post('shoutout')">{{ 'SUBMIT' | translate }}</button></div>
                 <div class="col"><button class="button button-block" type="button" ng-click="closeModal()">{{ 'CANCEL' | translate }}</button></div>
