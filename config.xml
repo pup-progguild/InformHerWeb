@@ -1,15 +1,15 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.ionicframework.starter" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.pup-proggild.informher" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>InformHer</name>
     <description>
-        A social networking application for women empowerment.
+        InformHer is a social question and answer app focused on women
     </description>
-    <author email="pup.progguild@outlook.com" href="http://pup-progguild.github.com/">
+    <author email="pup.progguild@outlook.com" href="http://pup-progguild.github.io/">
         PUP Programming Guild
     </author>
     <content src="index.html" />
     <access origin="*" />
-    <preference name="fullscreen" value="true" />
+    <preference name="fullscreen" value="false" />
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
