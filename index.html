@@ -209,25 +209,12 @@
 
 <script id="pages/stream.html" type="text/ng-template">
     <ion-nav-page id="pageStream">
-        <div class="bar bar-header bar-dark item-input-inset">
+        <div class="bar bar-header bar-dark">
             <button class="button button-icon" ng-click="toggleLeft()"><i class="icon ion-navicon"></i></button>
-            <label class="item-input-wrapper">
-                <i class="icon ion-ios7-search placeholder-icon"></i>
-                <input type="search" placeholder="{{ 'SEARCH' | translate }}">
-            </label>
+            <h1 class="title">{{ 'STREAM' | translate }}</h1>
             <a class="button button-clear" href="#/settings/main"><i class="icon ion-gear-a"></i></a>
         </div>
-        <div class="bar bar-subheader">
-            <button class="button button-outline button-energized" ng-click="toggleFilter('ask')" ng-class="filterCriteria.ask ? 'active' : ''"><i class="icon ion-help-circled"></i></button>
-            <button class="button button-energized" ng-click="openModal('modalAsk')"><i class="icon ion-plus"></i></button>
-            <button class="button button-outline button-balanced" ng-click="toggleFilter('relate')" ng-class="filterCriteria.relate ? 'active' : ''"><i class="icon ion-information-circled"></i></button>
-            <button class="button button-balanced" ng-click="openModal('modalRelate')"><i class="icon ion-plus"></i></button>
-            <button class="button button-outline button-positive" ng-click="toggleFilter('shoutout')" ng-class="filterCriteria.shoutout ? 'active' : ''"><i class="icon ion-chatbox-working"></i></button>
-            <button class="button button-positive"  ng-click="openModal('modalShoutout')"><i class="icon ion-plus"></i></button>
-            <button class="button button-clear button-dark" ng-click="flipFilter()"><i class="icon ion-contrast"></i></button>
-        </div>
-        <!-- <ion-content has-header="true" has-subheader="true" has-footer="true" scroll="true" on-refresh="onRefresh()"> -->
-        <ion-content has-header="true" has-subheader="true" scroll="true" on-refresh="onRefresh()">
+        <ion-content has-header="true" scroll="true" on-refresh="onRefresh()">
             <ion-list>
                 <a ng-repeat="post in posts" class="item item-avatar informher-stream-item-meta" href="#/stream/view/{{post.id}}" ng-hide="!post.visible">
                     <img class="avatar-author" ng-src="{{post.author.profile.avatar_url}}" alt="{{post.author.username}}" />
@@ -240,18 +227,54 @@
                 <i class="icon ion-loading-a"></i>
             </ion-scroll-refresher>
         </ion-content>
-        <!--
-        <div class="bar bar-footer">
-            <div class="button-bar">
-                <button class="button icon-left">Title</button>
-                <button class="button icon-left">Author</button>
-                <button class="button icon-left icon ion-arrow-down-a">Date</button>
-            </div>
+        <div class="tabs tabs-icon-top">
+            <a class="tab-item" ng-hide="!(mode == 'initial')" ng-click="mode = 'new-post'">
+                <i class="icon ion-plus"></i>
+                New Post
+            </a>
+            <a class="tab-item energized" ng-hide="!(mode == 'new-post')" ng-click="openModal('modalAsk')">
+                <i class="icon ion-help-circled"></i>
+                Ask
+            </a>
+            <a class="tab-item balanced" ng-hide="!(mode == 'new-post')" ng-click="openModal('modalRelate')">
+                <i class="icon ion-information-circled"></i>
+                Relate
+            </a>
+            <a class="tab-item positive" ng-hide="!(mode == 'new-post')" ng-click="openModal('modalShoutout')">
+                <i class="icon ion-chatbox-working"></i>
+                Shoutout
+            </a>
+            <a class="tab-item" ng-hide="!(mode == 'initial')" ng-click="mode = 'filter'">
+                <i class="icon ion-contrast"></i>
+                Filter
+            </a>
+            <a ng-hide="!(mode == 'filter')" ng-click="toggleFilter('ask')" ng-class="'tab-item energized ' + (filterCriteria.ask ? 'active' : '')">
+                <i class="icon ion-help-circled"></i>
+                Ask
+            </a>
+            <a ng-hide="!(mode == 'filter')" ng-click="toggleFilter('relate')" ng-class="'tab-item balanced ' + (filterCriteria.relate ? 'active' : '')">
+                <i class="icon ion-information-circled"></i>
+                Relate
+            </a>
+            <a ng-hide="!(mode == 'filter')" ng-click="toggleFilter('shoutout')" ng-class="'tab-item positive ' + (filterCriteria.shoutout ? 'active' : '')">
+                <i class="icon ion-chatbox-working"></i>
+                Shoutout
+            </a>
+            <a ng-hide="!(mode == 'filter')" ng-click="toggleSearchMode()" ng-class="'tab-item royal ' + (search ? 'active' : '')">
+                <i class="icon ion-search"></i>
+                Search results
+            </button>
+            <a class="tab-item" ng-hide="!(mode == 'initial')" ng-click="openModal('modalSearch')">
+                <i class="icon ion-search"></i>
+                Search
+            </a>
+            <a class="tab-item" ng-hide="!(mode != 'initial')" ng-click="mode = 'initial'">
+                <i class="icon ion-arrow-return-left"></i>
+                Back
+            </a>
         </div>
-        -->
     </ion-nav-page>
 </script>
-
 <script id="pages/post.html" type="text/ng-template">
     <ion-nav-page id="pagePost">
         <div class="bar bar-header bar-dark item-input-inset">
@@ -369,6 +392,7 @@
 </script>
 
 <!--== MENUS ==-->
+
 <script id="menus/settings.html" type="text/ng-template">
     <div class="bar bar-header bar-dark">
         <button class="button button-icon" ng-click="goBack()"><i class="icon ion-arrow-left-c"></i></button>
@@ -391,55 +415,9 @@
                 Language
                 <span class="item-note">{{ '_LANGUAGE_ID' | translate }}</span>
             </a>
-            <!--
-            <div class="item item-divider">{{ 'DEFAULT_SORT' | translate }}</div>
-            <label class="item item-radio">
-                <input type="radio" name="sort">
-                <div class="item-content">
-                    {{ 'TITLE_ASCENDING' }}
-                </div>
-                <i class="radio-icon ion-checkmark"></i>
-            </label>
-            <label class="item item-radio">
-                <input type="radio" name="sort">
-                <div class="item-content">
-                    {{ 'TITLE_DESCENDING' }}
-                </div>
-                <i class="radio-icon ion-checkmark"></i>
-            </label>
-            <label class="item item-radio">
-                <input type="radio" name="sort">
-                <div class="item-content">
-                    {{ 'AUTHOR_ASCENDING' }}
-                </div>
-                <i class="radio-icon ion-checkmark"></i>
-            </label>
-            <label class="item item-radio">
-                <input type="radio" name="sort">
-                <div class="item-content">
-                    {{ 'AUTHOR_DESCENDING' }}
-                </div>
-                <i class="radio-icon ion-checkmark"></i>
-            </label>
-            <label class="item item-radio">
-                <input type="radio" name="sort">
-                <div class="item-content">
-                    {{ 'DATE_RECENT' }}
-                </div>
-                <i class="radio-icon ion-checkmark"></i>
-            </label>
-            <label class="item item-radio">
-                <input type="radio" name="sort">
-                <div class="item-content">
-                    {{ 'DATE_OLDER' }}
-                </div>
-                <i class="radio-icon ion-checkmark"></i>
-            </label>
-            -->
         </div>
     </ion-content>
 </script>
-
 <script id="menus/language.html" type="text/ng-template">
     <div class="bar bar-header bar-dark">
         <button class="button button-icon" ng-click="goBack()"><i class="icon ion-arrow-left-c"></i></button>
@@ -502,7 +480,7 @@
                     <input ng-model="input.title" type="text" placeholder="{{ 'TITLE' | translate }}">
                 </li>
 
-                <li class="item item-input item-stacked-label informher-tags-input">
+                <li class="item item-input item-stacked-label informher-tags-input item-text-wrap">
                     <span class="input-label">{{ 'TAGS' | translate }}</span>
                     <div class="informher-tags-list">
                         <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('education')">education</button>
@@ -541,7 +519,7 @@
                     <span class="input-label">{{ 'TITLE' | translate }}</span>
                     <input ng-model="input.title" type="text" placeholder="{{ 'TITLE' | translate }}">
                 </label>
-                <label class="item item-input item-stacked-label">
+                <label class="item item-input item-stacked-label informher-tags-input item-text-wrap">
                     <span class="input-label">{{ 'TAGS' | translate }}</span>
                     <div class="informher-tags-list">
                         <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('education')">education</button>
@@ -575,7 +553,7 @@
         </header>
         <ion-content has-header="true">
             <ul class="list">
-                <li class="item item-input item-stacked-label">
+                <li class="item item-input item-stacked-label item-text-wrap informher-tags-input">
                     <span class="input-label">{{ 'NATURE_OF_YOUR_REPORT' | translate }}</span>
 
                     <div class="informher-tags-list">
@@ -590,20 +568,20 @@
                         <span ng-repeat="tag in input.tags" class="informher-tags-input-tag">{{tag}}</span>
                         <input type="text" placeholder="{{ 'TAGS' | translate }}">
                     </label>
-                <li class="item item-checkbox">
+                <li class="item item-checkbox item-text-wrap">
                     <label class="checkbox">
                         <input type="checkbox" ng-model="trackLocation">
                     </label>
                     {{ 'KNOW_MY_CURRENT_LOCATION' | translate }}
                 </li>
-                <li class="item item-checkbox">
+                <li class="item item-checkbox item-text-wrap">
                     <label class="checkbox">
                         <input type="checkbox" ng-model="contact"
                                ng-click="immediateContact = contact &amp;&amp; immediateContact">
                     </label>
                     {{ 'CONTACT_ME' | translate }}
                 </li>
-                <li class="item item-checkbox">
+                <li class="item item-checkbox item-text-wrap">
                     <label class="checkbox">
                         <input type="checkbox" ng-model="immediateContact"
                                ng-checked="contact &amp;&amp; immediateContact" ng-disabled="!contact">
@@ -613,6 +591,81 @@
             </ul>
             <div class="row">
                 <div class="col"><button class="button button-block button-positive" type="button" ng-click="post('shoutout')">{{ 'SUBMIT' | translate }}</button></div>
+                <div class="col"><button class="button button-block" type="button" ng-click="closeModal()">{{ 'CANCEL' | translate }}</button></div>
+            </div>
+        </ion-content>
+    </div>
+</script>
+<script id="modals/search.html" type="text/ng-template">
+    <div class="modal">
+        <header class="bar bar-header bar-dark">
+            <h1 class="title">{{ 'SEARCH' | translate }}</h1>
+        </header>
+        <ion-content has-header="true">
+            <ul class="list">
+                <li class="item item-input item-stacked-label">
+                    <span class="input-label">{{ 'TITLE' | translate }}</span>
+                    <input ng-model="input.title" type="text" placeholder="{{ 'TITLE' | translate }}">
+                </li>
+
+                <li class="item item-input item-stacked-label">
+                    <span class="input-label">{{ 'AUTHOR' | translate }}</span>
+                    <input ng-model="input.author" type="text" placeholder="{{ 'AUTHOR' | translate }}">
+                </li>
+
+                <li class="item item-input item-stacked-label informher-tags-input item-text-wrap">
+                    <span class="input-label">{{ 'TAGS' | translate }}</span>
+                    <div class="informher-tags-list">
+                        <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('education')">education</button>
+                        <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('health')">health</button>
+                        <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('abuse')">abuse</button>
+                        <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('government')">government</button>
+                        <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('news')">news</button>
+                        <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('moe')">moe</button>
+                    </div>
+                    <label class="item item-input">
+                        <span ng-repeat="tag in input.tags" class="informher-tags-input-tag">{{tag}}</span>
+                        <input type="text" placeholder="{{ 'TAG' | translate }}">
+                    </label>
+                </li>
+
+                <li class="item item-divider">{{ 'DATE_RANGE' | translate }} </li>
+
+                <li class="item item-input">
+                    <span class="input-label">{{ 'DATE_FROM' | translate }}</span>
+                    <input ng-model="input.dateFrom" type="date" placeholder="{{ 'DATE_FROM' | translate }}">
+                </li>
+
+                <li class="item item-input">
+                    <span class="input-label">{{ 'DATE_TO' | translate }}</span>
+                    <input ng-model="inputSearch.dateTo" type="date" placeholder="{{ 'DATE_TO' | translate }}">
+                </li>
+
+                <li class="item item-divider">{{ 'SEARCH_IN' | translate }}</li>
+
+                <li class="item item-checkbox item-text-wrap">
+                    <label class="checkbox">
+                        <input ng-model="filterCriteria.ask" type="checkbox">
+                    </label>
+                    {{ 'ASK' | translate }}
+                </li>
+
+                <li class="item item-checkbox item-text-wrap">
+                    <label class="checkbox">
+                        <input ng-model="filterCriteria.relate" type="checkbox">
+                    </label>
+                    {{ 'RELATE' | translate }}
+                </li>
+
+                <li class="item item-checkbox item-text-wrap">
+                    <label class="checkbox">
+                        <input ng-model="filterCriteria.shoutout" type="checkbox">
+                    </label>
+                    {{ 'SHOUTOUT' | translate }}
+                </li>
+            </ul>
+            <div class="row">
+                <div class="col"><button class="button button-block button-positive" type="button" ng-click="search()">{{ 'SEARCH' | translate }}</button></div>
                 <div class="col"><button class="button button-block" type="button" ng-click="closeModal()">{{ 'CANCEL' | translate }}</button></div>
             </div>
         </ion-content>

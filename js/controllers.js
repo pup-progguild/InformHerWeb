@@ -4,6 +4,14 @@ angular.module('informher.controllers', [])
 
         $scope.doAuth = function (authType) {
             $scope.message = MessageService.dismissMessage();
+            $scope.showLoading((function(authType) {
+                switch(authType) {
+                    case 'login': return 'Logging in...Please wait.';
+                    case 'register': return 'Processing your registration...Please wait.';
+                    case 'logout': return 'Logging out...Please wait.';
+                }
+                return 'Unknown auth type';
+            })(authType));
             var queries = {
                 'login': {
                     'path': '/user/login',
@@ -49,12 +57,12 @@ angular.module('informher.controllers', [])
 
             ApiService.getResponse(query.method, query.path, query.body)
                 .success(function (response) {
+                    $scope.hideLoading();
                     switch (authType) {
                         case 'login':
                             if(response.status == "USER_LOGIN_SUCCESS") {
                                 Auth.setCredentials($scope.input.username, $scope.input.password, response.user.profile);
                                 $scope.updateCurrentUser();
-                                console.log($scope.input.remember);
                                 if($scope.input.remember)
                                     PersistenceService.set('informher-remember', Base64.encode($scope.input.username + ':' + $scope.input.password));
                                 else
@@ -79,6 +87,7 @@ angular.module('informher.controllers', [])
                     }
                 })
                 .error(function (response) {
+                    $scope.hideLoading();
                     response = response || { status: 'ERR_CONNECTIVITY', description: "The app cannot communicate with InformHer's servers right now. Please try again later" };
                     $scope.message = MessageService.errorMessage(response.description, "Error: " + response.status);
                     console.log(response);
@@ -110,21 +119,30 @@ angular.module('informher.controllers', [])
     })
 
     // displaying of stream's posts
-    .controller('StreamCtrl', function ($scope, PostService, ModalService) {
+    .controller('StreamCtrl', function ($scope, PostService, ModalService, MessageService) {
+        // fields unmodifiable by the user
         $scope.posts = [];
+        $scope.currentPage = 0;
 
         $scope.input = {
             'title': '',
+            'author': '', //for search only
             'content': '',
+            'dateFrom': '', //for search only
+            'dateTo': '', //for search only
             'tags': [],
             'category': ''
         };
+
+        $scope.mode = 'initial';
 
         $scope.filterCriteria = {
             ask: true,
             relate: true,
             shoutout: true
         };
+
+        $scope.search = false;
 
         $scope.toggleLeft = function () {
             $scope.sideMenuController.toggleLeft();
@@ -151,7 +169,8 @@ angular.module('informher.controllers', [])
                 var post = $scope.posts[i];
                 post.visible = false;
 
-                post.visible = $scope.filterCriteria[post.category.name];
+                if(!$scope.search)
+                    post.visible = $scope.filterCriteria[post.category.name];
             }
         };
 
@@ -160,10 +179,9 @@ angular.module('informher.controllers', [])
             $scope.filter();
         };
 
-        $scope.flipFilter = function() {
-            $scope.toggleFilter('ask');
-            $scope.toggleFilter('relate');
-            $scope.toggleFilter('shoutout');
+        $scope.toggleSearchMode = function() {
+            $scope.search = !$scope.search;
+            $scope.filter();
         };
 
         $scope.post = function(category) {
@@ -185,6 +203,7 @@ angular.module('informher.controllers', [])
         ModalService.loadModal('modalAsk', 'modals/ask.html', $scope);
         ModalService.loadModal('modalRelate', 'modals/relate.html', $scope);
         ModalService.loadModal('modalShoutout', 'modals/shoutout.html', $scope);
+        ModalService.loadModal('modalSearch', 'modals/search.html', $scope);
 
         $scope.onRefresh();
     })
