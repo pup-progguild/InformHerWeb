@@ -6,13 +6,7 @@
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
 angular.module('informher', ['ionic', 'informher.services', 'informher.controllers', 'pascalprecht.translate'])
-    .controller('SessionCtrl', function($scope, $translate, ModalService, UserService, PersistenceService) {
-        $scope.modals = {
-            urls: ['modals/tos.html', 'modals/ask.html', 'modals/relate.html', 'modals/shoutout.html'],
-            current: '',
-            loaded: []
-        };
-
+    .controller('SessionCtrl', function($scope, $translate, ModalService, UserService, PersistenceService, $ionicLoading) {
         /* GLOBAL METHODS */
         $scope.setLanguage = function(lang) {
             $translate.use($scope.language = lang);
@@ -29,6 +23,30 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
 
         $scope.updateCurrentUser = function() {
             $scope.currentUser = UserService.getCurrentUserProfile();
+        };
+
+        $scope.showLoading = function(content) {
+            $scope.loading = $ionicLoading.show({
+                // The text to display in the loading indicator
+                content: content,
+
+                // The animation to use
+                animation: 'fade-in',
+
+                // Will a dark overlay or backdrop cover the entire view
+                showBackdrop: true,
+
+                // The maximum width of the loading indicator
+                // Text will be wrapped if longer than maxWidth
+                maxWidth: 200,
+
+                // The delay in showing the indicator
+                showDelay: 500
+            });
+        };
+
+        $scope.hideLoading = function() {
+            $scope.loading.hide();
         };
 
         // initialize persistence in app-wide vars
@@ -125,8 +143,12 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 NATURE_OF_YOUR_REPORT: 'Describe the nature of your report',
                 KNOW_MY_CURRENT_LOCATION: 'I want InformHer to know my current location',
                 CONTACT_ME: 'I want InformHer to get in touch regarding my report',
-                CONTACT_ME_IMMEDIATELY: 'I want InformHer to contact me immediately'
+                CONTACT_ME_IMMEDIATELY: 'I want InformHer to contact me immediately',
 
+                SEARCH_IN: 'Search in...',
+                DATE_RANGE: 'Date Range',
+                DATE_FROM: 'From',
+                DATE_TO: 'To'
             })
             .translations('tl-PH', {
                 _LANGUAGE_ID: 'Tagalog',
@@ -212,7 +234,12 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 NATURE_OF_YOUR_REPORT: 'Ilarawan ang detalye ng iyong kaso',
                 KNOW_MY_CURRENT_LOCATION: 'Nais kong matiyak ng InformHer ang aking lokasyon',
                 CONTACT_ME: 'Nais kong makipag-ugnayan ang InformHer sa akin ukol sa aking kaso',
-                CONTACT_ME_IMMEDIATELY: 'Nais kong makipag-ugnayan ang InformHer sa akin agad-agad'
+                CONTACT_ME_IMMEDIATELY: 'Nais kong makipag-ugnayan ang InformHer sa akin agad-agad',
+
+                SEARCH_IN: 'Maghanap sa...',
+                DATE_RANGE: 'Sakop ng Petsa',
+                DATE_FROM: 'Mula',
+                DATE_TO: 'Hanggang'
             })
             .preferredLanguage('en-PH')
             .fallbackLanguage('en-PH');

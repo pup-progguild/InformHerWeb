@@ -165,7 +165,7 @@
                 'GET:*': {
                     timeout: 1000,
                     method: 'get',
-                    path: function() { return '/posts'; }
+                    path: function(page) { return '/posts?page=' + page; }
                 },
                 'GET:postId': {
                     timeout: 1000,
@@ -271,7 +271,7 @@
                 modals.current = '';
             };
         })
-        .factory('MessageService', function() {
+        .factory('MessageService', function($ionicLoading) {
             var message = {
                 displayed: false,
                 title: {
@@ -317,6 +317,9 @@
                 message.displayed = false;
                 return message;
             };
+
+            var loading;
+
             return {
                 informationMessage: function(body, title) {
                     return displayMessage(body, title, 'stable', 'dark');
