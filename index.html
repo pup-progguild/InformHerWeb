@@ -16,20 +16,18 @@
     <script src="lib/js/underscore/underscore.string.min.js"></script>
 
     <!-- angularjs scripts -->
-    <script src="lib/js/ionic.bundle.min.js"></script>
-    <!-- <script src="lib/js/ionic.js"></script>
-    <script src="lib/js/angular/angular.js"></script>
-    <script src="lib/js/angular/angular-animate.js"></script> -->
+    <script src="lib/js/ionic.bundle.js"></script>
     <script src="lib/js/angular/angular-sanitize.js"></script>
-    <!-- <script src="lib/js/angular-ui/angular-ui-router.js"></script> -->
     <script src="lib/js/angular-translate/angular-translate.js"></script>
-    <!-- <script src="lib/js/ionic-angular.js"></script> -->
+    <script src="lib/js/angular-geolocation/angular-geolocation.min.js"></script>
+    <script src="lib/js/angular-cache/angular-cache-2.3.3.min.js"></script>
 
     <!-- cordova script -->
     <!-- <script src="cordova.js"></script> -->
 
     <!-- your app's script -->
     <script src="js/app.js"></script>
+    <script src="js/services.auth.js"></script>
     <script src="js/services.js"></script>
     <script src="js/controllers.js"></script>
 </head>
@@ -68,7 +66,6 @@
                     <img class="avatar-author" ng-src="{{currentUser.avatar_url}}" alt="{{currentUser.username}}" />
                     <h2><a href="#/profile/{{currentUser.user_id}}">{{currentUser.username}}</a></h2>
                     <p><i class="icon ion-thumbsup"></i></p>
-
                 </div>
 
                 <a class="item">
@@ -103,8 +100,8 @@
             </div>
 
             <div class="row">
-                <div class="col"><a class="button button-block button-positive" href="#/auth/login">{{ 'LOGIN' | translate }}</a></div>
-                <div class="col"><a class="button button-block button-positive" href="#/auth/register">{{ 'REGISTER' | translate }}</a></div>
+                <div class="col"><a class="button button-block button-dark" href="#/auth/login">{{ 'LOGIN' | translate }}</a></div>
+                <div class="col"><a class="button button-block button-dark" href="#/auth/register">{{ 'REGISTER' | translate }}</a></div>
             </div>
         </ion-content>
         <ion-footer-bar type="padding-horizontal" id="informher-language-list">
@@ -147,12 +144,18 @@
                     </label>
                     {{ 'REMEMBER_ME' | translate }}
                 </li>
+                <li class="item item-checkbox">
+                    <label class="checkbox">
+                        <input ng-model="trackLocation" type="checkbox" ng-click="toggleTracking()">
+                    </label>
+                    {{ 'TRACK_MY_LOCATION' | translate }}
+                </li>
                 <li class="item">
                     <a href="">{{ 'FORGOT_PASSWORD' | translate }}</a>
                 </li>
             </ul>
             <div class="row">
-                <div class="col"><button class="button button-block button-positive" type="button" ng-click="doAuth('login')">{{ 'LOGIN' | translate }}</button></div>
+                <div class="col"><button class="button button-block button-dark" type="button" ng-click="doAuth('login')">{{ 'LOGIN' | translate }}</button></div>
                 <div class="col"><button class="button button-block" type="button" ng-click="goBack()">{{ 'BACK' | translate }}</button></div>
             </div>
         </ion-content>
@@ -181,7 +184,7 @@
             <ul class="list" ng-hide="registrationSuccessful">
                 <li class="item item-input item-stacked-label">
                     <span class="input-label">{{ 'USERNAME' | translate }}</span>
-                    <input ng-model="input.username" type="text" placeholder="{{ 'USERNAME' | translate }}">
+                    <input ng-model="input.usernameRegister" type="text" placeholder="{{ 'USERNAME' | translate }}">
                 </li>
                 <li class="item item-input item-stacked-label">
                     <span class="input-label">{{ 'EMAIL_ADDRESS' | translate }}</span>
@@ -189,7 +192,7 @@
                 </li>
                 <li class="item item-input item-stacked-label">
                     <span class="input-label">{{ 'PASSWORD' | translate }}</span>
-                    <input ng-model="input.password" type="password" placeholder="{{ 'PASSWORD' | translate }}">
+                    <input ng-model="input.passwordRegister" type="password" placeholder="{{ 'PASSWORD' | translate }}">
                 </li>
                 <li class="item item-input item-stacked-label">
                     <span class="input-label">{{ 'CONFIRM_PASSWORD' | translate }}</span>
@@ -205,7 +208,7 @@
 
             <div class="row">
                 <div class="col" ng-hide="registrationSuccessful">
-                    <button class="button button-block button-positive" type="button" ng-click="doAuth('register')" ng-disabled="!input.agree">{{ 'REGISTER' | translate }}</button>
+                    <button class="button button-block button-dark" type="button" ng-click="doAuth('register')" ng-disabled="!input.agree">{{ 'REGISTER' | translate }}</button>
                 </div>
                 <div class="col" ng-hide="registrationSuccessful">
                     <button class="button button-block" type="button" ng-click="goBack()">{{ 'BACK' | translate }}</button>
@@ -225,9 +228,9 @@
             <h1 class="title">{{ 'STREAM' | translate }}</h1>
             <a class="button button-clear" href="#/settings/main"><i class="icon ion-gear-a"></i></a>
         </div>
-        <ion-content has-header="true" scroll="true" on-refresh="onRefresh()">
+        <ion-content has-header="true" has-tabs="true" scroll="true" on-refresh="onRefresh()">
             <ion-list>
-                <a ng-repeat="post in posts" class="item item-avatar informher-stream-item-meta" href="#/stream/view/{{post.id}}" ng-hide="!post.visible">
+                <a ng-repeat="post in posts" class="item item-avatar informher-stream-item-meta" ng-click="if()" href="#/stream/view/{{post.id}}" ng-hide="!post.visible">
                     <img class="avatar-author" ng-src="{{post.author.profile.avatar_url}}" alt="{{post.author.username}}" />
                     <strong class="informher-{{post.category.name}} informher-category-tag">{{post.category.name}}</strong>
                     <h2>{{post.title}}</h2>
@@ -241,47 +244,51 @@
         <div class="tabs tabs-icon-top">
             <a class="tab-item" ng-hide="!(mode == 'initial')" ng-click="mode = 'new-post'">
                 <i class="icon ion-plus"></i>
-                New Post
+                {{ 'NEW_POST' | translate }}
             </a>
             <a class="tab-item energized" ng-hide="!(mode == 'new-post')" ng-click="openModal('modalAsk')">
                 <i class="icon ion-help-circled"></i>
-                Ask
+                {{ 'ASK' | translate }}
             </a>
             <a class="tab-item balanced" ng-hide="!(mode == 'new-post')" ng-click="openModal('modalRelate')">
                 <i class="icon ion-information-circled"></i>
-                Relate
+                {{ 'RELATE' | translate }}
             </a>
             <a class="tab-item positive" ng-hide="!(mode == 'new-post')" ng-click="openModal('modalShoutout')">
                 <i class="icon ion-chatbox-working"></i>
-                Shoutout
+                {{ 'SHOUTOUT' | translate }}
             </a>
             <a class="tab-item" ng-hide="!(mode == 'initial')" ng-click="mode = 'filter'">
                 <i class="icon ion-contrast"></i>
-                Filter
+                {{ 'FILTER' | translate }}
             </a>
             <a ng-hide="!(mode == 'filter')" ng-click="toggleFilter('ask')" ng-class="'tab-item energized ' + (filterCriteria.ask ? 'active' : '')">
                 <i class="icon ion-help-circled"></i>
-                Ask
+                {{ 'ASK' | translate }}
             </a>
             <a ng-hide="!(mode == 'filter')" ng-click="toggleFilter('relate')" ng-class="'tab-item balanced ' + (filterCriteria.relate ? 'active' : '')">
                 <i class="icon ion-information-circled"></i>
-                Relate
+                {{ 'RELATE' | translate }}
             </a>
             <a ng-hide="!(mode == 'filter')" ng-click="toggleFilter('shoutout')" ng-class="'tab-item positive ' + (filterCriteria.shoutout ? 'active' : '')">
                 <i class="icon ion-chatbox-working"></i>
-                Shoutout
+                {{ 'SHOUTOUT' | translate }}
             </a>
             <a ng-hide="!(mode == 'filter')" ng-click="toggleSearchMode()" ng-class="'tab-item royal ' + (search ? 'active' : '')">
                 <i class="icon ion-search"></i>
-                Search results
+                {{ 'SEARCH_RESULTS' | translate }}
             </button>
             <a class="tab-item" ng-hide="!(mode == 'initial')" ng-click="openModal('modalSearch')">
                 <i class="icon ion-search"></i>
-                Search
+                {{ 'SEARCH' | translate }}
+            </a>
+            <a class="tab-item" ng-hide="!(mode == 'initial')" ng-click="mode = 'approve'">
+                <i class="icon ion-plus"></i>
+                {{ 'APPROVE' | translate }}
             </a>
             <a class="tab-item" ng-hide="!(mode != 'initial')" ng-click="mode = 'initial'">
                 <i class="icon ion-arrow-return-left"></i>
-                Back
+                {{ 'BACK' | translate }}
             </a>
         </div>
     </ion-nav-page>
@@ -299,7 +306,7 @@
                     <strong class="informher-{{post.category.name}} informher-category-tag">{{post.category.name}}</strong>
                     <h2>{{post.title}}</h2>
                     <p><a href="#/profile/{{post.author.id}}">{{post.author.username}}</a> &middot; <time>{{post.created_at}}</time></p>
-                    <button class="button icon-left button-small ion-thumbsup" ng-click="likePost()">{{ 'LIKE' | translate}}
+                    <button ng-click="likePost()" ng-class="'button icon-left button-small ion-thumbsup' + (liked ? 'button-positive' : 'button-dark')">{{ 'LIKE' | translate}}
                         <span ng-hide="post.likers <= 0 || isNaN(post.likers)">({{post.likers}})</span>
                     </button>
                     <button class="button icon-left button-small ion-compose" ng-click="edit()">{{ 'EDIT' | translate }}</button>
@@ -313,12 +320,11 @@
                 </div>
                 <div class="item item-divider">
                     {{ 'COMMENTS' | translate }}
-                    <span ng-hide="post.comments_count <= 0 || isNaN(post.comments_count)">({{post.comments_count}})</span>
                 </div>
                 <div class="item item-avatar item-text-wrap">
-                    <img class="avatar-author" ng-src="{{user.avatar_url}}" alt="{{user.username}}" />
+                    <img class="avatar-author" ng-src="{{currentUser.avatar_url}}" alt="{{currentUser.username}}" />
                     <textarea ng-model="input.message" placeholder="{{ 'TAP_TO_BEGIN_WRITING' | translate }}"></textarea>
-                    <button class="button button-small button-positive" ng-click="addComment()">{{ 'SUBMIT' | translate }}</button>
+                    <button class="button button-small button-dark" ng-click="addComment()">{{ 'SUBMIT' | translate }}</button>
                 </div>
                 <div ng-repeat="comment in post.comments" class="item item-text-wrap item-avatar informher-comment-item">
                     <img class="avatar-author" ng-src="{{comment.author.profile.avatar_url}}" alt="{{comment.author.username}}" />
@@ -347,19 +353,15 @@
         <ion-content has-header="true">
             <ul class="list">
                 <li class="item item-image">
-                    <img class="full-image" ng-src="{{user.avatar_url}}" alt="{{user.username}}">
+
                 </li>
-                <li class="item item-input">
-                    <span class="input-label">{{ 'USERNAME' | translate }}</span>
-                    <input ng-model="user.username" type="text" disabled>
+                <li class="item item-thumbnail-left">
+
                 </li>
-                <li class="item item-input">
-                    <span class="input-label">{{ 'REGISTERED' | translate }}</span>
-                    <input ng-model="user.created_at" type="date" disabled>
-                </li>
-                <li class="item item-input">
-                    <span class="input-label">{{ 'BADGE' | translate }}</span>
-                    <input ng-model="user.badge" type="text" disabled>
+                <li class="item item-text-wrap item-thumbnail-left">
+                    <img class="full-image" ng-src="{{user.avatar_url}}" alt="{{user.username}}"/>
+                    <h2>{{user.username}}</h2>
+                    <p>{{user.badge}} &middot; Joined {{user.created_at}}</p>
                 </li>
                 <li class="item item-input item-stacked-label">
                     <span class="input-label">{{ 'BIO' | translate }}</span>
@@ -397,11 +399,11 @@
 
             </ul>
             <div class="row" ng-hide="!isEditMode">
-                <div class="col"><button class="button button-block button-positive" type="button" ng-click="save()">{{ 'SAVE' | translate }}</button></div>
+                <div class="col"><button class="button button-block button-dark" type="button" ng-click="save()">{{ 'SAVE' | translate }}</button></div>
                 <div class="col"><button class="button button-block" type="button" ng-click="cancel()">{{ 'CANCEL' | translate }}</button></div>
             </div>
             <div class="row" ng-hide="isEditMode">
-                <div class="col" ng-hide="currentUser.id != user.user_id"><button class="button button-block button-positive" type="button" ng-click="editMode()">{{ 'EDIT' | translate }}</button></div>
+                <div class="col" ng-hide="currentUser.user_id != user.user_id"><button class="button button-block button-dark" type="button" ng-click="editMode()">{{ 'EDIT' | translate }}</button></div>
                 <div class="col"><button class="button button-block" type="button" ng-click="goBack()">{{ 'BACK' | translate }}</button></div>
             </div>
         </ion-content>
@@ -417,19 +419,20 @@
     </div>
     <ion-content has-header="true">
         <div class="list">
-            <div class="item item-divider">{{ 'ACCOUNT' | translate }}</div>
-            <div class="item item-toggle">
-                {{ 'TRACK_MY_LOCATION' | translate }}
-                <label class="toggle">
-                    <input type="checkbox">
-                    <div class="track">
-                        <div class="handle"></div>
-                    </div>
+            <div class="item item-divider">{{ 'GEOLOCATION' | translate }}</div>
+            <div class="item item-checkbox">
+                <label class="checkbox">
+                    <input type="checkbox" ng-model="trackLocation" ng-checked="trackLocation" ng-click="toggleTracking()">
                 </label>
+                {{ 'TRACK_MY_LOCATION' | translate }}
             </div>
+            <a class="item item-checkbox" href="" ng-hide="!trackLocation" ng-click="getLocation()">
+                {{ 'CURRENT_LOCATION' | translate }}
+                <span class="item-note">{{ currentUser.coords.lat }}, {{ currentUser.coords.lon }}</span>
+            </a>
             <div class="item item-divider">{{ 'STREAM' | translate }}</div>
             <a class="item" href="#/settings/language">
-                Language
+                {{ 'LANGUAGE' | translate }}
                 <span class="item-note">{{ '_LANGUAGE_ID' | translate }}</span>
             </a>
         </div>
@@ -462,13 +465,14 @@
     <div class="modal">
         <header class="bar bar-header bar-dark">
             <h1 class="title">{{ 'TERMS_OF_SERVICE' | translate }}</h1>
+            <button class="button button-icon" ng-click="closeModal()"><i class="icon ion-close"></i></button>
         </header>
         <ion-content has-header="true" padding="true">
             <ul class="informher-terms-of-service list">
-                <li class="item item-text-wrap">Please read these Terms of Use carefully before using the services offered by informher. This Agreement sets forth the legally binding terms and conditions for your use of the application. By using the service in any manner, including, but not limited to, browsing the application or contributing content, information, or other materials or services to the application, you agree to be bound by this Agreement.</li>
+                <li class="item item-text-wrap">Please read these Terms of Use carefully before using the services offered by InformHer. This Agreement sets forth the legally binding terms and conditions for your use of the application. By using the service in any manner, including, but not limited to, browsing the application or contributing content, information, or other materials or services to the application, you agree to be bound by this Agreement.</li>
                 <li class="item item-divider">Terms</li>
                 <li class="item item-text-wrap">You must be at least 13 years old to use the Service.</li>
-                <li class="item item-text-wrap">InformHer’s content may be copied, reproduced, republished, uploaded, posted, transmitted, distributed, or used for the creation of derivative works without the author’s prior written consent.</li>
+                <li class="item item-text-wrap">InformHer's content may be copied, reproduced, republished, uploaded, posted, transmitted, distributed, or used for the creation of derivative works without the author's prior written consent.</li>
                 <li class="item item-text-wrap">You may not post violent, nude, partially nude, discriminatory, unlawful, infringing, hateful, pornographic or sexually suggestive photos or other content via the Service.</li>
                 <li class="item item-text-wrap">You may not create an account for anyone other than yourself. You also represent that all information you provide or provided to InformHer upon registration and at all other times will be true, accurate, current and complete and you agree to update your information as necessary to maintain its truth and accuracy.</li>
                 <li class="item item-text-wrap">You agree that you will not solicit, collect or use the login credentials of other InformHer users.</li>
@@ -477,18 +481,19 @@
                 <li class="item item-text-wrap">You may not use the service for any illegal or unauthorized purpose.</li>
                 <li class="item item-text-wrap">You are solely responsible for your conduct and any data, text, files, information, usernames, images, graphics, photos, profiles, audio and video clips, sounds, musical works, works of authorship, applications, links and other content or materials you submit, post or display.</li>
                 <li class="item item-text-wrap">You must not create or submit unwanted email, comments, likes or other forms of commercial or harassing communications to any InformHer users.</li>
-                <li class="item item-text-wrap">You must not attempt to restrict another user from using or enjoying the Service and you must not encourage or facilitate violations of these Terms of Use.</li>
+                <li class="item item-text-wrap">You must not attempt to restrict another user from using the Service and you must not encourage or facilitate violations of these Terms of Use.</li>
                 <li class="item item-text-wrap">Violation of these Terms of Use may, in InformHer sole discretion, result in termination of your account.</li>
             </ul>
 
-            <button class="button button-block button-positive" ng-click="closeModal()">{{ 'OK' | translate }}</button>
+            <button class="button button-block button-dark" ng-click="closeModal()">{{ 'OK' | translate }}</button>
         </ion-content>
     </div>
 </script>
 <script id="modals/ask.html" type="text/ng-template">
     <div class="modal">
-        <header class="bar bar-header bar-dark">
+        <header class="bar bar-header bar-energized">
             <h1 class="title">{{ 'ASK' | translate }}</h1>
+            <button class="button button-icon" ng-click="closeModal()"><i class="icon ion-close"></i></button>
         </header>
         <ion-content has-header="true">
             <ul class="list">
@@ -519,7 +524,7 @@
                 </li>
             </ul>
             <div class="row">
-                <div class="col"><button class="button button-block button-positive" type="button" ng-click="post('ask')">{{ 'SUBMIT' | translate }}</button></div>
+                <div class="col"><button class="button button-block button-energized" type="button" ng-click="submitPost('ask')">{{ 'SUBMIT' | translate }}</button></div>
                 <div class="col"><button class="button button-block" type="button" ng-click="closeModal()">{{ 'CANCEL' | translate }}</button></div>
             </div>
         </ion-content>
@@ -527,8 +532,9 @@
 </script>
 <script id="modals/relate.html" type="text/ng-template">
     <div class="modal">
-        <header class="bar bar-header bar-dark">
+        <header class="bar bar-header bar-balanced">
             <h1 class="title">{{ 'RELATE' | translate }}</h1>
+            <button class="button button-icon" ng-click="closeModal()"><i class="icon ion-close"></i></button>
         </header>
         <ion-content has-header="true">
             <div class="list">
@@ -557,7 +563,7 @@
                 </label>
             </div>
             <div class="row">
-                <div class="col"><button class="button button-block button-positive" type="button" ng-click="post('relate')">{{ 'SUBMIT' | translate }}</button></div>
+                <div class="col"><button class="button button-block button-balanced" type="button" ng-click="submitPost('relate')">{{ 'SUBMIT' | translate }}</button></div>
                 <div class="col"><button class="button button-block" type="button" ng-click="closeModal()">{{ 'CANCEL' | translate }}</button></div>
             </div>
         </content>
@@ -565,8 +571,9 @@
 </script>
 <script id="modals/shoutout.html" type="text/ng-template">
     <div class="modal">
-        <header class="bar bar-header bar-dark">
+        <header class="bar bar-header bar-positive">
             <h1 class="title">{{ 'SHOUTOUT' | translate }}</h1>
+            <button class="button button-icon" ng-click="closeModal()"><i class="icon ion-close"></i></button>
         </header>
         <ion-content has-header="true">
             <ul class="list">
@@ -615,7 +622,7 @@
             </ul>
 
             <div class="row">
-                <div class="col"><button class="button button-block button-positive" type="button" ng-click="post('shoutout')">{{ 'SUBMIT' | translate }}</button></div>
+                <div class="col"><button class="button button-block button-positive" type="button" ng-click="submitPost('shoutout')">{{ 'SUBMIT' | translate }}</button></div>
                 <div class="col"><button class="button button-block" type="button" ng-click="closeModal()">{{ 'CANCEL' | translate }}</button></div>
             </div>
         </ion-content>
@@ -623,8 +630,9 @@
 </script>
 <script id="modals/search.html" type="text/ng-template">
     <div class="modal">
-        <header class="bar bar-header bar-dark">
+        <header class="bar bar-header bar-royal">
             <h1 class="title">{{ 'SEARCH' | translate }}</h1>
+            <button class="button button-icon" ng-click="closeModal()"><i class="icon ion-close"></i></button>
         </header>
         <ion-content has-header="true">
             <ul class="list">

@@ -23,7 +23,7 @@
     
     <gap:platform name="android" />
     
-    <preference name="android-minSdkVersion" value="17" />
+    <!-- <preference name="android-minSdkVersion" value="17" /> -->
     <preference name="orientation" value="default" />
     <preference name="fullscreen" value="false" />
     <preference name="webviewbounce" value="false" />

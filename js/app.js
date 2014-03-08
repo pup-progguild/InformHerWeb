@@ -1,16 +1,16 @@
-// Ionic Starter App
 
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.services' is found in services.js
-// 'starter.controllers' is found in controllers.js
-angular.module('informher', ['ionic', 'informher.services', 'informher.controllers', 'pascalprecht.translate'])
-    .controller('SessionCtrl', function($scope, $translate, ModalService, UserService, PersistenceService, $ionicLoading) {
+angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.services.auth', 'informher.services', 'informher.controllers', 'pascalprecht.translate', 'geolocation'])
+    .controller('SessionCtrl', function($scope, $translate, PersistenceService, ModalService, UserService, LoadingService, MessageService, geolocation) {
         /* GLOBAL METHODS */
+
         $scope.setLanguage = function(lang) {
             $translate.use($scope.language = lang);
-            PersistenceService.set('informher-language', lang);
+            PersistenceService.put('global', 'language', lang);
+        };
+
+        $scope.refreshLanguage = function() {
+            $scope.language = PersistenceService.get('global', 'language');
+            $translate.use($scope.language);
         };
 
         $scope.goBack = function() {
@@ -25,37 +25,59 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
             $scope.currentUser = UserService.getCurrentUserProfile();
         };
 
-        $scope.showLoading = function(content) {
-            $scope.loading = $ionicLoading.show({
-                // The text to display in the loading indicator
-                content: '<i class="icon ion-loading-a"></i><br>' + content,
+        $scope.updateTracking = function() {
+            //$scope.trackLocation = PersistenceService.get('global', 'track') == "true";
+            PersistenceService.put('global', 'track', $scope.trackLocation);
+        };
 
-                // The animation to use
-                animation: 'fade-in',
+        $scope.toggleTracking = function() {
+            $scope.trackLocation = !$scope.trackLocation;
+            $scope.updateTracking();
+            if($scope.trackLocation)
+                $scope.getLocation();
+        };
 
-                // Will a dark overlay or backdrop cover the entire view
-                showBackdrop: true,
+        $scope.retrieveTracking = function() {
+            $scope.trackLocation = PersistenceService.get('global', 'track');
+        };
 
-                // The maximum width of the loading indicator
-                // Text will be wrapped if longer than maxWidth
-                maxWidth: 270,
-
-                // The delay in showing the indicator
-                showDelay: 500
-            });
+        $scope.showLoading = function(message, backdrop) {
+            LoadingService.showLoading(message, backdrop);
         };
 
         $scope.hideLoading = function() {
-            $scope.loading.hide();
+            LoadingService.hideLoading();
         };
+
+        $scope.showScreenMessage = function(message, obstructive) {
+            MessageService.screenMessage(message, obstructive);
+        };
+
+        $scope.getLocation = function() {
+            geolocation.getLocation()
+                .then(function(data){
+                    $scope.currentUser.coords = {lat:data.coords.latitude, lon:data.coords.longitude};
+                });
+        };
+
+        PersistenceService.clear('stream');
+        PersistenceService.clear('admin');
+
+        if(PersistenceService.get('global', 'language') === undefined) {
+            PersistenceService.put('global', 'language', $translate.preferredLanguage());
+            PersistenceService.put('global', 'track', false);
+            PersistenceService.put('global', 'auth', '');
+            PersistenceService.put('global', 'remember', '');
+            PersistenceService.put('global', 'current-user', null);
+            $scope.setLanguage($translate.preferredLanguage());
+        }
 
         // initialize persistence in app-wide vars
         $scope.updateCurrentUser();
-
-        if(PersistenceService.get('informher-language') == null) {
-            PersistenceService.reset();
-            $scope.setLanguage($translate.preferredLanguage());
-        }
+        $scope.retrieveTracking();
+        $scope.refreshLanguage();
+        if($scope.trackLocation)
+            $scope.getLocation();
     })
     .config(function($translateProvider) {
         $translateProvider
@@ -154,7 +176,39 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 HELP: 'Help',
 
                 POSTS: 'Posts',
-                LIKES: 'Likes'
+                LIKES: 'Likes',
+
+                LOGGING_IN: 'Logging in...Please wait.',
+                REGISTERING: 'Processing your registration...Please wait.',
+                LOGGING_OUT: 'Logging out...Please wait.',
+
+                USER_LOGIN_SUCCESS: 'Welcome!',
+                USER_LOGGED_OUT_SUCCESS: 'You are now logged out of InformHer.',
+
+                POST_ADD: 'Creating post...Please wait.',
+                POST_ADD_SUCCESSFUL: 'Post created successfully!',
+                POST_ADD_FAILED: 'Post creation failed.',
+                POST_UPDATE: 'Editing post...Please wait.',
+                POST_UPDATE_SUCCESSFUL: 'Post edited successfully!',
+                POST_UPDATE_FAILED: 'Editing post failed.',
+                POST_SHOW_UNAPPROVED_SUCCESSFUL: 'Unapproved posts shown.',
+
+                USER_PROFILE_UPDATE_SUCCESSFUL: 'Profile edited successfully!',
+
+
+                ERR_INVALID_USERNAME: 'Invalid username.',
+                ERR_INVALID_EMAIL_ADDRESS: 'Invalid e-mail address.',
+                ERR_SHORT_PASSWORD: 'Password cannot be shorter than 6 characters.',
+                ERR_PASSWORDS_DO_NOT_MATCH: 'Passwords do not match.',
+                ERR_CONNECTIVITY: 'The app cannot communicate with InformHer\'s servers right now. Please try again later.',
+
+                NEW_POST: 'New Post',
+                FILTER: 'Filter',
+                SEARCH_RESULTS: 'Search Results',
+                APPROVE: 'Approve',
+
+                GEOLOCATION: 'Geolocation',
+                CURRENT_LOCATION: 'Current location'
             })
             .translations('tl-PH', {
                 _LANGUAGE_ID: 'Tagalog',
@@ -174,7 +228,7 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 YOU: 'Ikaw',
 
                 TERMS_OF_USE_PRE: "Sang-ayon ako sa ",
-                TERMS_OF_USE: "terms of use",
+                TERMS_OF_USE: "nakatakdang kasulatan ukol sa paggamit",
                 TERMS_OF_USE_POST: " ng InformHer.",
 
                 BACK: 'Bumalik',
@@ -191,7 +245,7 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 POST: 'Post',
                 VIEW: 'Tingnan',
 
-                COMMENTS: 'Mga pahayag',
+                COMMENTS: 'Mga Pahayag',
                 TAP_TO_BEGIN_WRITING: 'Pindutin at magsimulang mag-type',
 
                 LIKE: 'Like',
@@ -239,8 +293,8 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 ANYTHING_YOU_WANT_TO_SHARE_HERE: 'I-type ang anumang nais mong ibahagi dito',
                 NATURE_OF_YOUR_REPORT: 'Ilarawan ang detalye ng iyong kaso',
                 KNOW_MY_CURRENT_LOCATION: 'Nais kong matiyak ng InformHer ang aking lokasyon',
-                CONTACT_ME: 'Nais kong makipag-ugnayan ang InformHer sa akin ukol sa aking kaso',
-                CONTACT_ME_IMMEDIATELY: 'Nais kong makipag-ugnayan ang InformHer sa akin agad-agad',
+                CONTACT_ME: 'Nais kong makipag-ugnayan ang mga kinauukulan sa InformHer sa akin ukol sa aking kaso',
+                CONTACT_ME_IMMEDIATELY: 'Nais kong makipag-ugnayan ang mga kinauukulan sa InformHer sa akin agad-agad',
 
                 SEARCH_IN: 'Maghanap sa...',
                 DATE_RANGE: 'Sakop ng Petsa',
@@ -248,10 +302,32 @@ angular.module('informher', ['ionic', 'informher.services', 'informher.controlle
                 DATE_TO: 'Hanggang',
 
                 MOBILE: 'Mobile',
-                HELP: 'Help',
+                HELP: 'Tulong',
 
                 POSTS: 'Mga Post',
-                LIKES: 'Mga Like'
+                LIKES: 'Mga Like',
+
+                LOGGING_IN: 'Nagla-log in...Sandali lang.',
+                REGISTERING: 'Pinoproseso ang iyong pagrerehistro...Sandali lang.',
+                LOGGING_OUT: 'Nagla-log out...Sandali lang.',
+
+                USER_LOGIN_SUCCESS: 'Maligayang Pagdating!',
+                USER_LOGGED_OUT_SUCCESS: 'Ikaw ay naka-log out na ng InformHer.',
+
+                ERR_INVALID_USERNAME: 'Imbalidong username.',
+                ERR_INVALID_EMAIL_ADDRESS: 'Imbalidong e-mail address.',
+                ERR_SHORT_PASSWORD: 'Hindi pwedeng mas maikli sa 6 na simbolo ang password.',
+                ERR_PASSWORDS_DO_NOT_MATCH: 'Hundi tugma ang mga password.',
+                ERR_CONNECTIVITY: 'Kasalukuyang hindi makakonekta ang app sa mga server ng InformHer. Subukan muli mamaya.',
+
+                NEW_POST: 'Bagong Post',
+                FILTER: 'Salain',
+                SEARCH_RESULTS: 'Resulta ng Paghahanap',
+
+                APPROVE: 'Mag-apruba',
+                GEOLOCATION: 'Geolocation',
+
+                CURRENT_LOCATION: 'Kasalukuyang lokasyon'
             })
             .preferredLanguage('en-PH')
             .fallbackLanguage('en-PH');

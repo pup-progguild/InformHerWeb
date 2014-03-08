@@ -1,124 +1,13 @@
 (function() {
-    angular.module('informher.services', [])
-        .factory('Base64', function() {
-            var keyStr = 'ABCDEFGHIJKLMNOP' +
-                'QRSTUVWXYZabcdef' +
-                'ghijklmnopqrstuv' +
-                'wxyz0123456789+/' +
-                '=';
-            return {
-                encode: function (input) {
-                    var output = "";
-                    var chr1, chr2, chr3 = "";
-                    var enc1, enc2, enc3, enc4 = "";
-                    var i = 0;
-
-                    do {
-                        chr1 = input.charCodeAt(i++);
-                        chr2 = input.charCodeAt(i++);
-                        chr3 = input.charCodeAt(i++);
-
-                        enc1 = chr1 >> 2;
-                        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-                        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-                        enc4 = chr3 & 63;
-
-                        if (isNaN(chr2)) {
-                            enc3 = enc4 = 64;
-                        } else if (isNaN(chr3)) {
-                            enc4 = 64;
-                        }
-
-                        output = output +
-                            keyStr.charAt(enc1) +
-                            keyStr.charAt(enc2) +
-                            keyStr.charAt(enc3) +
-                            keyStr.charAt(enc4);
-                        chr1 = chr2 = chr3 = "";
-                        enc1 = enc2 = enc3 = enc4 = "";
-                    } while (i < input.length);
-
-                    return output;
-                },
-
-                decode: function (input) {
-                    var output = "";
-                    var chr1, chr2, chr3 = "";
-                    var enc1, enc2, enc3, enc4 = "";
-                    var i = 0;
-
-                    // remove all characters that are not A-Z, a-z, 0-9, +, /, or =
-                    var base64test = /[^A-Za-z0-9\+\/\=]/g;
-                    if (base64test.exec(input)) {
-                        alert("There were invalid base64 characters in the input text.\n" +
-                            "Valid base64 characters are A-Z, a-z, 0-9, '+', '/',and '='\n" +
-                            "Expect errors in decoding.");
-                    }
-                    input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
-
-                    do {
-                        enc1 = keyStr.indexOf(input.charAt(i++));
-                        enc2 = keyStr.indexOf(input.charAt(i++));
-                        enc3 = keyStr.indexOf(input.charAt(i++));
-                        enc4 = keyStr.indexOf(input.charAt(i++));
-
-                        chr1 = (enc1 << 2) | (enc2 >> 4);
-                        chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
-                        chr3 = ((enc3 & 3) << 6) | enc4;
-
-                        output = output + String.fromCharCode(chr1);
-
-                        if (enc3 != 64) {
-                            output = output + String.fromCharCode(chr2);
-                        }
-                        if (enc4 != 64) {
-                            output = output + String.fromCharCode(chr3);
-                        }
-
-                        chr1 = chr2 = chr3 = "";
-                        enc1 = enc2 = enc3 = enc4 = "";
-
-                    } while (i < input.length);
-
-                    return output;
-                }
-            };
-        })
-        .factory('Auth', function (Base64, $http, UserService, PersistenceService) {
-            // initialize to whatever is in the cookie, if anything
-            //var authKey = localStorage.getItem('informher-auth');
-            var authKey = PersistenceService.get('informher-auth');
-
-            $http.defaults.headers.common.Authentication = 'Basic ' + (authKey != null ? authKey : '');
-
-            return {
-                setCredentials: function (username, password, profile) {
-                    var encoded = Base64.encode(username + ':' + password);
-                    $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
-                    PersistenceService.set('informher-auth', encoded);
-                    profile.username = username;
-                    UserService.setCurrentUserProfile(profile);
-                },
-                clearCredentials: function () {
-                    $http.defaults.headers.common.Authorization = 'Basic ';
-                    PersistenceService.set('informher-auth', '');
-                    UserService.setCurrentUserProfile(null);
-                }
-            };
-        })
+    angular.module('informher.services', ['informher.services.auth'])
         .service('ApiService', function($http) {
             var requestBaseProtocol = 'http';
-            //var requestBase = requestBaseProtocol + '://192.168.137.91/InformHerAPI/wwwroot';
-            //var requestBase = requestBaseProtocol + '://localhost/InformHerAPI/wwwroot';
-            //var requestBase = requestBaseProtocol + '://informherapi.azurewebsites.net';
             var requestBase = requestBaseProtocol + '://informherapi.cloudapp.net';
 
             this.getResponse = function(method, path, body, withCredentials) {
                 if(withCredentials === undefined)
                     withCredentials = false;
-                //$http.defaults.headers.common.Authentication = 'Basic ' + localStorage.getItem('informher-auth');
 
-                //return $http[method](requestBase + path, body || {}, {withCredentials: true}); //TODO: modified by awk
                 return $http({
                     method: method,
                     url: requestBase + path,
@@ -128,59 +17,104 @@
             };
         })
         .service('UserService', function($http, $q, $timeout, ApiService, PersistenceService) {
-            this.getProfile = function(id) {
-                var deferred = $q.defer();
-                $timeout(function() {
-                    deferred.resolve(ApiService.getResponse('get', '/user/profile/' + id, {}, true));
-                }, 300);
-                return deferred.promise;
+            var queries = {
+                'get user($0).profile': {
+                    timeout: 300,
+                    method: 'get',
+                    path: function(id) { return '/user/profile/' + id; }
+                },
+                'update currentUser.profile = $0': {
+                    timeout: 300,
+                    method: 'post',
+                    path: function() { return '/user/profile'; }
+                },
+                'get currentUser.data': {
+                    timeout: 300,
+                    method: 'get',
+                    path: function() { return '/user'; }
+                }
             };
 
-            this.saveProfile = function(profileData) {
-                var deferred = $q.defer();
-                $timeout(function() {
-                    deferred.resolve(ApiService.getResponse('post', '/user/profile', profileData, true));
-                }, 300);
-                return deferred.promise;
-            };
+            this.query = function(which) {
+                var q = queries[which];
+                var args = Array.prototype.slice.call(arguments);
+                args.shift();
 
-            this.getUserData = function() {
                 var deferred = $q.defer();
                 $timeout(function() {
-                    deferred.resolve(ApiService.getResponse('get', '/user'));
-                }, 300);
+                    deferred.resolve(
+                        ApiService.getResponse(
+                            q.method,
+                            q.path.apply(this, args),
+                            q.method == 'post' ? args[args.length - 1] : {},
+                            true
+                        )
+                    );
+                }, q.timeout);
                 return deferred.promise;
             };
 
             this.getCurrentUserProfile = function() {
-                return PersistenceService.get('informher-current-user');
+                return PersistenceService.get('global', 'current-user');
             };
 
             this.setCurrentUserProfile = function(profile) {
-                PersistenceService.set('informher-current-user', profile);
+                PersistenceService.put('global', 'current-user', profile);
+            };
+        })
+        .service('LoadingService', function($ionicLoading, I18N) {
+            var loading;
+
+            this.showLoading = function(content, backdrop) {
+                loading = $ionicLoading.show({
+                    // The text to display in the loading indicator
+                    content: '<i class="icon ion-loading-a"></i>' + (content !== undefined ? '<br/>' + I18N._(content) : ''),
+
+                    // The animation to use
+                    animation: 'fade-in',
+
+                    // Will a dark overlay or backdrop cover the entire view
+                    showBackdrop: backdrop,
+
+                    // The maximum width of the loading indicator
+                    // Text will be wrapped if longer than maxWidth
+                    maxWidth: 270,
+
+                    // The delay in showing the indicator
+                    showDelay: 0
+                });
+            };
+
+            this.hideLoading = function() {
+                loading.hide();
             };
         })
         .service('PostService', function($q, $timeout, ApiService) {
             var queries = {
-                'GET:*': {
+                'get page($0).posts': {
                     timeout: 300,
                     method: 'get',
                     path: function(page) { return '/posts?page=' + page; }
                 },
-                'GET:postId': {
+                'get post($0)': {
                     timeout: 300,
                     method: 'get',
                     path: function(id) { return '/posts/' + id; }
                 },
-                'POST': {
+                'new post': {
                     timeout: 300,
                     method: 'post',
                     path: function() { return '/posts'; }
                 },
-                'POST:postId.like': {
+                'update post($0) = $1': {
                     timeout: 300,
                     method: 'post',
-                    path: function(postId) { return '/posts/' + postId + '/like'; }
+                    path: function(id) { return '/posts/' + id; }
+                },
+                'like post($0)': {
+                    timeout: 300,
+                    method: 'post',
+                    path: function(id) { return '/posts/' + id + '/like'; }
                 }
             };
 
@@ -205,22 +139,22 @@
         })
         .service('CommentService', function($q, $timeout, ApiService) {
             var queries = {
-                'GET:postId.*': {
+                'get post($0).page($1).comments': {
                     timeout: 300,
                     method: 'get',
-                    path: function(postId) { return '/posts/' + postId + '/comments'; }
+                    path: function(postId, page) { return '/posts/' + postId + '/comments?page=' + page; }
                 },
-                'GET:postId.commentId': {
+                'get post($0).comment($1)': {
                     timeout: 300,
                     method: 'get',
                     path: function(postId, id) { return '/posts/' + postId + '/comments/' + id; }
                 },
-                'POST:postId.+': {
+                'new post($0).comment': {
                     timeout: 300,
                     method: 'post',
                     path: function(postId) { return '/posts/' + postId + '/comments'; }
                 },
-                'POST:postId.commentId.like': {
+                'like post($0).comment($1)': {
                     timeout: 300,
                     method: 'post',
                     path: function(postId, id) { return '/posts/' + postId + '/comments/' + id + '/like'; }
@@ -271,7 +205,7 @@
                 modals.current = '';
             };
         })
-        .factory('MessageService', function($ionicLoading) {
+        .factory('MessageService', function(I18N, $ionicLoading) {
             var message = {
                 displayed: false,
                 title: {
@@ -295,14 +229,14 @@
                 message = {
                     displayed: true,
                     title: {
-                        content: title,
+                        content: I18N._(title),
                         color: {
                             bg: fg,
                             fg: bg
                         }
                     },
                     body: {
-                        content: body,
+                        content: I18N._(body),
                         color: {
                             bg: bg,
                             fg: fg
@@ -318,7 +252,31 @@
                 return message;
             };
 
-            var loading;
+            var screenMessage;
+
+            var showScreenMessage = function(body, backdrop) {
+                screenMessage = $ionicLoading.show({
+                    // The text to display in the loading indicator
+                    content: I18N._(body),
+
+                    // The animation to use
+                    animation: 'fade-in',
+
+                    // Will a dark overlay or backdrop cover the entire view
+                    showBackdrop: backdrop,
+
+                    // The maximum width of the loading indicator
+                    // Text will be wrapped if longer than maxWidth
+                    maxWidth: 270,
+
+                    // The delay in showing the indicator
+                    showDelay: 0
+                });
+            };
+
+            var hideScreenMessage = function() {
+                screenMessage.hide();
+            };
 
             return {
                 informationMessage: function(body, title) {
@@ -329,40 +287,38 @@
                 },
                 dismissMessage: function() {
                     return dismissMessage();
+                },
+                screenMessage: function(body, backdrop) {
+                    showScreenMessage(body, backdrop);
+                    setTimeout(function() { hideScreenMessage(); }, backdrop ? 1000 : 1500);
                 }
             };
         })
-        .service('PersistenceService', function() {
-            var defaults = {
-                'informher-language': '',
-                'informher-auth': '',
-                'informher-remember': '',
-                'informher-current-user': null
+        .service('PersistenceService', function($angularCacheFactory) {
+            var caches = {
+                'global': 'localStorage',
+                'stream': 'localStorage',
+                'admin': 'localStorage'
             };
 
-            this.get = function(key) {
-                var value;
-                try {
-                    value = JSON.parse(localStorage.getItem(key));
-                }
-                catch(e) {
-                    value = localStorage.getItem(key);
-                }
-                return value;
+            this.get = function(cache, key) {
+                return caches[cache].get(key);
             };
 
-            this.set = function(key, value) {
-                if(value instanceof Object)
-                    value = JSON.stringify(value);
-                return localStorage.setItem(key, value);
+            this.put = function(cache, key, value) {
+                caches[cache].put(key, value);
             };
 
-            this.reset = function(key) {
-                if(key !== undefined)
-                    this.set(key, defaults[key]);
-                else
-                    for(var defaultsKey in defaults)
-                        this.set(defaultsKey, defaults[defaultsKey]);
+            this.clear = function(cache) {
+                caches[cache].removeAll();
+            };
+
+            for(var i in caches)
+                caches[i] = $angularCacheFactory(i, { storageMode: caches[i] } );
+        })
+        .service('I18N', function() {
+            this._ = function(key) {
+                return ("{{ '" + key + "' | translate }}");
             };
         })
     ;
