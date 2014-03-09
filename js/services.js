@@ -97,36 +97,43 @@
                 'get page($0).posts': {
                     timeout: 300,
                     method: 'get',
+                    message: 'POST_SHOW',
                     path: function(page) { return '/posts?page=' + page; }
                 },
                 'get post($0)': {
                     timeout: 300,
                     method: 'get',
+                    message: 'POST_SHOW',
                     path: function(id) { return '/posts/' + id; }
                 },
                 'get post($0).likes': {
                     timeout: 300,
                     method: 'get',
+                    message: 'POST_LIKES_RETRIEVE',
                     path: function(id) { return '/posts/' + id + '/likes'; }
                 },
                 'new post': {
                     timeout: 300,
                     method: 'post',
+                    message: 'POST_ADD',
                     path: function() { return '/posts'; }
                 },
                 'update post($0) = $1': {
                     timeout: 300,
                     method: 'post',
+                    message: 'POST_UPDATE',
                     path: function(id) { return '/posts/' + id; }
                 },
                 'like post($0)': {
                     timeout: 300,
                     method: 'post',
+                    message: 'POST_CREATE_LIKE',
                     path: function(id) { return '/posts/' + id + '/like'; }
                 },
                 'delete post($0)': {
                     timeout: 300,
                     method: 'delete',
+                    message: 'POST_DELETE',
                     path: function(id) { return '/posts/' + id; }
                 }
             };

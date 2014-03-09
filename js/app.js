@@ -190,7 +190,6 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
 
                 USER_PROFILE_UPDATE_SUCCESSFUL: 'Profile edited successfully!',
 
-
                 ERR_INVALID_USERNAME: 'Invalid username.',
                 ERR_INVALID_EMAIL_ADDRESS: 'Invalid e-mail address.',
                 ERR_SHORT_PASSWORD: 'Password cannot be shorter than 6 characters.',
@@ -221,7 +220,10 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 CONFIRM_POST_DELETE: 'Do you really want to delete this post?',
                 CONFIRM_COMMENT_DELETE: 'Do you really want to delete this comment?',
 
-                POST_CREATE_LIKE_FAILED: 'Error liking post.'
+                POST_CREATE_LIKE_FAILED: 'Error liking post.',
+                POST_DELETE: 'Deleting post...Please wait.',
+                POST_DELETE_SUCCESSFUL: 'Deleted post!',
+                POST_DELETE_FAILED: 'Failed to delete post.'
             })
             .translations('tl-PH', {
                 _LANGUAGE_ID: 'Tagalog',
@@ -352,7 +354,10 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 CONFIRM_POST_DELETE: 'Nais mo ba talagang burahin ang post na ito?',
                 CONFIRM_COMMENT_DELETE: 'Nais mo ba talagang burahin ang komento na ito?',
 
-                POST_CREATE_LIKE_FAILED: 'May error sa pagla-like ng post.'
+                POST_CREATE_LIKE_FAILED: 'May error sa pagla-like ng post.',
+                POST_DELETE: 'Binubura ang post...Sandali lang.',
+                POST_DELETE_SUCCESSFUL: 'Nabura na ang post!',
+                POST_DELETE_FAILED: 'Hindi mabura ang post.'
             })
             .preferredLanguage('en-PH')
             .fallbackLanguage('en-PH');

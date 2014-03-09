@@ -60,3 +60,7 @@
 .informher-terms-of-service > li {
     list-style-type: decimal;
 }
+
+#map {
+    height: 180px;
+}

@@ -1,7 +1,5 @@
 angular.module('informher.controllers', [])
     .controller('AuthCtrl', function ($scope, $state, ApiService, UserService, Auth, ModalService, MessageService, Base64, PersistenceService) {
-        $scope.registrationSuccessful = false;
-
         $scope.doAuth = function (authType) {
             $scope.message = MessageService.dismissMessage();
             $scope.showLoading((function(authType) {
@@ -42,19 +40,19 @@ angular.module('informher.controllers', [])
                 switch (!false) {
                     case !($scope.input.usernameRegister != ''):
                         $scope.hideLoading();
-                        $scope.message = MessageService.errorMessage('ERR_INVALID_USERNAME', 'Error: ERR_INVALID_USERNAME');
+                        $scope.showScreenMessage('ERR_INVALID_USERNAME', false);
                         return;
                     case !($scope.input.email != ''): // check if email is invalid
                         $scope.hideLoading();
-                        $scope.message = MessageService.errorMessage('ERR_INVALID_EMAIL_ADDRESS', 'Error: ERR_INVALID_EMAIL_ADDRESS');
+                        $scope.showScreenMessage('ERR_INVALID_EMAIL_ADDRESS', false);
                         return;
                     case !($scope.input.passwordRegister.length >= 6):
                         $scope.hideLoading();
-                        $scope.message = MessageService.errorMessage('ERR_SHORT_PASSWORD', 'Error: ERR_SHORT_PASSWORD');
+                        $scope.showScreenMessage('ERR_SHORT_PASSWORD', false);
                         return;
                     case !($scope.input.password == $scope.input.passwordConfirmation):
                         $scope.hideLoading();
-                        $scope.message = MessageService.errorMessage('ERR_PASSWORDS_DO_NOT_MATCH', 'Error: ERR_PASSWORDS_DO_NOT_MATCH');
+                        $scope.showScreenMessage('ERR_PASSWORDS_DO_NOT_MATCH', false);
                         return;
                 }
             }
@@ -88,13 +86,10 @@ angular.module('informher.controllers', [])
                             }
                             break;
                         case 'register':
-                            if(response.status == "USER_CREATE_SUCCESSFUL") {
-                                $scope.registrationSuccessful = true;
-
-                                $scope.hideLoading();
-                                //$scope.showScreenMessage(response.status);
-                                $scope.message = MessageService.informationMessage(response.description, "Message: " + response.status);
-                            }
+                            $scope.hideLoading();
+                            $scope.showScreenMessage(response.status, false);
+                            if(response.status == "USER_CREATE_SUCCESSFUL")
+                                $state.go('home');
                             break;
                         case 'logout':
                             if(response.status == "USER_LOGGED_OUT_SUCCESS") {
@@ -105,7 +100,7 @@ angular.module('informher.controllers', [])
                                 PersistenceService.clear('admin');
 
                                 $scope.hideLoading();
-                                $scope.showScreenMessage(response.status);
+                                $scope.showScreenMessage(response.status, false);
                                 $state.go('home');
                             }
                             break;
@@ -116,7 +111,7 @@ angular.module('informher.controllers', [])
                 .error(function (response) {
                     $scope.hideLoading();
                     response = response || { status: 'ERR_CONNECTIVITY', description: "The app cannot communicate with InformHer's servers right now. Please try again later" };
-                    $scope.message = MessageService.errorMessage(response.status, "Error: " + response.status);
+                    $scope.showScreenMessage(response.status, false);
                 });
         };
 
@@ -135,7 +130,6 @@ angular.module('informher.controllers', [])
                 remember: PersistenceService.get('global', 'remember') != '', // for login only
                 agree: false // for register only,
             };
-            $scope.registrationSuccessful = false;
         };
 
         $scope.openTouModal = function() {
@@ -441,11 +435,12 @@ angular.module('informher.controllers', [])
 
         $scope.filter = function(posts) {
             posts = posts || $scope.posts;
-                for(var i = 0, len = posts.length; i < len; i++) {
-                    var post = posts[i];
-                    post.visible = false;
-                    post.visible = $scope.getSearchMode() ? $scope.searchInput[post.category.name] : $scope.filterCriteria[post.category.name];
-                }
+            posts = _.reject(posts, function(post) { return post == null || post === undefined; });
+            for(var i = 0, len = posts.length; i < len; i++) {
+                var post = posts[i];
+                post.visible = false;
+                post.visible = $scope.getSearchMode() ? $scope.searchInput[post.category.name] : $scope.filterCriteria[post.category.name];
+            }
             return posts;
         };
 
@@ -521,43 +516,36 @@ angular.module('informher.controllers', [])
                         'urgent': $scope.input.urgent
                     };
                     var flagArray = [];
+
                     var messageArray = [];
-                    if($scope.input.track)
-                        input.geolocation = $scope.currentUser.coords;
                     for(var flagKey in flags)
                         if(flags[flagKey]) {
                             flagArray.push(flagKey.toUpperCase());
                             switch(flagKey) {
                                 case 'track':
-                                    messageArray.push('My current location is ' + '0' + '.');
+                                    messageArray.push('"location":"' + $scope.currentUser.coords + '"');
                                     break;
                                 case 'contact':
                                     var hasEmail = $scope.input.email != '';
                                     var hasMobile = $scope.input.mobile != '';
-                                    messageArray.push(
-                                        'You can contact me '
-                                            + (hasEmail ? 'via email: ' + $scope.input.email : '')
-                                            + (hasEmail && hasMobile ? ', or ' : '')
-                                            + (hasMobile ? 'via mobile: ' + $scope.input.mobile : '')
-                                            + '.'
-                                    );
+                                    messageArray.push('"email":"' + $scope.input.email + '"');
+                                    messageArray.push('"mobile":"' + $scope.input.mobile + '"');
                                     break;
                                 case 'urgent':
-                                    messageArray.push('I am expecting your response as soon as possible.');
+                                    messageArray.push('"urgent":true');
                                     break;
                             }
                         }
-                    messageArray.push('');
                     input.title = flagArray.join(', ');
-                    input.content = messageArray.join('\n');
+                    input.content = "{" + messageArray.join(',') + "}";
                     input.tags = $scope.input.tags;
                     break;
             }
+            $scope.showLoading('POST_ADD', true);
             PostService.query('new post', input)
                 .then(function (response) {
-                    //$scope.hideLoading();
-                    $scope.showScreenMessage(response.data.status);
-                    console.log(response);
+                    $scope.hideLoading();
+                    $scope.showScreenMessage(response.data.status, false);
                     if(response.data.status == "POST_ADD_SUCCESSFUL") {
                         ModalService.closeModal();
                         $scope.refreshNewer();
@@ -590,7 +578,7 @@ angular.module('informher.controllers', [])
     })
 
     // displaying of posts' comments
-    .controller('PostCtrl', function ($scope, $stateParams, PostService, CommentService, ModalService) {
+    .controller('PostCtrl', function ($scope, $stateParams, PostService, CommentService, ModalService, PersistenceService) {
         $scope.input = { 'message': '' };
         $scope.editPost = {};
 
@@ -703,40 +691,43 @@ angular.module('informher.controllers', [])
                             flagArray.push(flagKey.toUpperCase());
                             switch(flagKey) {
                                 case 'track':
-                                    messageArray.push('My current location is ' + '0' + '.');
+                                    messageArray.push('location:' + $scope.currentUser.coords);
                                     break;
                                 case 'contact':
                                     var hasEmail = $scope.input.email != '';
                                     var hasMobile = $scope.input.mobile != '';
-                                    messageArray.push(
-                                        'You can contact me '
-                                            + (hasEmail ? 'via email: ' + $scope.input.email : '')
-                                            + (hasEmail && hasMobile ? ', or ' : '')
-                                            + (hasMobile ? 'via mobile: ' + $scope.input.mobile : '')
-                                            + '.'
-                                    );
+                                    messageArray.push('email:' + $scope.input.email);
+                                    messageArray.push('mobile:' + $scope.input.mobile);
                                     break;
                                 case 'urgent':
-                                    messageArray.push('I am expecting your response as soon as possible.');
+                                    messageArray.push('urgent:true');
                                     break;
                             }
                         }
-                    messageArray.push('');
                     input.title = flagArray.join(', ');
+                    input.content = "{" + messageArray.join(',') + "}";
+                    input.tags = $scope.input.tags;
                     break;
             }
             $scope.showLoading('POST_UPDATE', true);
             PostService.query('update post($0) = $1', $stateParams.postId, input)
                 .then(function (response) {
-                    $scope.post.content = input.content;
+                    $scope.hideLoading();
                     $scope.showScreenMessage(response.data.status, false);
-                    ModalService.closeModal();
+                    if(response.data.status == "POST_UPDATE_SUCCESSFUL") {
+                        $scope.post.content = input.content;
+                        ModalService.closeModal();
+                    }
                 });
         };
 
         $scope.showLoading('', true);
 
-        $scope.post = PostService.getPost($stateParams.postId);
+        // retrieving post!!!
+        var post = PostService.getPost($stateParams.postId);
+        if(post.category.name == "shoutout")
+            post = _.extend(post, JSON.parse(post.content));
+        $scope.post = post;
         $scope.post.comments = [];
 
         switch($scope.post.category.name) {
@@ -750,8 +741,12 @@ angular.module('informher.controllers', [])
                 break;
             case 'shoutout':
                 $scope.input = {
-                    tags: _.pluck($scope.post.tags, 'tagname')
-
+                    tags: _.pluck($scope.post.tags, 'tagname'),
+                    track: $scope.post.location !== undefined,
+                    urgent: $scope.post.urgent,
+                    contact: $scope.post.email != '' || $scope.post.mobile != '',
+                    email: $scope.post.email,
+                    mobile: $scope.post.mobile
                 };
                 break;
         }
@@ -763,18 +758,32 @@ angular.module('informher.controllers', [])
         };
 
         $scope.doDeletePost = function() {
+            $scope.showLoading('POST_DELETE', true);
             PostService.query('delete post($0)', $stateParams.postId)
                 .then(function(response) {
-                    console.log(response);
+                    $scope.showScreenMessage(response.data.status, false);
+                    if(response.data.status == "POST_DELETE_SUCCESSFUL") {
+                        var posts = PersistenceService.get('stream', PersistenceService.get('stream', 'mode'));
+                        for(var i = 0, len = posts.length; i < len; i++) {
+                            if(posts[i].id == $stateParams.postId) {
+                                delete posts[i];
+                                PersistenceService.put('stream', PersistenceService.get('stream', 'mode'), posts);
+                                break;
+                            }
+                        }
+                        $scope.goBack();
+                    }
                 });
         };
 
+        /*
         $scope.doDeleteComment = function(id) {
             CommentService.query('delete post($0).comment($1)', $stateParams.postId, id)
                 .then(function(response) {
                     console.log(response);
                 });
         };
+        */
 
         ModalService.loadModal('modal-edit', 'modals/' + $scope.post.category.name + '.html', $scope);
         ModalService.loadModal('modal-delete', 'modals/delete.html', $scope);
@@ -796,6 +805,18 @@ angular.module('informher.controllers', [])
                     .then(function(response) {
                         if(response.data.status == "POST_LIKES_RETRIEVE_SUCCESSFUL")
                             $scope.post.liked = _.contains(response.data.likes, $scope.currentUser.user_id);
+                        if(post.category.name == "shoutout") {
+                            post = _.extend(post, JSON.parse(post.content));
+                             var coordsRaw = post.location.split(',');
+                             var x = coordsRaw[0],
+                             y = coordsRaw[1];
+                             var map = L.map('map').setView([x, y], 13);
+                             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                             }).addTo(map);
+
+                             L.marker([x, y]).addTo(map)
+                        }
                     })
             })
     })

@@ -8,6 +8,8 @@
     <!-- ionic css -->
     <link href="lib/css/ionic.css" rel="stylesheet">
 
+    <link href="lib/css/leaflet.css" rel="stylesheet">
+
     <!-- your app's css -->
     <link href="css/app.css" rel="stylesheet">
 
@@ -21,6 +23,8 @@
     <script src="lib/js/angular-translate/angular-translate.js"></script>
     <script src="lib/js/angular-geolocation/angular-geolocation.min.js"></script>
     <script src="lib/js/angular-cache/angular-cache-2.3.3.min.js"></script>
+
+    <script src="lib/js/leaflet/leaflet.js"></script>
 
     <!-- cordova script -->
     <!-- <script src="cordova.js"></script> -->
@@ -70,11 +74,11 @@
 
                 <a class="item">
                     <span class="input-label">{{ 'POSTS' | translate }}</span>
-                    <span href="#" class="badge badge-royal">{{currentUser.posts.ask.length}}</span>
+                    <span class="badge badge-royal">{{currentUser.posts.ask.length}}</span>
                 </a>
                 <a class="item">
                     <span class="input-label">{{ 'COMMENTS' | translate }}</span>
-                    <span href="#" class="badge badge-royal">{{currentUser.posts.ask.length}}</span>
+                    <span class="badge badge-royal">{{currentUser.posts.ask.length}}</span>
                 </a>
             </div>
 
@@ -120,15 +124,6 @@
                 <h1>{{ 'LOGIN' | translate }}</h1>
             </div>
 
-            <div class="card" ng-hide="!message.displayed">
-                <div class="item item-divider {{message.title.color.bg}}-bg {{message.title.color.bg}}-border {{message.title.color.fg}}">
-                    {{ message.title.content }}
-                </div>
-                <div class="item item-text-wrap {{message.title.color.bg}}-border">
-                    <p>{{ message.body.content }}</p>
-                </div>
-            </div>
-
             <ul class="list">
                 <li class="item item-input">
                     <span class="input-label">{{ 'USERNAME' | translate }}</span>
@@ -172,15 +167,6 @@
                 <h1>{{ 'REGISTER' | translate }}</h1>
             </div>
 
-            <div class="card" ng-hide="!message.displayed">
-                <div class="item item-divider {{message.title.color.bg}}-bg {{message.title.color.bg}}-border {{message.title.color.fg}}">
-                    {{ message.title.content }}
-                </div>
-                <div class="item item-text-wrap {{message.title.color.bg}}-border">
-                    <p>{{ message.body.content }}</p>
-                </div>
-            </div>
-
             <ul class="list" ng-hide="registrationSuccessful">
                 <li class="item item-input item-stacked-label">
                     <span class="input-label">{{ 'USERNAME' | translate }}</span>
@@ -207,14 +193,11 @@
             </ul>
 
             <div class="row">
-                <div class="col" ng-hide="registrationSuccessful">
+                <div class="col">
                     <button class="button button-block button-dark" type="button" ng-click="doAuth('register')" ng-disabled="!input.agree">{{ 'REGISTER' | translate }}</button>
                 </div>
-                <div class="col" ng-hide="registrationSuccessful">
+                <div class="col">
                     <button class="button button-block" type="button" ng-click="goBack()">{{ 'BACK' | translate }}</button>
-                </div>
-                <div class="col" ng-hide="!registrationSuccessful">
-                    <a class="button button-positive button-block" ng-click="goBack()">{{ 'BACK' | translate }}</a>
                 </div>
             </div>
         </ion-content>
@@ -302,21 +285,37 @@
                     <strong class="informher-{{post.category.name}} informher-category-tag">{{ post.category.name.toUpperCase() + '_LOWERCASE' | translate }}</strong>
                     <h2>{{post.title}}</h2>
                     <p><a href="#/profile/{{post.author.id}}">{{post.author.username}}</a> &middot; <time>{{post.created_at}}</time></p>
-                        <button ng-click="likePost()" ng-class="'button icon-left ion-thumbsup' + (post.liked ? ' button-royal' : '')">
-                            {{ 'LIKE' | translate}}
-                            <span ng-hide="post.likers <= 0 || isNaN(post.likers)">({{post.likers}})</span>
-                        </button>
-                        <button class="button icon-left ion-compose" ng-click="edit()">{{ 'EDIT' | translate }}</button>
-                        <button class="button icon-left ion-close button-assertive" ng-click="deleteConfirm('post', post.id)" ng-hide="post.author.id != currentUser.user_id">{{ 'DELETE' | translate }}</button>
-                    </div>
+                    <button ng-click="likePost()" ng-class="'button icon-left ion-thumbsup' + (post.liked ? ' button-royal' : '')">
+                        {{ 'LIKE' | translate}}
+                        <span ng-hide="post.likers <= 0 || isNaN(post.likers)">({{post.likers}})</span>
+                    </button>
+                    <button class="button icon-left ion-compose" ng-click="edit()">{{ 'EDIT' | translate }}</button>
+                    <button class="button icon-left ion-close button-assertive" ng-click="deleteConfirm('post', post.id)" ng-hide="post.author.id != currentUser.user_id">{{ 'DELETE' | translate }}</button>
                 </div>
                 <div class="item item-text-wrap informher-post-tags">
                     {{ 'TAGS' | translate }}
                     <!-- <a class="informher-post-tag" ng-repeat="tag in post.tags" href="#/stream/tag/{{tag.id}}">{{tag.tagname}}</a> -->
                     <a class="informher-post-tag" ng-repeat="tag in post.tags" href="">{{tag.tagname}}</a>
                 </div>
-                <div class="item item-text-wrap">
-                    {{post.content}}
+                <div class="item item-body item-text-wrap" ng-hide="post.category.name == 'shoutout'">
+                    {{ post.content }}
+                </div>
+                <div class="item" ng-hide="post.category.name != 'shoutout'">
+                    <span class="input-label">{{ 'URGENT' | translate }}</span>
+                    {{ post.urgent }}
+                </div>
+                <div class="item item-divider" ng-hide="post.category.name != 'shoutout'">{{ 'CONTACT' | translate }}</div>
+                <div class="item" ng-hide="post.category.name != 'shoutout'">
+                    <span class="input-label">{{ 'EMAIL_ADDRESS' | translate }}</span>
+                    {{ post.email }}
+                </div>
+                <div class="item" ng-hide="post.category.name != 'shoutout'">
+                    <span class="input-label">{{ 'MOBILE' | translate }}</span>
+                    {{ post.mobile }}
+                </div>
+                <div class="item item-divider" ng-hide="post.category.name != 'shoutout'">{{ 'LOCATION' | translate }}</div>
+                <div class="item item-body" ng-hide="post.category.name != 'shoutout'">
+                    <div id="map"></div>
                 </div>
                 <div class="item item-divider">
                     {{ 'COMMENTS' | translate }}
