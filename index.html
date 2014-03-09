@@ -98,14 +98,17 @@
 
 <script id="pages/home.html" type="text/ng-template">
     <ion-nav-page id="pageHome">
-        <ion-content has-footer="true">
-            <div class="padding">
-                <img src="img/informher-banner-with-icon.png" alt="{{ '_APP_ID' | translate }}" class="full-image informher-logo" />
-            </div>
-
-            <div class="row">
-                <div class="col"><a class="button button-block button-dark" href="#/auth/login">{{ 'LOGIN' | translate }}</a></div>
-                <div class="col"><a class="button button-block button-dark" href="#/auth/register">{{ 'REGISTER' | translate }}</a></div>
+        <ion-content has-footer="true" scroll="false" class="informher-home-content">
+            <div class="row row-center">
+                <div class="col">
+                    <div class="padding">
+                        <img src="img/informher-banner-with-icon.png" alt="{{ '_APP_ID' | translate }}" class="full-image informher-logo" />
+                    </div>
+                    <div class="row">
+                        <div class="col"><a class="button button-block button-dark" href="#/auth/login">{{ 'LOGIN' | translate }}</a></div>
+                        <div class="col"><a class="button button-block button-dark" href="#/auth/register">{{ 'REGISTER' | translate }}</a></div>
+                    </div>
+                </div>
             </div>
         </ion-content>
         <ion-footer-bar type="padding-horizontal" id="informher-language-list">
