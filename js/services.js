@@ -4,7 +4,7 @@
             var requestBaseProtocol = 'http';
 
             var requestBase = requestBaseProtocol + '://informherapi.cloudapp.net';
-            var requestBase = requestBaseProtocol + '://informherapi.cloudapp.net/InformHerAPI/wwwroot';
+            //var requestBase = requestBaseProtocol + '://informherapi.cloudapp.net/InformHerAPI/wwwroot';
             //var requestBase = requestBaseProtocol + '://192.168.137.239';
 
             this.getResponse = function(method, path, body, withCredentials) {
@@ -124,6 +124,11 @@
                     method: 'post',
                     path: function(id) { return '/posts/' + id + '/like'; }
                 },
+                'delete post($0)': {
+                    timeout: 300,
+                    method: 'delete',
+                    path: function(id) { return '/posts/' + id; }
+                }
             };
 
             this.query = function(which) {
@@ -191,6 +196,11 @@
                     timeout: 300,
                     method: 'post',
                     path: function(postId, id) { return '/posts/' + postId + '/comments/' + id + '/like'; }
+                },
+                'delete post($0).comment($1)': {
+                    timeout: 300,
+                    method: 'delete',
+                    path: function(postId, id) { return '/posts/' + postId + '/comments/' + id; }
                 }
             };
 

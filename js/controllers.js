@@ -133,7 +133,7 @@ angular.module('informher.controllers', [])
                 passwordRegister: '', // for register only
                 passwordConfirmation: '', // for register only
                 remember: PersistenceService.get('global', 'remember') != '', // for login only
-                agree: false, // for register only,
+                agree: false // for register only,
             };
             $scope.registrationSuccessful = false;
         };
@@ -425,6 +425,7 @@ angular.module('informher.controllers', [])
         };
 
         $scope.initStream = function() {
+            $scope.showLoading();
             if($scope.getSearchMode())
                 $scope.refreshSearch(
                     function() { $scope.hideLoading(); $scope.hasSearched = true; },
@@ -546,12 +547,14 @@ angular.module('informher.controllers', [])
                         }
                     messageArray.push('');
                     input.title = flagArray.join(', ');
+                    input.content = messageArray.join('\n');
                     break;
             }
             PostService.query('new post', input)
                 .then(function (response) {
-                    $scope.hideLoading();
+                    //$scope.hideLoading();
                     $scope.showScreenMessage(response.data.status);
+                    console.log(response);
                     if(response.data.status == "POST_ADD_SUCCESSFUL") {
                         ModalService.closeModal();
                         $scope.refreshNewer();
@@ -651,10 +654,17 @@ angular.module('informher.controllers', [])
         };
 
         $scope.likePost = function() {
-            $scope.liked = !$scope.liked;
+            var initial = $scope.post.liked;
+            $scope.post.liked = !$scope.post.liked;
             PostService.query('like post($0)', $stateParams.postId, {})
                 .then(function(response) {
-                    console.log(response);
+                    if(response.data.status == "POST_CREATE_LIKE_SUCCESS") {
+                        $scope.post.liked = _.contains(response.data.likes, $scope.currentUser.user_id);
+                    }
+                    else {
+                        $scope.showScreenMessage(response.data.status);
+                        $scope.post.liked = initial;
+                    }
                 });
         };
 
@@ -723,7 +733,6 @@ angular.module('informher.controllers', [])
 
         $scope.showLoading('', true);
 
-        console.log($stateParams.postId);
         $scope.post = PostService.getPost($stateParams.postId);
         $scope.post.comments = [];
 
@@ -750,8 +759,18 @@ angular.module('informher.controllers', [])
             ModalService.openModal('modal-delete');
         };
 
-        $scope.doDeletePost = function(id) {
+        $scope.doDeletePost = function() {
+            PostService.query('delete post($0)', $stateParams.postId)
+                .then(function(response) {
+                    console.log(response);
+                });
+        };
 
+        $scope.doDeleteComment = function(id) {
+            CommentService.query('delete post($0).comment($1)', $stateParams.postId, id)
+                .then(function(response) {
+                    console.log(response);
+                });
         };
 
         ModalService.loadModal('modal-edit', 'modals/' + $scope.post.category.name + '.html', $scope);
@@ -772,9 +791,8 @@ angular.module('informher.controllers', [])
 
                 PostService.query('get post($0).likes', $stateParams.postId)
                     .then(function(response) {
-                        if(response.data.status == "POST_LIKES_RETRIEVE_SUCCESSFUL") {
-
-                        }
+                        if(response.data.status == "POST_LIKES_RETRIEVE_SUCCESSFUL")
+                            $scope.post.liked = _.contains(response.data.likes, $scope.currentUser.user_id);
                     })
             })
     })

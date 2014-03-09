@@ -302,7 +302,7 @@
                     <strong class="informher-{{post.category.name}} informher-category-tag">{{ post.category.name.toUpperCase() + '_LOWERCASE' | translate }}</strong>
                     <h2>{{post.title}}</h2>
                     <p><a href="#/profile/{{post.author.id}}">{{post.author.username}}</a> &middot; <time>{{post.created_at}}</time></p>
-                        <button ng-click="likePost()" ng-class="'button icon-left ion-thumbsup' + (liked ? ' button-dark' : '')">
+                        <button ng-click="likePost()" ng-class="'button icon-left ion-thumbsup' + (post.liked ? ' button-royal' : '')">
                             {{ 'LIKE' | translate}}
                             <span ng-hide="post.likers <= 0 || isNaN(post.likers)">({{post.likers}})</span>
                         </button>

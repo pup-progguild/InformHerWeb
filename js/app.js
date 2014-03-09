@@ -219,7 +219,9 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 NO: 'No',
 
                 CONFIRM_POST_DELETE: 'Do you really want to delete this post?',
-                CONFIRM_COMMENT_DELETE: 'Do you really want to delete this comment?'
+                CONFIRM_COMMENT_DELETE: 'Do you really want to delete this comment?',
+
+                POST_CREATE_LIKE_FAILED: 'Error liking post.'
             })
             .translations('tl-PH', {
                 _LANGUAGE_ID: 'Tagalog',
@@ -348,7 +350,9 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 NO: 'Hindi',
 
                 CONFIRM_POST_DELETE: 'Nais mo ba talagang burahin ang post na ito?',
-                CONFIRM_COMMENT_DELETE: 'Nais mo ba talagang burahin ang komento na ito?'
+                CONFIRM_COMMENT_DELETE: 'Nais mo ba talagang burahin ang komento na ito?',
+
+                POST_CREATE_LIKE_FAILED: 'May error sa pagla-like ng post.'
             })
             .preferredLanguage('en-PH')
             .fallbackLanguage('en-PH');
