@@ -331,6 +331,8 @@ angular.module('informher.controllers', [])
             return $scope.refreshPage(false, $scope.nextPage, function() {
                 $scope.updatePage();
                 $scope.nextPage++;
+            }, function() {
+                $scope.nextPage--;
             });
         };
 
@@ -362,10 +364,10 @@ angular.module('informher.controllers', [])
                         $scope.filter();
                         $scope.rememberPosts();
                         if(success instanceof Function)
-                            success();
+                            success(response);
                     }
                     else if(error instanceof Function)
-                        error();
+                        error(response);
                 });
         };
 
@@ -548,6 +550,7 @@ angular.module('informher.controllers', [])
                     messageArray.push('');
                     input.title = flagArray.join(', ');
                     input.content = messageArray.join('\n');
+                    input.tags = $scope.input.tags;
                     break;
             }
             PostService.query('new post', input)

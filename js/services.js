@@ -172,7 +172,8 @@
             };
 
             this.getPost = function(id) {
-                return _.findWhere(PersistenceService.get('stream', PersistenceService.get('stream', 'mode')), { 'id': parseInt(id) });
+                return _.findWhere(PersistenceService.get('stream', PersistenceService.get('stream', 'mode')), { 'id': id })
+                    || _.findWhere(PersistenceService.get('stream', PersistenceService.get('stream', 'mode')), { 'id': parseInt(id) });
             };
         })
         .service('CommentService', function($q, $timeout, ApiService) {
