@@ -4,7 +4,7 @@
             var requestBaseProtocol = 'http';
 
             var requestBase = requestBaseProtocol + '://informherapi.cloudapp.net';
-            var requestBase = requestBaseProtocol + '://informherapi.cloudapp.net/InformHerAPI/wwwroot';
+            //var requestBase = requestBaseProtocol + '://informherapi.cloudapp.net/InformHerAPI/wwwroot';
             //var requestBase = requestBaseProtocol + '://192.168.137.239';
 
             this.getResponse = function(method, path, body, withCredentials) {
