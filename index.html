@@ -276,10 +276,12 @@
                 <i class="icon ion-search"></i>
                 {{ 'SEARCH' | translate }}
             </a>
+            <!--
             <a class="tab-item" ng-hide="!(isVisible('approve'))" ng-click="doAction('approve')">
                 <i class="icon ion-plus"></i>
                 {{ 'APPROVE' | translate }}
             </a>
+            -->
             <a class="tab-item" ng-hide="!(isVisible('back'))" ng-click="doAction('back')">
                 <i class="icon ion-arrow-return-left"></i>
                 {{ 'BACK' | translate }}
@@ -498,12 +500,14 @@
             <div ng-hide="deleteType != 'post'">
                 {{ 'CONFIRM_POST_DELETE' | translate }}
             </div>
+            <div ng-hide="deleteType != 'post'"></div>
             <div ng-hide="deleteType != 'comment'">
                 {{ 'CONFIRM_COMMENT_DELETE' | translate }}
             </div>
+            <div ng-hide="deleteType != 'comment'"></div>
             <div class="row">
-                <div class="col" ng-hide="deleteType != 'post'"><button class="button button-block button-assertive" type="button" ng-click="doDeletePost()">{{ 'YES' | translate }}</button></div>
-                <div class="col" ng-hide="deleteType != 'comment'"><button class="button button-block button-assertive" type="button" ng-click="doDeleteComment()">{{ 'YES' | translate }}</button></div>
+                <div class="col" ng-hide="deleteType != 'post'"><button class="button button-block button-assertive" type="button" ng-click="doDeletePost(); closeModal()">{{ 'YES' | translate }}</button></div>
+                <div class="col" ng-hide="deleteType != 'comment'"><button class="button button-block button-assertive" type="button" ng-click="doDeleteComment(); closeModal()">{{ 'YES' | translate }}</button></div>
                 <div class="col"><button class="button button-block" type="button" ng-click="closeModal()">{{ 'NO' | translate }}</button></div>
             </div>
         </ion-content>

@@ -213,7 +213,13 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 SEARCH_FOR: 'Search for...',
 
                 POST_SEARCH_FAILED: 'No results for search.',
-                DELETE: 'Delete'
+                DELETE: 'Delete',
+
+                YES: 'Yes',
+                NO: 'No',
+
+                CONFIRM_POST_DELETE: 'Do you really want to delete this post?',
+                CONFIRM_COMMENT_DELETE: 'Do you really want to delete this comment?'
             })
             .translations('tl-PH', {
                 _LANGUAGE_ID: 'Tagalog',
@@ -336,7 +342,13 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 SEARCH_FOR: 'Maghanap ng post ayon sa...',
 
                 POST_SEARCH_FAILED: 'Walang resulta sa paghahanap.',
-                DELETE: 'Burahin'
+                DELETE: 'Burahin',
+
+                YES: 'Oo',
+                NO: 'Hindi',
+
+                CONFIRM_POST_DELETE: 'Nais mo ba talagang burahin ang post na ito?',
+                CONFIRM_COMMENT_DELETE: 'Nais mo ba talagang burahin ang komento na ito?'
             })
             .preferredLanguage('en-PH')
             .fallbackLanguage('en-PH');

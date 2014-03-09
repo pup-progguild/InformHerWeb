@@ -2,7 +2,10 @@
     angular.module('informher.services', ['informher.services.auth'])
         .service('ApiService', function($http) {
             var requestBaseProtocol = 'http';
+
             var requestBase = requestBaseProtocol + '://informherapi.cloudapp.net';
+            var requestBase = requestBaseProtocol + '://informherapi.cloudapp.net/InformHerAPI/wwwroot';
+            //var requestBase = requestBaseProtocol + '://192.168.137.239';
 
             this.getResponse = function(method, path, body, withCredentials) {
                 if(withCredentials === undefined)
@@ -120,7 +123,7 @@
                     timeout: 300,
                     method: 'post',
                     path: function(id) { return '/posts/' + id + '/like'; }
-                }
+                },
             };
 
             this.query = function(which) {
@@ -164,7 +167,7 @@
             };
 
             this.getPost = function(id) {
-                return _.findWhere(PersistenceService.get('stream', PersistenceService.get('stream', 'mode')), {'id': id});
+                return _.findWhere(PersistenceService.get('stream', PersistenceService.get('stream', 'mode')), { 'id': parseInt(id) });
             };
         })
         .service('CommentService', function($q, $timeout, ApiService) {

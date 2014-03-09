@@ -559,6 +559,9 @@ angular.module('informher.controllers', [])
                 });
         };
 
+        if($scope.getStreamMode() === undefined)
+            $scope.setStreamMode('main');
+
         $scope.recallPosts();
 
         PostService.query('get page($0).posts', 1)
@@ -720,6 +723,7 @@ angular.module('informher.controllers', [])
 
         $scope.showLoading('', true);
 
+        console.log($stateParams.postId);
         $scope.post = PostService.getPost($stateParams.postId);
         $scope.post.comments = [];
 
@@ -742,7 +746,12 @@ angular.module('informher.controllers', [])
 
         $scope.deleteConfirm = function(which, id) {
             $scope.deleteType = which;
+            $scope.deleteId  = id;
             ModalService.openModal('modal-delete');
+        };
+
+        $scope.doDeletePost = function(id) {
+
         };
 
         ModalService.loadModal('modal-edit', 'modals/' + $scope.post.category.name + '.html', $scope);
