@@ -177,8 +177,7 @@ angular.module('informher.controllers', [])
 
         $scope.recallPosts = function() {
             $scope.posts = [];
-            $scope.filter();
-            $scope.posts = PersistenceService.get('stream', $scope.streamMode) || [];
+            $scope.posts = $scope.filter(PersistenceService.get('stream', $scope.streamMode)) || [];
         };
         $scope.getStreamMode = function() { $scope.streamMode = PersistenceService.get('stream', 'mode'); };
 
@@ -355,13 +354,13 @@ angular.module('informher.controllers', [])
                         for(var i = newPosts.length - 1, len = 0; i >= len; i--) {
                             var newPost = newPosts[i];
                             if(_.find($scope.posts, function(post) { return post.id == newPost.id }) === undefined) {
-                                newPost.visible = true;
+                                newPost.visible = false;
                                 $scope.posts[isPush ? 'push' : 'unshift'](newPost);
                             }
                         }
 
-                        $scope.rememberPosts();
                         $scope.filter();
+                        $scope.rememberPosts();
                         if(success instanceof Function)
                             success();
                     }
@@ -396,13 +395,13 @@ angular.module('informher.controllers', [])
                         for(var i = newPosts.length - 1, len = 0; i >= len; i--) {
                             var newPost = newPosts[i];
                             if(_.find($scope.posts, function(post) { return post.id == newPost.id }) === undefined) {
-                                newPost.visible = true;
+                                newPost.visible = false;
                                 $scope.posts['unshift'](newPost); // XXX COMPAT!!!!
                             }
                         }
 
-                        $scope.rememberPosts();
                         $scope.filter();
+                        $scope.rememberPosts();
                         if(success instanceof Function)
                             success(response);
                     }
@@ -428,7 +427,7 @@ angular.module('informher.controllers', [])
         $scope.initStream = function() {
             if($scope.getSearchMode())
                 $scope.refreshSearch(
-                    function(response) { $scope.hideLoading(); $scope.hasSearched = true; },
+                    function() { $scope.hideLoading(); $scope.hasSearched = true; },
                     function(response) { $scope.hideLoading(); $scope.showScreenMessage(response.data.status) }
                 );
             else
@@ -437,12 +436,14 @@ angular.module('informher.controllers', [])
 
         // === Filtering ===
 
-        $scope.filter = function() {
-            for(var i = 0, len = $scope.posts.length; i < len; i++) {
-                var post = $scope.posts[i];
-                post.visible = false;
-                post.visible = $scope.getSearchMode() ? $scope.searchInput[post.category.name] : $scope.filterCriteria[post.category.name];
-            }
+        $scope.filter = function(posts) {
+            posts = posts || $scope.posts;
+                for(var i = 0, len = posts.length; i < len; i++) {
+                    var post = posts[i];
+                    post.visible = false;
+                    post.visible = $scope.getSearchMode() ? $scope.searchInput[post.category.name] : $scope.filterCriteria[post.category.name];
+                }
+            return posts;
         };
 
         $scope.toggleFilter = function(which) {
@@ -482,7 +483,7 @@ angular.module('informher.controllers', [])
 
         $scope.hasSearched = false;
 
-        $scope.searchInput = {
+        $scope.searchInput = $scope.searchInput || {
             queryString: '',
             title: true,
             author: false,
@@ -507,6 +508,8 @@ angular.module('informher.controllers', [])
                 case 'ask':
                 case 'relate':
                     input = _.extend(input, _.pick($scope.input, 'title', 'tags', 'content'));
+                    if($scope.trackLocation)
+                        input.geolocation = $scope.currentUser.coords;
                     break;
                 case 'shoutout':
                     var flags = {
@@ -516,6 +519,8 @@ angular.module('informher.controllers', [])
                     };
                     var flagArray = [];
                     var messageArray = [];
+                    if($scope.input.track)
+                        input.geolocation = $scope.currentUser.coords;
                     for(var flagKey in flags)
                         if(flags[flagKey]) {
                             flagArray.push(flagKey.toUpperCase());
@@ -659,7 +664,7 @@ angular.module('informher.controllers', [])
         };
 
         $scope.edit = function() {
-            ModalService.openModal('modalEdit');
+            ModalService.openModal('modal-edit');
         };
 
         $scope.submitPost = function(category) {
@@ -735,7 +740,14 @@ angular.module('informher.controllers', [])
                 break;
         }
 
+        $scope.deleteConfirm = function(which, id) {
+            $scope.deleteType = which;
+            ModalService.openModal('modal-delete');
+        };
+
         ModalService.loadModal('modal-edit', 'modals/' + $scope.post.category.name + '.html', $scope);
+        ModalService.loadModal('modal-delete', 'modals/delete.html', $scope);
+
         CommentService.query('get post($0).page($1).comments', $stateParams.postId, 1)
             .then(function (response) {
                 if (response.data.status == "POST_COMMENT_RETRIEVE_SUCCESSFUL") {

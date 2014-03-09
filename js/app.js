@@ -54,9 +54,9 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
         };
 
         $scope.getLocation = function() {
-            geolocation.getLocation()
+            return geolocation.getLocation()
                 .then(function(data){
-                    $scope.currentUser.coords = {lat:data.coords.latitude, lon:data.coords.longitude};
+                    $scope.currentUser.coords = data.coords.latitude + "," + data.coords.longitude;
                 });
         };
 
@@ -78,8 +78,7 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
         $scope.updateCurrentUser();
         $scope.retrieveTracking();
         $scope.refreshLanguage();
-        if($scope.trackLocation)
-            $scope.getLocation();
+        $scope.getLocation();
     })
     .config(function($translateProvider) {
         $translateProvider
@@ -213,7 +212,8 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 QUERY_STRING: 'Query string',
                 SEARCH_FOR: 'Search for...',
 
-                POST_SEARCH_FAILED: 'No results for search.'
+                POST_SEARCH_FAILED: 'No results for search.',
+                DELETE: 'Delete'
             })
             .translations('tl-PH', {
                 _LANGUAGE_ID: 'Tagalog',
@@ -335,7 +335,8 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 QUERY_STRING: 'Query string',
                 SEARCH_FOR: 'Maghanap ng post ayon sa...',
 
-                POST_SEARCH_FAILED: 'Walang resulta sa paghahanap.'
+                POST_SEARCH_FAILED: 'Walang resulta sa paghahanap.',
+                DELETE: 'Burahin'
             })
             .preferredLanguage('en-PH')
             .fallbackLanguage('en-PH');
