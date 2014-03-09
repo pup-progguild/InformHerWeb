@@ -60,8 +60,10 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 });
         };
 
-        PersistenceService.clear('stream');
-        PersistenceService.clear('admin');
+        if(PersistenceService.get('global', 'auth') === undefined || PersistenceService.get('global', 'auth') === '') {
+            PersistenceService.clear('stream');
+            PersistenceService.clear('admin');
+        }
 
         if(PersistenceService.get('global', 'language') === undefined) {
             PersistenceService.put('global', 'language', $translate.preferredLanguage());
@@ -108,16 +110,18 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 ASK: 'Ask',
                 RELATE: 'Relate',
                 SHOUTOUT: 'Shoutout',
+                ASK_LOWERCASE: 'ask',
+                RELATE_LOWERCASE: 'relate',
+                SHOUTOUT_LOWERCASE: 'shoutout',
 
                 TITLE: 'Title',
                 AUTHOR: 'Author',
-                DATE: 'Date',
 
                 POST: 'Post',
                 VIEW: 'View',
 
                 COMMENTS: 'Comments',
-                TAP_TO_BEGIN_WRITING: 'Tap to begin writing',
+                WRITE_COMMENT: 'Write a comment...',
 
                 LIKE: 'Like',
                 EDIT: 'Edit',
@@ -143,14 +147,6 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 TRACK_MY_LOCATION: 'Track my location',
 
                 STREAM: 'Stream',
-                DEFAULT_SORT: 'Default sort',
-
-                TITLE_ASCENDING: 'Title, ascending',
-                TITLE_DESCENDING: 'Title, descending',
-                AUTHOR_ASCENDING: 'Author, ascending',
-                AUTHOR_DESCENDING: 'Author, descending',
-                DATE_RECENT: 'Date, recent',
-                DATE_OLDER: 'Date, older',
 
                 TERMS_OF_SERVICE: 'Terms of Service',
 
@@ -208,7 +204,16 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 APPROVE: 'Approve',
 
                 GEOLOCATION: 'Geolocation',
-                CURRENT_LOCATION: 'Current location'
+                CURRENT_LOCATION: 'Current location',
+
+                SHOW_MORE_POSTS: 'Show more posts',
+                NO_MORE_POSTS: 'There are no more posts to show.',
+                SHOW_MORE_COMMENTS: 'Show more comments',
+
+                QUERY_STRING: 'Query string',
+                SEARCH_FOR: 'Search for...',
+
+                POST_SEARCH_FAILED: 'No results for search.'
             })
             .translations('tl-PH', {
                 _LANGUAGE_ID: 'Tagalog',
@@ -234,19 +239,21 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 BACK: 'Bumalik',
 
                 SEARCH: 'Maghanap',
-                ASK: 'Magtanong',
-                RELATE: 'Ibahagi',
+                ASK: 'Ask',
+                RELATE: 'Relate',
                 SHOUTOUT: 'Shoutout',
+                ASK_LOWERCASE: 'ask',
+                RELATE_LOWERCASE: 'relate',
+                SHOUTOUT_LOWERCASE: 'shoutout',
 
                 TITLE: 'Pamagat',
                 AUTHOR: 'May-akda',
-                DATE: 'Petsa',
 
                 POST: 'Post',
                 VIEW: 'Tingnan',
 
                 COMMENTS: 'Mga Pahayag',
-                TAP_TO_BEGIN_WRITING: 'Pindutin at magsimulang mag-type',
+                WRITE_COMMENT: 'Magsulat ng pahayag...',
 
                 LIKE: 'Like',
                 EDIT: 'Baguhin',
@@ -272,14 +279,6 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 TRACK_MY_LOCATION: 'Tiyakin ang aking lokasyon',
 
                 STREAM: 'Stream',
-                DEFAULT_SORT: 'Default na pag-aayos',
-
-                TITLE_ASCENDING: 'Pamagat, ascending',
-                TITLE_DESCENDING: 'Pamagat, descending',
-                AUTHOR_ASCENDING: 'May-akda, ascending',
-                AUTHOR_DESCENDING: 'May-akda, descending',
-                DATE_RECENT: 'Petsa, mas bago',
-                DATE_OLDER: 'Petsa, mas luma',
 
                 TERMS_OF_SERVICE: 'Mga Tuntunin ng Serbisyo',
 
@@ -327,7 +326,16 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 APPROVE: 'Mag-apruba',
                 GEOLOCATION: 'Geolocation',
 
-                CURRENT_LOCATION: 'Kasalukuyang lokasyon'
+                CURRENT_LOCATION: 'Kasalukuyang lokasyon',
+
+                SHOW_MORE_POSTS: 'Magpakita pa ng mga post',
+                NO_MORE_POSTS: 'Wala nang mga post na hindi naipapakita.',
+                SHOW_MORE_COMMENTS: 'Magpakita pa ng mga pahayag',
+
+                QUERY_STRING: 'Query string',
+                SEARCH_FOR: 'Maghanap ng post ayon sa...',
+
+                POST_SEARCH_FAILED: 'Walang resulta sa paghahanap.'
             })
             .preferredLanguage('en-PH')
             .fallbackLanguage('en-PH');

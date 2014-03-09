@@ -230,63 +230,57 @@
         </div>
         <ion-content has-header="true" has-tabs="true" scroll="true" on-refresh="onRefresh()">
             <ion-list>
-                <a ng-repeat="post in posts" class="item item-avatar informher-stream-item-meta" ng-click="if()" href="#/stream/view/{{post.id}}" ng-hide="!post.visible">
+                <a ng-repeat="post in posts" class="item item-avatar informher-stream-item-meta" href="#/stream/view/{{post.id}}" ng-hide="!post.visible">
                     <img class="avatar-author" ng-src="{{post.author.profile.avatar_url}}" alt="{{post.author.username}}" />
-                    <strong class="informher-{{post.category.name}} informher-category-tag">{{post.category.name}}</strong>
+                    <strong class="informher-{{post.category.name}} informher-category-tag">{{ post.category.name.toUpperCase() + '_LOWERCASE' | translate }}</strong>
                     <h2>{{post.title}}</h2>
                     <p>{{post.author.username}} &middot; <time>{{post.created_at}}</time> &middot; {{post.comments_count}} <i class="icon ion-chatbox"></i> &middot; {{post.likers}} <i class="icon ion-thumbsup"></i> </p>
                 </a>
+                <a class="item" href="" ng-click="refreshOlder()" ng-hide="searchMode || prevPage == 0 || prevPage == undefined">
+                    {{ 'SHOW_MORE_POSTS' | translate }}
+                </a>
+                <div class="item" ng-hide="searchMode || prevPage != 0">
+                    {{ 'NO_MORE_POSTS' | translate }}
+                </div>
             </ion-list>
             <ion-scroll-refresher>
                 <i class="icon ion-loading-a"></i>
             </ion-scroll-refresher>
         </ion-content>
         <div class="tabs tabs-icon-top">
-            <a class="tab-item" ng-hide="!(mode == 'initial')" ng-click="mode = 'new-post'">
+            <a class="tab-item" ng-hide="!(isVisible('new-post'))" ng-click="doAction('new-post')">
                 <i class="icon ion-plus"></i>
                 {{ 'NEW_POST' | translate }}
             </a>
-            <a class="tab-item energized" ng-hide="!(mode == 'new-post')" ng-click="openModal('modalAsk')">
-                <i class="icon ion-help-circled"></i>
-                {{ 'ASK' | translate }}
-            </a>
-            <a class="tab-item balanced" ng-hide="!(mode == 'new-post')" ng-click="openModal('modalRelate')">
-                <i class="icon ion-information-circled"></i>
-                {{ 'RELATE' | translate }}
-            </a>
-            <a class="tab-item positive" ng-hide="!(mode == 'new-post')" ng-click="openModal('modalShoutout')">
-                <i class="icon ion-chatbox-working"></i>
-                {{ 'SHOUTOUT' | translate }}
-            </a>
-            <a class="tab-item" ng-hide="!(mode == 'initial')" ng-click="mode = 'filter'">
+            <a class="tab-item" ng-hide="!(isVisible('filter'))" ng-click="doAction('filter')">
                 <i class="icon ion-contrast"></i>
                 {{ 'FILTER' | translate }}
             </a>
-            <a ng-hide="!(mode == 'filter')" ng-click="toggleFilter('ask')" ng-class="'tab-item energized ' + (filterCriteria.ask ? 'active' : '')">
+            <a ng-class="'tab-item energized ' + (inMode('mode:/filter') &amp;&amp; filterCriteria.ask ? 'active' : '')" ng-hide="!(isVisible('ask'))" ng-click="doAction('ask')">
                 <i class="icon ion-help-circled"></i>
                 {{ 'ASK' | translate }}
             </a>
-            <a ng-hide="!(mode == 'filter')" ng-click="toggleFilter('relate')" ng-class="'tab-item balanced ' + (filterCriteria.relate ? 'active' : '')">
+            <a ng-class="'tab-item balanced ' + (inMode('mode:/filter') &amp;&amp; filterCriteria.relate ? 'active' : '')" ng-hide="!(isVisible('relate'))" ng-click="doAction('relate')">
                 <i class="icon ion-information-circled"></i>
                 {{ 'RELATE' | translate }}
             </a>
-            <a ng-hide="!(mode == 'filter')" ng-click="toggleFilter('shoutout')" ng-class="'tab-item positive ' + (filterCriteria.shoutout ? 'active' : '')">
+            <a ng-class="'tab-item positive ' + (inMode('mode:/filter') &amp;&amp; filterCriteria.shoutout ? 'active' : '')" ng-hide="!(isVisible('shoutout'))" ng-click="doAction('shoutout')">
                 <i class="icon ion-chatbox-working"></i>
                 {{ 'SHOUTOUT' | translate }}
             </a>
-            <a ng-hide="!(mode == 'filter')" ng-click="toggleSearchMode()" ng-class="'tab-item royal ' + (search ? 'active' : '')">
+            <a ng-class="'tab-item royal ' + (inMode('mode:/filter') &amp;&amp; searchMode ? 'active' : '')" ng-hide="!(isVisible('search-results'))" ng-click="doAction('search-results')">
                 <i class="icon ion-search"></i>
                 {{ 'SEARCH_RESULTS' | translate }}
             </button>
-            <a class="tab-item" ng-hide="!(mode == 'initial')" ng-click="openModal('modalSearch')">
+            <a class="tab-item" ng-hide="!(isVisible('search'))" ng-click="doAction('search')">
                 <i class="icon ion-search"></i>
                 {{ 'SEARCH' | translate }}
             </a>
-            <a class="tab-item" ng-hide="!(mode == 'initial')" ng-click="mode = 'approve'">
+            <a class="tab-item" ng-hide="!(isVisible('approve'))" ng-click="doAction('approve')">
                 <i class="icon ion-plus"></i>
                 {{ 'APPROVE' | translate }}
             </a>
-            <a class="tab-item" ng-hide="!(mode != 'initial')" ng-click="mode = 'initial'">
+            <a class="tab-item" ng-hide="!(isVisible('back'))" ng-click="doAction('back')">
                 <i class="icon ion-arrow-return-left"></i>
                 {{ 'BACK' | translate }}
             </a>
@@ -299,14 +293,15 @@
             <button class="button button-icon" ng-click="goBack()"><i class="icon ion-arrow-left-c"></i></button>
             <h1 class="title">{{ 'POST' | translate }} &mdash; {{ 'VIEW' | translate }}</h1>
         </div>
-        <ion-content has-header="true" on-refresh="onRefresh()">
+        <ion-content has-header="true">
             <div class="list">
                 <div class="item item-text-wrap item-thumbnail-left informher-stream-item-meta">
                     <img class="avatar-author" ng-src="{{post.author.profile.avatar_url}}" alt="{{post.author.username}}" />
-                    <strong class="informher-{{post.category.name}} informher-category-tag">{{post.category.name}}</strong>
+                    <strong class="informher-{{post.category.name}} informher-category-tag">{{ post.category.name.toUpperCase() + '_LOWERCASE' | translate }}</strong>
                     <h2>{{post.title}}</h2>
                     <p><a href="#/profile/{{post.author.id}}">{{post.author.username}}</a> &middot; <time>{{post.created_at}}</time></p>
-                    <button ng-click="likePost()" ng-class="'button icon-left button-small ion-thumbsup' + (liked ? 'button-positive' : 'button-dark')">{{ 'LIKE' | translate}}
+                    <button ng-click="likePost()" ng-class="'button icon-left button-small ion-thumbsup' + (liked ? ' button-dark' : '')">
+                        {{ 'LIKE' | translate}}
                         <span ng-hide="post.likers <= 0 || isNaN(post.likers)">({{post.likers}})</span>
                     </button>
                     <button class="button icon-left button-small ion-compose" ng-click="edit()">{{ 'EDIT' | translate }}</button>
@@ -323,7 +318,7 @@
                 </div>
                 <div class="item item-avatar item-text-wrap">
                     <img class="avatar-author" ng-src="{{currentUser.avatar_url}}" alt="{{currentUser.username}}" />
-                    <textarea ng-model="input.message" placeholder="{{ 'TAP_TO_BEGIN_WRITING' | translate }}"></textarea>
+                    <textarea ng-model="input.message" placeholder="{{ 'WRITE_COMMENT' | translate }}"></textarea>
                     <button class="button button-small button-dark" ng-click="addComment()">{{ 'SUBMIT' | translate }}</button>
                 </div>
                 <div ng-repeat="comment in post.comments" class="item item-text-wrap item-avatar informher-comment-item">
@@ -336,10 +331,10 @@
                         <span ng-hide="comment.likers <= 0 || isNaN(comment.likers)">({{comment.likers}})</span>
                     </button>
                 </div>
+                <a class="item" href="" ng-click="refreshOlder()" ng-hide="prevPage == 0 || prevPage === undefined">
+                    {{ 'SHOW_MORE_COMMENTS' | translate }}
+                </a>
             </div>
-            <ion-scroll-refresher>
-                <i class="icon ion-loading-a"></i>
-            </ion-scroll-refresher>
         </ion-content>
     </ion-nav-page>
 </script>
@@ -600,7 +595,7 @@
                 </li>
                 <li class="item item-checkbox item-text-wrap">
                     <label class="checkbox">
-                        <input type="checkbox" ng-model="input.contact">
+                        <input type="checkbox" ng-model="input.contact" ng-click="input.urgent = input.contact &amp;&amp; input.urgent">
                     </label>
                     {{ 'CONTACT_ME' | translate }}
                 </li>
@@ -637,68 +632,65 @@
         <ion-content has-header="true">
             <ul class="list">
                 <li class="item item-input item-stacked-label">
-                    <span class="input-label">{{ 'TITLE' | translate }}</span>
-                    <input ng-model="input.title" type="text" placeholder="{{ 'TITLE' | translate }}">
+                    <span class="input-label">{{ 'QUERY_STRING' | translate }}</span>
+                    <input ng-model="searchInput.queryString" type="text" placeholder="{{ 'QUERY_STRING' | translate }}">
                 </li>
 
-                <li class="item item-input item-stacked-label">
-                    <span class="input-label">{{ 'AUTHOR' | translate }}</span>
-                    <input ng-model="input.author" type="text" placeholder="{{ 'AUTHOR' | translate }}">
-                </li>
+                <li class="item item-divider">{{ 'SEARCH_FOR' | translate }} </li>
 
-                <li class="item item-input item-stacked-label informher-tags-input item-text-wrap">
-                    <span class="input-label">{{ 'TAGS' | translate }}</span>
-                    <div class="informher-tags-list">
-                        <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('education')">education</button>
-                        <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('health')">health</button>
-                        <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('abuse')">abuse</button>
-                        <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('government')">government</button>
-                        <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('news')">news</button>
-                        <button class="button button-small button-clear informher-tags-list-tag" ng-click="addTag('moe')">moe</button>
-                    </div>
-                    <label class="item item-input">
-                        <span ng-repeat="tag in input.tags" class="informher-tags-input-tag">{{tag}}</span>
-                        <input type="text" placeholder="{{ 'TAG' | translate }}">
+                <li class="item item-checkbox item-text-wrap">
+                    <label class="checkbox">
+                        <input ng-model="searchInput.title" type="checkbox">
                     </label>
+                    {{ 'TITLE' | translate }}
                 </li>
 
-                <li class="item item-divider">{{ 'DATE_RANGE' | translate }} </li>
-
-                <li class="item item-input">
-                    <span class="input-label">{{ 'DATE_FROM' | translate }}</span>
-                    <input ng-model="input.dateFrom" type="date" placeholder="{{ 'DATE_FROM' | translate }}">
+                <li class="item item-checkbox item-text-wrap">
+                    <label class="checkbox">
+                        <input ng-model="searchInput.author" type="checkbox">
+                    </label>
+                    {{ 'AUTHOR' | translate }}
                 </li>
 
-                <li class="item item-input">
-                    <span class="input-label">{{ 'DATE_TO' | translate }}</span>
-                    <input ng-model="inputSearch.dateTo" type="date" placeholder="{{ 'DATE_TO' | translate }}">
+                <li class="item item-checkbox item-text-wrap">
+                    <label class="checkbox">
+                        <input ng-model="searchInput.content" type="checkbox">
+                    </label>
+                    {{ 'CONTENT' | translate }}
+                </li>
+
+                <li class="item item-checkbox item-text-wrap">
+                    <label class="checkbox">
+                        <input ng-model="searchInput.tags" type="checkbox">
+                    </label>
+                    {{ 'TAGS' | translate }}
                 </li>
 
                 <li class="item item-divider">{{ 'SEARCH_IN' | translate }}</li>
 
                 <li class="item item-checkbox item-text-wrap">
                     <label class="checkbox">
-                        <input ng-model="filterCriteria.ask" type="checkbox">
+                        <input ng-model="searchInput.ask" type="checkbox">
                     </label>
                     {{ 'ASK' | translate }}
                 </li>
 
                 <li class="item item-checkbox item-text-wrap">
                     <label class="checkbox">
-                        <input ng-model="filterCriteria.relate" type="checkbox">
+                        <input ng-model="searchInput.relate" type="checkbox">
                     </label>
                     {{ 'RELATE' | translate }}
                 </li>
 
                 <li class="item item-checkbox item-text-wrap">
                     <label class="checkbox">
-                        <input ng-model="filterCriteria.shoutout" type="checkbox">
+                        <input ng-model="searchInput.shoutout" type="checkbox">
                     </label>
                     {{ 'SHOUTOUT' | translate }}
                 </li>
             </ul>
             <div class="row">
-                <div class="col"><button class="button button-block button-positive" type="button" ng-click="search()">{{ 'SEARCH' | translate }}</button></div>
+                <div class="col"><button class="button button-block button-royal" type="button" ng-click="setSearchMode(true); search()">{{ 'SEARCH' | translate }}</button></div>
                 <div class="col"><button class="button button-block" type="button" ng-click="closeModal()">{{ 'CANCEL' | translate }}</button></div>
             </div>
         </ion-content>

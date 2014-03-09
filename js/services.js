@@ -89,7 +89,7 @@
                 loading.hide();
             };
         })
-        .service('PostService', function($q, $timeout, ApiService) {
+        .service('PostService', function($q, $timeout, ApiService, PersistenceService) {
             var queries = {
                 'get page($0).posts': {
                     timeout: 300,
@@ -100,6 +100,11 @@
                     timeout: 300,
                     method: 'get',
                     path: function(id) { return '/posts/' + id; }
+                },
+                'get post($0).likes': {
+                    timeout: 300,
+                    method: 'get',
+                    path: function(id) { return '/posts/' + id + '/likes'; }
                 },
                 'new post': {
                     timeout: 300,
@@ -135,6 +140,31 @@
                     );
                 }, q.timeout);
                 return deferred.promise;
+            };
+
+            this.search = function(query, options) {
+                var deferred = $q.defer();
+                $timeout(function() {
+                    deferred.resolve(
+                        ApiService.getResponse(
+                            'post',
+                            '/posts/search',
+                            (function() {
+                                var flags = {};
+                                for(var flag in options)
+                                    flags[flag] = ''; // set flag
+                                flags.query = query;
+                                return flags;
+                            })(),
+                            true
+                        )
+                    );
+                }, 300);
+                return deferred.promise;
+            };
+
+            this.getPost = function(id) {
+                return _.findWhere(PersistenceService.get('stream', PersistenceService.get('stream', 'mode')), {'id': id});
             };
         })
         .service('CommentService', function($q, $timeout, ApiService) {
@@ -201,8 +231,12 @@
             };
 
             this.closeModal = function() {
-                modals.loaded[modals.current].hide();
-                modals.current = '';
+                try {
+                    modals.loaded[modals.current].hide();
+                    modals.current = '';
+                } catch(e) {
+
+                }
             };
         })
         .factory('MessageService', function(I18N, $ionicLoading) {
@@ -298,7 +332,8 @@
             var caches = {
                 'global': 'localStorage',
                 'stream': 'localStorage',
-                'admin': 'localStorage'
+                'admin': 'localStorage',
+                'post': 'localStorage'
             };
 
             this.get = function(cache, key) {
@@ -311,6 +346,10 @@
 
             this.clear = function(cache) {
                 caches[cache].removeAll();
+            };
+
+            this.remove = function(cache, key) {
+                caches[cache].remove(key);
             };
 
             for(var i in caches)

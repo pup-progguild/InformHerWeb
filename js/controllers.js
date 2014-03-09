@@ -139,42 +139,22 @@ angular.module('informher.controllers', [])
         };
 
         $scope.openTouModal = function() {
-            ModalService.openModal('modalTou');
+            ModalService.openModal('modal-tou');
         };
 
         $scope.reset('login');
-        ModalService.loadModal('modalTou', 'modals/tos.html', $scope);
+        ModalService.loadModal('modal-tou', 'modals/tos.html', $scope);
     })
 
     // displaying of stream's posts
     .controller('StreamCtrl', function ($scope, PersistenceService, PostService, ModalService) {
         // fields unmodifiable by the user
         $scope.posts = [];
-        $scope.currentPage = PersistenceService.get('stream', 'page') || 1;
 
-        $scope.input = {
-            'title': '',
-            'author': '', //for search only
-            'content': '',
-            'dateFrom': '', //for search only
-            'dateTo': '', //for search only
-            'tags': [],
-            'category': ''
-        };
-
-        $scope.mode = 'initial'; // TODO admin
-        // TODO load from cache
-
-        $scope.filterCriteria = {
-            ask: true,
-            relate: true,
-            shoutout: true
-        };
-
-        $scope.searchMode = false;
-
+        // === Components ===
         $scope.isLeftMenuShown = function() {
             //return $scope.sideMenuController._leftShowing;
+            // TODO read ionic docs
         };
 
         $scope.toggleLeft = function () {
@@ -182,69 +162,343 @@ angular.module('informher.controllers', [])
             console.log($scope.sideMenuController.isOpen());
         };
 
-        $scope.onRefresh = function(showLoading) {
+        $scope.openModal = function(key) {
+            ModalService.openModal(key);
+        };
+
+        ModalService.loadModal('modal-ask', 'modals/ask.html', $scope);
+        ModalService.loadModal('modal-relate', 'modals/relate.html', $scope);
+        ModalService.loadModal('modal-shoutout', 'modals/shoutout.html', $scope);
+        ModalService.loadModal('modal-search', 'modals/search.html', $scope);
+
+        // === Stream mode ===
+
+        $scope.streamMode = PersistenceService.get('stream', 'mode') || 'main';
+
+        $scope.recallPosts = function() {
+            $scope.posts = [];
+            $scope.filter();
+            $scope.posts = PersistenceService.get('stream', $scope.streamMode) || [];
+        };
+        $scope.getStreamMode = function() { $scope.streamMode = PersistenceService.get('stream', 'mode'); };
+
+        $scope.setStreamMode = function(mode) { PersistenceService.put('stream', 'mode', $scope.streamMode = mode); };
+
+        $scope.prevPage = PersistenceService.get('stream', $scope.streamMode + '-previous-page') || 1;
+        $scope.nextPage = PersistenceService.get('stream', $scope.streamMode + '-next-page') || 1;
+
+        $scope.searchMode = PersistenceService.get('stream', 'is-search-mode') || false;
+        $scope.getSearchMode = function() { return $scope.searchMode; };
+        $scope.setSearchMode = function(b) {
+            PersistenceService.put('stream', 'is-search-mode', $scope.searchMode = b);
+            $scope.setStreamMode(b ? (($scope.approveMode ? 'approve-' : '') + 'search-results') : 'main');
+            $scope.posts = [];
+            $scope.recallPosts();
+        };
+
+        $scope.approveMode = PersistenceService.get('stream', 'is-approve-mode') || false;
+        $scope.getApproveMode = function() {
+            return $scope.approveMode;
+        };
+        $scope.setApproveMode = function(b) {
+            PersistenceService.put('stream', 'is-approve-mode', $scope.approveMode = b);
+            $scope.setStreamMode(b ? ('approve' + ($scope.approveMode ? '-search-results' : '')) : 'main');
+            $scope.posts = [];
+            $scope.recallPosts();
+        };
+
+        // Persist
+        //$scope.setSearchMode($scope.searchMode);
+        //$scope.setApproveMode($scope.approveMode);
+
+
+
+        // === Menu mode ===
+        $scope.menuMode = ['mode:'];
+
+        $scope.isRootMenuMode = function() {
+            return $scope.getAbsoluteMenuModePath() == "mode:";
+        };
+
+        $scope.getAbsoluteMenuModePath = function() {
+            return $scope.menuMode.join('/');
+        };
+
+        $scope.getMenuMode = function() {
+            return _.last($scope.menuMode);
+        };
+
+        $scope.getParentMenuModePath = function() {
+            return $scope.getParentMenuModes().join("/");
+        };
+
+        $scope.getParentMenuModes = function() {
+            return _.initial($scope.menuMode);
+        };
+
+        $scope.inMode = function(mode) {
+            return $scope.getAbsoluteMenuModePath() == mode;
+        };
+
+        $scope.enterMenuMode = function(menuMode) {
+            $scope.menuMode.push(menuMode);
+        };
+
+        $scope.leaveMenuMode = function() {
+            if($scope.getAbsoluteMenuModePath() != "mode:")
+                $scope.menuMode.pop();
+        };
+
+        $scope.goToMenuMode = function(menuModePath) {
+            if(_.str.startsWith($scope.getAbsoluteMenuModePath(), "mode:") || _.str.startsWith($scope.getAbsoluteMenuModePath(), "/"))
+                while(!$scope.isRootMenuMode())
+                    $scope.leaveMenuMode();
+            var menuModes = menuModePath.split('/');
+            for(var i in menuModes) {
+                var menuMode = menuModes[i];
+                if(menuMode == "..")
+                    $scope.leaveMenuMode();
+                else if(menuMode != ".")
+                    $scope.enterMenuMode(menuMode);
+            }
+        };
+
+        $scope.isVisible = function(menuItem) {
+            switch(menuItem) {
+                case 'ask':
+                case 'relate':
+                case 'shoutout':
+                case 'back':
+                    return $scope.inMode("mode:/new-post")
+                        || $scope.inMode("mode:/filter")
+                        || $scope.inMode("mode:/approve/filter")
+                        || (menuItem == 'back' && $scope.inMode("mode:/approve"));
+                case 'search-results':
+                    return $scope.inMode("mode:/filter")
+                        || $scope.inMode("mode:/approve/filter");
+                case 'search':
+                case 'filter':
+                    return $scope.inMode("mode:")
+                        || $scope.inMode("mode:/approve");
+                default:
+                    return $scope.inMode("mode:");
+            }
+        };
+
+        $scope.doAction = function(menuItem) {
+            switch(menuItem) {
+                case 'ask':
+                case 'relate':
+                case 'shoutout':
+                    if($scope.inMode("mode:/new-post")) {
+                        $scope.resetInput();
+                        $scope.openModal('modal-' + menuItem);
+                    }
+                    else if($scope.inMode("mode:/filter"))
+                        $scope.toggleFilter(menuItem);
+                    break;
+                case 'search-results':
+                    $scope.toggleSearchMode();
+                    break;
+                case 'search':
+                    $scope.openModal('modal-' + menuItem);
+                    break;
+                case 'back':
+                    if($scope.inMode("mode:/approve"))
+                        $scope.approveMode = false;
+                    $scope.leaveMenuMode();
+                    break;
+                case 'approve':
+                    $scope.approveMode = true;
+                    $scope.enterMenuMode(menuItem);
+                    break;
+                default:
+                    $scope.enterMenuMode(menuItem);
+            }
+        };
+
+
+
+        // === Posts and caching ===
+
+        $scope.onRefresh = function() {
+            $scope.refreshNewer()
+                .then(function() {
+                    $scope.$emit('scroll.refreshComplete');
+                });
+        };
+
+        $scope.refreshNewer = function() {
+            return $scope.refreshPage(false, $scope.nextPage, function() {
+                $scope.updatePage();
+                $scope.nextPage++;
+            });
+        };
+
+        $scope.refreshOlder = function(showLoading) {
             if(showLoading)
                 $scope.showLoading('', false);
-            PostService.query('get page($0).posts', $scope.currentPage)
+            return $scope.refreshPage(true, $scope.prevPage, function() {
+                if($scope.prevPage > 0)
+                    $scope.prevPage--;
+                $scope.updatePage();
+            })
+                .then(function() { if(showLoading) $scope.hideLoading(); });
+        };
+
+        $scope.refreshPage = function(isPush, page, success, error) {
+            return PostService.query('get page($0).posts', page)
                 .then(function (response) {
                     if (response.data.status == "POST_SHOW_SUCCESSFUL") {
                         var newPosts = response.data.posts.data;
-                        var oldPosts = PersistenceService.get('stream', 'posts') || [];
 
-                        for(var i = 0, len = newPosts.length; i < len; i++) {
+                        for(var i = newPosts.length - 1, len = 0; i >= len; i--) {
                             var newPost = newPosts[i];
-                            if(_.find(oldPosts, function(post) { return post.id == newPost.id }) === undefined) {
+                            if(_.find($scope.posts, function(post) { return post.id == newPost.id }) === undefined) {
                                 newPost.visible = true;
-                                oldPosts.push(newPost);
+                                $scope.posts[isPush ? 'push' : 'unshift'](newPost);
                             }
                         }
 
-                        PersistenceService.put('stream', 'posts', oldPosts);
-                        $scope.showPosts();
-                        $scope.updatePage();
-                        $scope.currentPage++;
+                        $scope.rememberPosts();
+                        $scope.filter();
+                        if(success instanceof Function)
+                            success();
                     }
-
-                    if(showLoading)
-                        $scope.hideLoading();
+                    else if(error instanceof Function)
+                        error();
                 });
-            $scope.$emit('scroll.refreshComplete');
+        };
+
+        $scope.refreshSearch = function(success, error) {
+            var requestData = {};
+            var all = $scope.searchInput.title
+                && $scope.searchInput.author
+                && $scope.searchInput.content
+                && $scope.searchInput.tags;
+            if(all)
+                requestData.all = '';
+            else {
+                var flags = ['title', 'author', 'content', 'tags'];
+                for(var i in flags) {
+                    var flag = flags[i];
+                    if($scope.searchInput[flag])
+                        requestData[flag] = '';
+                }
+            }
+
+            return PostService.search($scope.searchInput.queryString, requestData)
+                .then(function(response) {
+                    if (response.data.status == "POST_SEARCH_SUCCESSFUL") {
+                        var newPosts = response.data.posts;
+
+
+                        for(var i = newPosts.length - 1, len = 0; i >= len; i--) {
+                            var newPost = newPosts[i];
+                            if(_.find($scope.posts, function(post) { return post.id == newPost.id }) === undefined) {
+                                newPost.visible = true;
+                                $scope.posts['unshift'](newPost); // XXX COMPAT!!!!
+                            }
+                        }
+
+                        $scope.rememberPosts();
+                        $scope.filter();
+                        if(success instanceof Function)
+                            success(response);
+                    }
+                    else {
+                        error(response);
+                    }
+                });
         };
 
         $scope.updatePage = function() {
-            PersistenceService.put('stream', 'page', $scope.currentPage);
+            PersistenceService.put('stream', $scope.streamMode + '-previous-page', $scope.prevPage);
+            PersistenceService.put('stream', $scope.streamMode + '-next-page', $scope.nextPage);
         };
 
-        $scope.showPosts = function() {
-            $scope.posts = PersistenceService.get('stream', 'posts');
+        $scope.forgetPosts = function() {
+            PersistenceService.remove('stream', 'search-results');
         };
+
+        $scope.rememberPosts = function() {
+            PersistenceService.put('stream', $scope.streamMode, $scope.posts);
+        };
+
+        $scope.initStream = function() {
+            if($scope.getSearchMode())
+                $scope.refreshSearch(
+                    function(response) { $scope.hideLoading(); $scope.hasSearched = true; },
+                    function(response) { $scope.hideLoading(); $scope.showScreenMessage(response.data.status) }
+                );
+            else
+                $scope.refreshNewer().then(function() { $scope.refreshOlder(false).then(function() { $scope.hideLoading(); }); });
+        };
+
+        // === Filtering ===
 
         $scope.filter = function() {
             for(var i = 0, len = $scope.posts.length; i < len; i++) {
                 var post = $scope.posts[i];
                 post.visible = false;
-
-                if(!$scope.searchMode)
-                    post.visible = $scope.filterCriteria[post.category.name];
-                else {
-                    // TODO search mode
-                }
+                post.visible = $scope.getSearchMode() ? $scope.searchInput[post.category.name] : $scope.filterCriteria[post.category.name];
             }
         };
 
         $scope.toggleFilter = function(which) {
             $scope.filterCriteria[which] = !$scope.filterCriteria[which];
-            $scope.filter();
-        };
-
-        $scope.toggleSearchMode = function() {
-            $scope.searchMode = !$scope.searchMode;
+            $scope.searchInput[which] = $scope.filterCriteria[which];
             $scope.filter();
         };
 
         $scope.search = function() {
-            $scope.searchMode = true;
-            $scope.filter();
+            ModalService.closeModal();
+            $scope.showLoading();
+            $scope.forgetPosts();
+            $scope.initStream();
+        };
+
+        $scope.toggleSearchMode = function() {
+            $scope.setSearchMode(!$scope.getSearchMode());
+            $scope.search();
+        };
+
+        $scope.filterCriteria = {
+            ask: true,
+            relate: true,
+            shoutout: true
+        };
+
+        $scope.resetInput = function() {
+            $scope.input = {
+                title: '',
+                tags: [],
+                content: '',
+                track: false,
+                contact: false,
+                urgent: false
+            };
+        };
+
+        $scope.hasSearched = false;
+
+        $scope.searchInput = {
+            queryString: '',
+            title: true,
+            author: false,
+            content: false,
+            tags: false,
+            ask: true,
+            relate: true,
+            shoutout: true
+        };
+
+
+
+        // === Creation ===
+
+        $scope.addTag = function(tag) {
+            $scope.input.tags.push(tag);
         };
 
         $scope.submitPost = function(category) {
@@ -274,10 +528,10 @@ angular.module('informher.controllers', [])
                                     var hasMobile = $scope.input.mobile != '';
                                     messageArray.push(
                                         'You can contact me '
-                                        + (hasEmail ? 'via email: ' + $scope.input.email : '')
-                                        + (hasEmail && hasMobile ? ', or ' : '')
-                                        + (hasMobile ? 'via mobile: ' + $scope.input.mobile : '')
-                                        + '.'
+                                            + (hasEmail ? 'via email: ' + $scope.input.email : '')
+                                            + (hasEmail && hasMobile ? ', or ' : '')
+                                            + (hasMobile ? 'via mobile: ' + $scope.input.mobile : '')
+                                            + '.'
                                     );
                                     break;
                                 case 'urgent':
@@ -295,67 +549,97 @@ angular.module('informher.controllers', [])
                     $scope.showScreenMessage(response.data.status);
                     if(response.data.status == "POST_ADD_SUCCESSFUL") {
                         ModalService.closeModal();
-                        $scope.onRefresh(false);
+                        $scope.refreshNewer();
                     }
                 });
         };
 
-        $scope.openModal = function(key) {
-            ModalService.openModal(key);
-        };
+        $scope.recallPosts();
 
-        $scope.addTag = function(tag) {
-            $scope.input.tags.push(tag);
-        };
+        PostService.query('get page($0).posts', 1)
+            .then(function (response) {
+                if (response.data.status == "POST_SHOW_SUCCESSFUL") {
+                    $scope.nextPage = response.data.posts['last_page'];
+                    $scope.prevPage = response.data.posts['last_page'] - 1;
+                    if($scope.prevPage < 0)
+                        $scope.prevPage = 0;
 
-        ModalService.loadModal('modalAsk', 'modals/ask.html', $scope);
-        ModalService.loadModal('modalRelate', 'modals/relate.html', $scope);
-        ModalService.loadModal('modalShoutout', 'modals/shoutout.html', $scope);
-        ModalService.loadModal('modalSearch', 'modals/search.html', $scope);
+                    $scope.updatePage();
+                    $scope.initStream();
+                }
+                else {
+                    $scope.showScreenMessage(response.data.status, false);
+                }
+            });
 
-        if($scope.posts.length == 0)
-            $scope.onRefresh(true);
+
     })
 
     // displaying of posts' comments
     .controller('PostCtrl', function ($scope, $stateParams, PostService, CommentService, ModalService) {
         $scope.input = { 'message': '' };
         $scope.editPost = {};
-        $scope.liked = false;
 
-        $scope.fetchComments = function() {
-            return CommentService.query('get post($0).page($1).comments', $stateParams.postId, 0)
+        $scope.onRefresh = function() {
+            $scope.refreshNewer()
+                .then(function() {
+                    $scope.$emit('scroll.refreshComplete');
+                });
+        };
+
+        $scope.refreshNewer = function() {
+            return $scope.refreshPage(true, $scope.nextPage, function() {
+                $scope.nextPage++;
+            });
+        };
+
+        $scope.refreshOlder = function(showLoading) {
+            if(showLoading)
+                $scope.showLoading('', false);
+            return $scope.refreshPage(true, $scope.prevPage, function() {
+                if($scope.prevPage > 0)
+                    $scope.prevPage--;
+            })
+                .then(function() { $scope.hideLoading(); });
+        };
+
+        $scope.refreshPage = function(isPush, page, success, error) {
+            return CommentService.query('get post($0).page($1).comments', $stateParams.postId, page)
                 .then(function (response) {
                     if (response.data.status == "POST_COMMENT_RETRIEVE_SUCCESSFUL") {
-                        var newPosts = response.data.comment.data;
+                        var newComments = response.data.comment.data;
 
-                        console.log($scope.post);
-
-                        for(var i = 0, len = newPosts.length; i < len; i++) {
-                            var newPost = newPosts[i];
-                            if(_.find($scope.post.comments, function(post) { return post.id == newPost.id }) === undefined)
-                                $scope.post.comments.push(newPost);
+                        for(var i = newComments.length - 1, len = 0; i >= len; i--) {
+                            var newComment = newComments[i];
+                            if(_.find($scope.post.comments, function(comment) { return comment.id == newComment.id }) === undefined) {
+                                $scope.post.comments[isPush ? 'push' : 'unshift'](newComment);
+                            }
                         }
+
+                        if(success instanceof Function)
+                            success();
                     }
+                    else if(error instanceof Function)
+                        error();
                 });
         };
 
         $scope.onRefresh = function() {
-            $scope.fetchComments()
+            $scope.refreshNewer()
                 .then(function() {
                     $scope.$broadcast('scroll.refreshComplete');
                 });
         };
 
         $scope.addComment = function() {
-            $scope.input = '';
-            CommentService.query('new post($0).comment', $stateParams.postId, $scope.input)
+            CommentService.query('new post($0).comment', $stateParams.postId, { 'message': $scope.input.message })
                 .then(function (response) {
+                    console.log(response);
                     if(response.data.status == "POST_COMMENT_CREATE_SUCCESS") {
                         $scope.post.comments.unshift(response.data.comment[0]);
-                        $scope.showScreenMessage(response.data.status);
                     }
                 });
+            $scope.input.message = '';
         };
 
         $scope.likePost = function() {
@@ -430,48 +714,48 @@ angular.module('informher.controllers', [])
         };
 
         $scope.showLoading('', true);
-        PostService.query('get post($0)', $stateParams.postId)
+
+        $scope.post = PostService.getPost($stateParams.postId);
+        $scope.post.comments = [];
+
+        switch($scope.post.category.name) {
+            case 'ask':
+            case 'relate':
+                $scope.input = {
+                    title: $scope.post.title,
+                    tags: _.pluck($scope.post.tags, 'tagname'),
+                    content: $scope.post.content
+                };
+                break;
+            case 'shoutout':
+                $scope.input = {
+                    tags: _.pluck($scope.post.tags, 'tagname')
+
+                };
+                break;
+        }
+
+        ModalService.loadModal('modal-edit', 'modals/' + $scope.post.category.name + '.html', $scope);
+        CommentService.query('get post($0).page($1).comments', $stateParams.postId, 1)
             .then(function (response) {
-                if (response.data.status == "POST_SHOW_SUCCESSFUL") {
-                    $scope.post = response.data.posts;
-                    $scope.post.comments = [];
-
-                    switch($scope.post.category.name) {
-                        case 'ask':
-                        case 'relate':
-                            $scope.input = {
-                                title: $scope.post.title,
-                                tags: _.pluck($scope.post.tags, 'tagname'),
-                                content: $scope.post.content
-                            };
-                            break;
-                        case 'shoutout':
-                            $scope.input = {
-                                tags: _.pluck($scope.post.tags, 'tagname')
-
-                            };
-                            break;
-                    }
-
-                    ModalService.loadModal('modalEdit', 'modals/' + $scope.post.category.name + '.html', $scope);
-                    console.log($scope.post.comment_count);
-                    $scope.fetchComments()
-                        .then(function() {
-                            $scope.hideLoading();
-                        });
-                    /*
-                    CommentService.query('GET:postId.*', $stateParams.postId)
-                        .then(function (response) {
-                            if (response.data.status == "POST_COMMENT_RETRIEVE_SUCCESSFUL") {
-                                $scope.post.comments = response.data.comment.data;
-                                $scope.hideLoading();
-                            }
-                        });
-                        */
-                    $scope.onRefresh();
+                if (response.data.status == "POST_COMMENT_RETRIEVE_SUCCESSFUL") {
+                    $scope.nextPage = response.data.comment['last_page'];
+                    $scope.prevPage = response.data.comment['last_page'];
+                    if($scope.prevPage < 0)
+                        $scope.prevPage = 0;
+                    $scope.refreshNewer().then(function() { $scope.refreshOlder(false); });
                 }
+                else {
+                    $scope.showScreenMessage(response.data.status, false);
+                }
+
+                PostService.query('get post($0).likes', $stateParams.postId)
+                    .then(function(response) {
+                        if(response.data.status == "POST_LIKES_RETRIEVE_SUCCESSFUL") {
+
+                        }
+                    })
             })
-        ;
     })
 
     .controller('UserCtrl', function ($scope, $stateParams, UserService) {
