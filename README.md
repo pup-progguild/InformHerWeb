@@ -2,18 +2,19 @@
 
 This is the [InformHer web application](https://github.com/pup-progguild/InformHerWeb), powered by the [InformHer API](https://github.com/pup-progguild/InformHerAPI).
 
-### Documentation
+### Dependencies
 
-TODO
-
-### BuiltWith
-
-- [Ionic Framework](http://ionicframework.com/)
-- [AngularJS](http://angularjs.org/)
+- [Ionic Framework](http://ionicframework.com)
+- [Underscore.js](http://underscorejs.org)
+- [AngularJS](http://angularjs.org)
+- [Angular Cache](http://jmdobry.github.io/angular-cache)
+- [Angular Geolocation](https://github.com/arunisrael/angularjs-geolocation)
+- [Angular Translate](http://pascalprecht.github.io/angular-translate)
+- [Leaflet](http://leafletjs.com)
 
 ### License
 
-Copyright 2014 PUP Programming Guild
+Copyright (c) 2014 PUP Programming Guild
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 You may obtain a copy of the License at [http://www.apache.org/licenses/LICENSE-2.0](http://www.apache.org/licenses/LICENSE-2.0)
@@ -22,7 +23,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 
 ### Devs
 
-- Allan Crisostomo @[Temoto-kun](https://github.com/Temoto-kun) [lead]
+- Allan V. Crisostomo @[Temoto-kun](https://github.com/Temoto-kun) [lead]
 - PUP Programming Guild @[pup-progguild](https://github.com/pup-progguild) [the rest of the team ;)]
 
 About Us
