@@ -72,6 +72,7 @@
                     <p><i class="icon ion-thumbsup"></i></p>
                 </div>
 
+                <!--
                 <a class="item">
                     <span class="input-label">{{ 'POSTS' | translate }}</span>
                     <span class="badge badge-royal">{{currentUser.posts.ask.length}}</span>
@@ -80,6 +81,7 @@
                     <span class="input-label">{{ 'COMMENTS' | translate }}</span>
                     <span class="badge badge-royal">{{currentUser.posts.ask.length}}</span>
                 </a>
+                -->
             </div>
 
             <div class="list">
@@ -296,7 +298,6 @@
                 </div>
                 <div class="item item-text-wrap informher-post-tags">
                     {{ 'TAGS' | translate }}
-                    <!-- <a class="informher-post-tag" ng-repeat="tag in post.tags" href="#/stream/tag/{{tag.id}}">{{tag.tagname}}</a> -->
                     <a class="informher-post-tag" ng-repeat="tag in post.tags" href="">{{tag.tagname}}</a>
                 </div>
                 <div class="item item-body item-text-wrap" ng-hide="post.category.name == 'shoutout'">
@@ -328,7 +329,7 @@
                     <h3><a href="#/profile/{{comment.author.id}}">{{comment.author.username}}</a></h3>
                     <time class="timestamp">{{comment.created_at}}</time>
                     <p>{{comment.message}}</p>
-                    <button class="button button-clear button-small icon-left ion-thumbsup informher-btn-like"  ng-click="likeComment(comment.id)">
+                    <button ng-class="'button button-clear button-small icon-left ion-thumbsup informher-btn-like' + (comment.liked ? ' button-royal' : '')" ng-click="likeComment(comment.id)">
                         {{ 'LIKE' | translate }}
                         <span ng-hide="comment.likers <= 0 || isNaN(comment.likers)">({{comment.likers}})</span>
                     </button>

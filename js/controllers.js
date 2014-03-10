@@ -613,6 +613,7 @@ angular.module('informher.controllers', [])
 
                         for(var i = newComments.length - 1, len = 0; i >= len; i--) {
                             var newComment = newComments[i];
+
                             if(_.find($scope.post.comments, function(comment) { return comment.id == newComment.id }) === undefined) {
                                 $scope.post.comments[isPush ? 'push' : 'unshift'](newComment);
                             }
@@ -634,12 +635,25 @@ angular.module('informher.controllers', [])
         };
 
         $scope.addComment = function() {
+            $scope.showLoading();
             CommentService.query('new post($0).comment', $stateParams.postId, { 'message': $scope.input.message })
                 .then(function (response) {
-                    console.log(response);
                     if(response.data.status == "POST_COMMENT_CREATE_SUCCESS") {
                         $scope.post.comments.unshift(response.data.comment[0]);
+
+                        PostService.query('get post($0)', $stateParams.postId)
+                            .then(function(response2) {
+                                console.log(response2);
+                                var posts = PersistenceService.get('stream', PersistenceService.get('stream', 'mode'));
+                                for(var i = 0, len = posts.length; i < len; i++)
+                                    if(posts[i].id == $stateParams.postId) {
+                                        posts[i].comments_count = response2.data.posts.comments_count;
+                                        PersistenceService.put('stream', PersistenceService.get('stream', 'mode'), posts);
+                                        break;
+                                    }
+                            });
                     }
+                    $scope.hideLoading();
                 });
             $scope.input.message = '';
         };
@@ -650,6 +664,17 @@ angular.module('informher.controllers', [])
             PostService.query('like post($0)', $stateParams.postId, {})
                 .then(function(response) {
                     if(response.data.status == "POST_CREATE_LIKE_SUCCESS") {
+                        PostService.query('get post($0)', $stateParams.postId)
+                            .then(function(response2) {
+                                $scope.post.likers = response2.data.posts.likers;
+                                var posts = PersistenceService.get('stream', PersistenceService.get('stream', 'mode'));
+                                for(var i = 0, len = posts.length; i < len; i++)
+                                    if(posts[i].id == $stateParams.postId) {
+                                        posts[i] = response2.data.posts;
+                                        PersistenceService.put('stream', PersistenceService.get('stream', 'mode'), posts);
+                                        break;
+                                    }
+                            });
                         $scope.post.liked = _.contains(response.data.likes, $scope.currentUser.user_id);
                     }
                     else {
@@ -660,10 +685,36 @@ angular.module('informher.controllers', [])
         };
 
         $scope.likeComment = function(id) {
-            console.log(_.find($scope.post.comments, function(comment) { return comment.id == id }));
+            var comment = (function() {
+                for(var i = 0, len = $scope.post.comments.length; i < len; i++)
+                    if($scope.post.comments[i].id == id)
+                        return $scope.post.comments[i];
+                return undefined;
+            })();
+
+            var initial = comment.liked;
+            comment.liked = !comment.liked;
+
             CommentService.query('like post($0).comment($1)', $stateParams.postId, id, {})
                 .then(function(response) {
-                    console.log(response);
+                    if(response.data.status == "COMMENT_CREATE_LIKE_SUCCESS") {
+                        return CommentService.query('get post($0).comment($1)', $stateParams.postId, id)
+                            .then(function(response2) {
+                                for(var i = 0, len = $scope.post.comments.length; i < len; i++) {
+                                    if($scope.post.comments[i].id == id) {
+                                        //$scope.post.comments[i] = response2.data.comment[0];
+                                        $scope.post.comments.likers = response2.data.comment.likers;
+                                        $scope.post.comments.liked = _.contains(response2.data.comment.likers_id, $scope.currentUser.user_id);
+                                        break;
+                                    }
+                                }
+                                console.log(response2);
+                            });
+                    }
+                    else {
+                        $scope.showScreenMessage(response.data.status);
+                        comment.liked = initial;
+                    }
                 });
         };
 
@@ -728,8 +779,8 @@ angular.module('informher.controllers', [])
         var post = PostService.getPost($stateParams.postId);
         if(post.category.name == "shoutout")
             post = _.extend(post, JSON.parse(post.content));
-        console.log(post);
         $scope.post = post;
+        $scope.post.liked = false;
         $scope.post.comments = [];
 
         switch($scope.post.category.name) {
