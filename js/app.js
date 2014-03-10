@@ -223,7 +223,11 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 POST_CREATE_LIKE_FAILED: 'Error liking post.',
                 POST_DELETE: 'Deleting post...Please wait.',
                 POST_DELETE_SUCCESSFUL: 'Deleted post!',
-                POST_DELETE_FAILED: 'Failed to delete post.'
+                POST_DELETE_FAILED: 'Failed to delete post.',
+
+                URGENT: 'Urgent',
+                CONTACT: 'Contact',
+                LOCATION: 'Location'
             })
             .translations('tl-PH', {
                 _LANGUAGE_ID: 'Tagalog',
@@ -357,7 +361,12 @@ angular.module('informher', ['ionic', 'jmdobry.angular-cache', 'informher.servic
                 POST_CREATE_LIKE_FAILED: 'May error sa pagla-like ng post.',
                 POST_DELETE: 'Binubura ang post...Sandali lang.',
                 POST_DELETE_SUCCESSFUL: 'Nabura na ang post!',
-                POST_DELETE_FAILED: 'Hindi mabura ang post.'
+                POST_DELETE_FAILED: 'Hindi mabura ang post.',
+
+                URGENT: 'Urgent',
+                CONTACT: 'Ugnayan',
+                LOCATION: 'Lokasyon'
+
             })
             .preferredLanguage('en-PH')
             .fallbackLanguage('en-PH');

@@ -686,24 +686,25 @@ angular.module('informher.controllers', [])
                     };
                     var flagArray = [];
                     var messageArray = [];
-                    for(var flagKey in flags)
-                        if(flags[flagKey]) {
+
+                    for(var flagKey in flags) {
+                        if(flags[flagKey])
                             flagArray.push(flagKey.toUpperCase());
-                            switch(flagKey) {
-                                case 'track':
-                                    messageArray.push('location:' + $scope.currentUser.coords);
-                                    break;
-                                case 'contact':
-                                    var hasEmail = $scope.input.email != '';
-                                    var hasMobile = $scope.input.mobile != '';
-                                    messageArray.push('email:' + $scope.input.email);
-                                    messageArray.push('mobile:' + $scope.input.mobile);
-                                    break;
-                                case 'urgent':
-                                    messageArray.push('urgent:true');
-                                    break;
-                            }
+                        switch(flagKey) {
+                            case 'track':
+                                messageArray.push('location:' + ($scope.input.track ? $scope.currentUser.coords : 'null'));
+                                break;
+                            case 'contact':
+                                var hasEmail = $scope.input.email != '';
+                                var hasMobile = $scope.input.mobile != '';
+                                messageArray.push('email:' + (hasEmail ? $scope.input.email : 'null'));
+                                messageArray.push('mobile:' + (hasMobile ? $scope.input.mobile : 'null'));
+                                break;
+                            case 'urgent':
+                                messageArray.push('urgent:' + $scope.input.urgent);
+                                break;
                         }
+                    }
                     input.title = flagArray.join(', ');
                     input.content = "{" + messageArray.join(',') + "}";
                     input.tags = $scope.input.tags;
@@ -727,6 +728,7 @@ angular.module('informher.controllers', [])
         var post = PostService.getPost($stateParams.postId);
         if(post.category.name == "shoutout")
             post = _.extend(post, JSON.parse(post.content));
+        console.log(post);
         $scope.post = post;
         $scope.post.comments = [];
 
@@ -744,9 +746,9 @@ angular.module('informher.controllers', [])
                     tags: _.pluck($scope.post.tags, 'tagname'),
                     track: $scope.post.location !== undefined,
                     urgent: $scope.post.urgent,
-                    contact: $scope.post.email != '' || $scope.post.mobile != '',
-                    email: $scope.post.email,
-                    mobile: $scope.post.mobile
+                    contact: $scope.post.email !== undefined || $scope.post.mobile !== undefined,
+                    email: $scope.post.email || '',
+                    mobile: $scope.post.mobile || ''
                 };
                 break;
         }
@@ -807,15 +809,17 @@ angular.module('informher.controllers', [])
                             $scope.post.liked = _.contains(response.data.likes, $scope.currentUser.user_id);
                         if(post.category.name == "shoutout") {
                             post = _.extend(post, JSON.parse(post.content));
-                             var coordsRaw = post.location.split(',');
-                             var x = coordsRaw[0],
-                             y = coordsRaw[1];
-                             var map = L.map('map').setView([x, y], 13);
-                             L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-                             attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                             }).addTo(map);
+                            if(post.location !== undefined) {
+                                var coordsRaw = post.location.split(',');
+                                var x = coordsRaw[0],
+                                y = coordsRaw[1];
+                                var map = L.map('map').setView([x, y], 13);
+                                L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+                                attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+                                }).addTo(map);
 
-                             L.marker([x, y]).addTo(map)
+                                L.marker([x, y]).addTo(map)
+                            }
                         }
                     })
             })
